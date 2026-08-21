@@ -1,86 +1,178 @@
 "use client";
+
 import { use } from "react";
 import Link from 'next/link';
-import { MOCK_BRANDS } from '@/lib/mock-data';
+import { INITIAL_BRANDS } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
 
 export default function BrandDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
-  const brand = MOCK_BRANDS.find(b => b.slug === resolvedParams.slug);
+  const brand = INITIAL_BRANDS.find(b => b.slug === resolvedParams.slug);
 
-  if (!brand) return <div className="p-20 text-center">Brand not found</div>;
+  if (!brand) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center">
+        <h1 className="text-2xl font-bold text-primary mb-2">Campaign Brief Not Found</h1>
+        <p className="text-text-secondary text-sm mb-6">The brand brief you requested is either expired or invalid.</p>
+        <Link href="/brands">
+          <Button variant="accent">Explore All Brand Briefs</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  // Related briefs for internal SEO linking
+  const relatedBrands = INITIAL_BRANDS.filter(b => b.slug !== brand.slug).slice(0, 3);
 
   return (
-    <div className="bg-white min-h-screen pb-20">
-      <div className="h-64 md:h-80 w-full relative">
-        <img src={brand.coverImage} alt={brand.name} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="container mx-auto px-4 relative h-full">
-          <Link href="/brands" className="absolute top-6 left-4 text-white hover:text-white/80 flex items-center gap-2 text-sm font-medium">
-            <ArrowLeft className="w-4 h-4" /> Back to Brands
+    <div className="bg-background min-h-screen pb-20">
+      {/* Breadcrumb Navigation for SEO */}
+      <div className="bg-white border-b border-border py-3">
+        <div className="container mx-auto px-4">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-text-secondary">
+            <Link href="/" className="hover:text-accent transition-colors">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <Link href="/brands" className="hover:text-accent transition-colors">Brand Briefs</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="font-semibold text-primary">{brand.name}</span>
+          </nav>
+        </div>
+      </div>
+
+      {/* Hero Banner */}
+      <div className="h-64 md:h-80 w-full relative bg-black">
+        <img src={brand.coverImage} alt={`${brand.name} Brand Campaign`} className="w-full h-full object-cover opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="container mx-auto px-4 relative h-full flex items-end pb-8">
+          <Link href="/brands" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-xs font-semibold mb-2">
+            <ArrowLeft className="w-4 h-4" /> Back to All Briefs
           </Link>
         </div>
       </div>
 
       <div className="container mx-auto px-4 -mt-16 relative z-10">
-        <div className="bg-surface rounded-xl border border-border p-6 shadow-sm mb-8 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
-          <div className="flex items-center gap-6">
-            <img src={brand.logo} alt={brand.name} className="w-24 h-24 rounded-full border-4 border-white shadow-md object-cover" />
+        {/* Brand Card Header */}
+        <div className="bg-white rounded-3xl border border-border p-6 md:p-8 shadow-xl mb-8 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+          <div className="flex items-center gap-5">
+            <img
+              src={brand.logo}
+              alt={`${brand.name} Logo`}
+              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-white shadow-lg object-cover bg-white"
+            />
             <div>
-              <h1 className="text-3xl font-bold mb-2">{brand.name}</h1>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-2 mb-1.5">
+                <h1 className="text-2xl md:text-3xl font-black text-primary">{brand.name}</h1>
+              </div>
+              <div className="flex flex-wrap gap-2 items-center">
                 <Badge variant="default">{brand.industry}</Badge>
                 <Badge variant={brand.budgetTier === 'Mega' || brand.budgetTier === 'Macro' ? 'approved' : brand.budgetTier === 'Mid-Tier' ? 'under_review' : 'default'}>
                   {brand.budgetTier} Tier
                 </Badge>
+                <span className="text-xs text-text-secondary font-medium ml-1">
+                  Managed by Schbang
+                </span>
               </div>
             </div>
           </div>
-          <Link href={`/apply/${brand.slug}`}>
-            <Button variant="accent" size="lg" className="w-full md:w-auto">Apply for Collaboration</Button>
+
+          <Link href={`/apply/${brand.slug}`} className="w-full md:w-auto">
+            <Button variant="accent" size="lg" className="w-full md:w-auto shadow-xl shadow-accent/25 py-6 px-8 text-sm font-bold">
+              Apply for this Campaign
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-8">
-            <section>
-              <h2 className="text-xl font-bold mb-4 border-b pb-2">About the Campaign</h2>
-              <p className="text-text-secondary leading-relaxed">{brand.description}</p>
-            </section>
+        {/* Content Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-white p-8 rounded-3xl border border-border">
+              <h2 className="text-lg font-bold text-primary mb-3">About the Campaign Brief</h2>
+              <p className="text-sm text-text-secondary leading-relaxed">{brand.description}</p>
+            </div>
             
-            <section>
-              <h2 className="text-xl font-bold mb-4 border-b pb-2">Campaign Types</h2>
-              <div className="flex gap-3 flex-wrap">
+            <div className="bg-white p-8 rounded-3xl border border-border">
+              <h2 className="text-lg font-bold text-primary mb-4">Required Creative Deliverables</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {brand.campaignTypes.map(type => (
-                  <div key={type} className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg border border-border text-sm font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-success" />
-                    {type}
+                  <div key={type} className="flex items-center gap-2.5 bg-gray-50 px-4 py-3 rounded-xl border border-border text-xs font-semibold text-primary">
+                    <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
+                    <span>{type}</span>
                   </div>
                 ))}
               </div>
-            </section>
+            </div>
           </div>
 
           <div>
-            <div className="bg-gray-50 rounded-xl p-6 border border-border">
-              <h3 className="font-bold mb-4">Requirements</h3>
-              <ul className="space-y-3 text-sm text-text-secondary">
-                <li className="flex items-start gap-2">
-                  <div className="mt-1 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                  <span>{brand.requirements}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="mt-1 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                  <span>High quality content production</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <div className="mt-1 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                  <span>Exclusive rights for 3 months</span>
-                </li>
-              </ul>
+            <div className="bg-white rounded-3xl p-6 border border-border shadow-sm space-y-6">
+              <div>
+                <h3 className="font-bold text-primary text-sm mb-3">Creator Eligibility</h3>
+                <div className="bg-emerald-50/60 border border-emerald-200/70 p-4 rounded-2xl text-xs text-emerald-950 leading-relaxed font-medium">
+                  {brand.requirements}
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-4 text-xs text-text-secondary space-y-2">
+                <div className="flex justify-between">
+                  <span>Agency Management:</span>
+                  <span className="font-semibold text-primary">Schbang Influencer Wing</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Support Email:</span>
+                  <span className="font-semibold text-primary">{brand.contactEmail || "briefs@schbang.com"}</span>
+                </div>
+              </div>
+
+              <Link href={`/apply/${brand.slug}`}>
+                <Button variant="accent" className="w-full mt-2">
+                  Submit Proposal
+                </Button>
+              </Link>
             </div>
+          </div>
+        </div>
+
+        {/* Related Campaigns for Strong Internal SEO Linking */}
+        <div className="mt-16 pt-12 border-t border-border">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold text-primary">Related Brand Opportunities</h2>
+              <p className="text-xs text-text-secondary mt-1">Explore other active briefs currently accepting creator pitches.</p>
+            </div>
+            <Link href="/brands" className="text-xs font-semibold text-accent hover:underline flex items-center gap-1">
+              View All <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {relatedBrands.map(item => (
+              <Card key={item.id} className="hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col border-border group">
+                <div className="h-36 overflow-hidden relative bg-gray-100">
+                  <img src={item.coverImage} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
+                  <div className="absolute top-3 right-3 px-2.5 py-0.5 bg-black/70 backdrop-blur-md text-white text-[10px] font-semibold rounded-full uppercase tracking-wider">
+                    {item.budgetTier}
+                  </div>
+                </div>
+                <CardContent className="p-5 flex-1 flex flex-col justify-between">
+                  <div className="flex items-center gap-3 mb-3">
+                    <img src={item.logo} alt={item.name} className="w-10 h-10 rounded-xl border border-border object-cover bg-white" />
+                    <div>
+                      <h3 className="font-bold text-sm text-primary">{item.name}</h3>
+                      <span className="text-[11px] text-text-secondary">{item.industry}</span>
+                    </div>
+                  </div>
+                  <Link href={`/brands/${item.slug}`} className="mt-2">
+                    <Button variant="outline" size="sm" className="w-full group-hover:border-accent group-hover:text-accent transition-colors text-xs">
+                      View Brief &rarr;
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </div>
