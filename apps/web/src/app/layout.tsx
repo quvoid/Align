@@ -1,6 +1,7 @@
 import { Providers } from './providers';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
+import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import type { Metadata } from 'next';
@@ -120,6 +121,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`min-h-screen flex flex-col font-sans antialiased text-text-primary bg-background selection:bg-accent selection:text-white`}>
+        <AnalyticsProvider />
         <Providers>
           <Navbar />
           <main className="flex-1">
