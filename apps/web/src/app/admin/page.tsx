@@ -24,7 +24,6 @@ import {
   ExternalLink,
   Check,
   X,
-  Sparkles,
   TrendingUp,
 } from "lucide-react";
 
@@ -154,10 +153,6 @@ export default function AdminDashboard() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent/20 text-accent text-[11px] font-bold uppercase tracking-wider mb-2">
-                <Sparkles className="w-3 h-3" />
-                <span>Schbang Agency Command Center</span>
-              </div>
               <h1 className="text-3xl font-extrabold tracking-tight">Align Admin Portal</h1>
               <p className="text-white/70 text-sm mt-1">
                 Manage brand portfolios, review creator metrics & coordinate partnership ads

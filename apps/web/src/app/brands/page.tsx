@@ -10,7 +10,6 @@ import { INITIAL_BRANDS, BrandItem } from "@/lib/mock-data";
 import {
   Search,
   X,
-  Sparkles,
   ArrowRight,
   ExternalLink,
   CheckCircle2,
@@ -61,10 +60,6 @@ export default function BrandsPage() {
       <div className="bg-primary text-white py-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/20 text-accent text-xs font-bold uppercase tracking-wider mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Active Brand Opportunities</span>
-            </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
               Explore Brand Briefs
             </h1>
