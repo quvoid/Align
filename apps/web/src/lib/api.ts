@@ -1,40 +1,46 @@
-import { MOCK_BRANDS, MOCK_APPLICATIONS } from './mock-data';
+import { INITIAL_BRANDS, INITIAL_APPLICATIONS } from './mock-data';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
 
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_URL}${endpoint}`;
   
-  // Try real API first
+  // Try real API with a quick 1.2s timeout so the UI never hangs
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
+
     const res = await fetch(url, {
       ...options,
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
       },
     });
+
+    clearTimeout(timeoutId);
     
     if (res.ok) {
       return await res.json();
     }
-  } catch (e) {
-    console.warn('API call failed, falling back to mock data', e);
+  } catch {
+    // Graceful fallback to mock data without blocking render
   }
 
-  // Fallback to mock data logic
+  // Instant fallback to mock data
   if (endpoint.includes('/brands/')) {
     const slug = endpoint.split('/brands/')[1];
-    return MOCK_BRANDS.find(b => b.slug === slug) as any;
+    return INITIAL_BRANDS.find(b => b.slug === slug) as any;
   }
   if (endpoint.includes('/brands')) {
-    return MOCK_BRANDS as any;
+    return INITIAL_BRANDS as any;
   }
   if (endpoint.includes('/applications')) {
-    return MOCK_APPLICATIONS as any;
+    return INITIAL_APPLICATIONS as any;
   }
 
-  throw new Error('API route not mocked or failed');
+  throw new Error('API route not available');
 }
 
 export const api = {
