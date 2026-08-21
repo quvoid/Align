@@ -16,20 +16,12 @@ export default function SignInPage() {
   const loginWithEmail = async (targetEmail: string, targetPass: string, redirectUrl: string) => {
     setLoading(true);
     try {
-      const res = await signIn('credentials', {
+      await signIn('credentials', {
         email: targetEmail,
         password: targetPass,
         callbackUrl: redirectUrl,
         redirect: true
       });
-      if (res?.error) {
-        toast({
-          title: "Sign in failed",
-          description: "Invalid credentials",
-          type: "error"
-        });
-        setLoading(false);
-      }
     } catch {
       toast({
         title: "Sign in error",

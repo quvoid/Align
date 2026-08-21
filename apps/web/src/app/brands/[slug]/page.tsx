@@ -32,8 +32,8 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
               <h1 className="text-3xl font-bold mb-2">{brand.name}</h1>
               <div className="flex flex-wrap gap-3">
                 <Badge variant="default">{brand.industry}</Badge>
-                <Badge variant={brand.budgetTier === 'High' ? 'approved' : brand.budgetTier === 'Medium' ? 'under_review' : 'default'}>
-                  {brand.budgetTier} Budget
+                <Badge variant={brand.budgetTier === 'Mega' || brand.budgetTier === 'Macro' ? 'approved' : brand.budgetTier === 'Mid-Tier' ? 'under_review' : 'default'}>
+                  {brand.budgetTier} Tier
                 </Badge>
               </div>
             </div>
