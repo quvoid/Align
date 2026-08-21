@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CREATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum AuthProvider {
+  GOOGLE
+  CREDENTIALS
+}
+
+enum ApplicationStatus {
+  PENDING
+  UNDER_REVIEW
+  SHORTLISTED
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+enum Industry {
+  FASHION
+  BEAUTY
+  FOOD
+  TECH
+  LIFESTYLE
+  GAMING
+  FINANCE
+  HEALTH
+  EDUCATION
+  ENTERTAINMENT
+  TRAVEL
+  AUTOMOTIVE
+  OTHER
+}
+
+enum BudgetTier {
+  NANO
+  MICRO
+  MID_TIER
+  MACRO
+  MEGA
+}
+
+enum CampaignType {
+  INSTAGRAM_REEL
+  INSTAGRAM_STORY
+  INSTAGRAM_POST
+  YOUTUBE_VIDEO
+  YOUTUBE_SHORT
+  FACEBOOK_POST
+  FACEBOOK_REEL
+  X_POST
+  BLOG_POST
+  PODCAST
+  EVENT
+  MULTI_PLATFORM
+}
+
+model User {
+  id           String          @id @default(cuid())
+  email        String          @unique
+  name         String
+  role         Role            @default(CREATOR)
+  avatar       String?
+  passwordHash String?
+  provider     AuthProvider    @default(CREDENTIALS)
+  providerId   String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  creatorProfile CreatorProfile?
+  applications   Application[]
+  sessions       Session[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CreatorProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Instagram
+  igHandle           String?
+  igFollowers        Int?
+  igEngagementRate   Decimal? @db.Decimal(5, 2)
+  igAvgLikes         Int?
+  igAvgComments      Int?
+
+  // YouTube
+  ytChannel          String?
+  ytSubscribers      Int?
+  ytAvgViews         Int?
+  ytEngagementRate   Decimal? @db.Decimal(5, 2)
+
+  // Facebook
+  fbPage             String?
+  fbFollowers        Int?
+  fbEngagementRate   Decimal? @db.Decimal(5, 2)
+
+  // X/Twitter
+  xHandle            String?
+  xFollowers         Int?
+  xEngagementRate    Decimal? @db.Decimal(5, 2)
+
+  // General
+  niche              String[]
+  location           String?
+  languages          String[]
+  mediaKit           String?
+  bio                String?
+  website            String?
+  phone              String?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([igFollowers])
+  @@index([ytSubscribers])
+}
+
+model Brand {
+  id             String         @id @default(cuid())
+  name           String
+  slug           String         @unique
+  logo           String
+  coverImage     String?
+  description    String
+  industry       Industry
+  campaignTypes  CampaignType[]
+  budgetTier     BudgetTier
+  requirements   Json
+  isActive       Boolean        @default(true)
+  contactEmail   String?
+  website        String?
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  applications   Application[]
+
+  @@index([slug])
+  @@index([industry])
+  @@index([isActive])
+  @@index([budgetTier])
+}
+
+model Application {
+  id             String            @id @default(cuid())
+  creatorId      String
+  brandId        String
+  status         ApplicationStatus @default(PENDING)
+  proposal       String
+  expectedRate   Decimal?          @db.Decimal(10, 2)
+  deliverables   Json
+  metricsSnapshot Json
+  adminNotes     String?
+  reviewedBy     String?
+  reviewedAt     DateTime?
+
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  creator        User              @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  brand          Brand             @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@unique([creatorId, brandId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([brandId, status])
+  @@index([creatorId, brandId])
+}
