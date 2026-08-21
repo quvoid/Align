@@ -22,11 +22,13 @@
   background: transparent;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
+/* Hide scrollbar for IE, Edge and Firefox while keeping scrolling active */
 html, body {
   font-family: var(--font-sans);
   background-color: var(--color-background);
   color: var(--color-text-primary);
+  overflow-x: hidden;
+  overflow-y: auto;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
   -webkit-font-smoothing: antialiased;

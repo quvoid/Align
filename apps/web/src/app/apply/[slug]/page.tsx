@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, useEffect, use } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
-import { MOCK_BRANDS } from "@/lib/mock-data";
+import { INITIAL_BRANDS } from "@/lib/mock-data";
 import {
   CheckCircle,
   ArrowRight,
@@ -52,7 +52,12 @@ export default function ApplyPage({
   const router = useRouter();
   const [step, setStep] = useState(1);
 
-  const brand = MOCK_BRANDS.find((b) => b.slug === resolvedParams.slug);
+  // Ensure body scroll is unlocked on mount
+  useEffect(() => {
+    document.body.style.overflow = "unset";
+  }, []);
+
+  const brand = INITIAL_BRANDS.find((b) => b.slug === resolvedParams.slug);
 
   const [form, setForm] = useState({
     // Personal
@@ -139,7 +144,7 @@ export default function ApplyPage({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-32">
       {/* Brand Header */}
       <div className="bg-primary text-white py-8">
         <div className="container mx-auto px-4">

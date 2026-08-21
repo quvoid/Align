@@ -25,18 +25,23 @@ export default function BrandsPage() {
   const [budgetFilter, setBudgetFilter] = useState("ALL");
   const [selectedBrand, setSelectedBrand] = useState<BrandItem | null>(null);
 
-  // Close drawer on Escape key
+  // Close drawer on Escape key and clean up body overflow
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSelectedBrand(null);
     };
+
     if (selectedBrand) {
       document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [selectedBrand]);
 
   const filteredBrands = INITIAL_BRANDS.filter((brand) => {
