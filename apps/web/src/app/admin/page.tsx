@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
-import { INITIAL_BRANDS, INITIAL_APPLICATIONS, BrandItem, ApplicationItem } from "@/lib/mock-data";
+import { INITIAL_BRANDS, INITIAL_APPLICATIONS, INITIAL_CREATORS, BrandItem, ApplicationItem, CreatorItem } from "@/lib/mock-data";
 import {
   Building2,
   FileText,
@@ -25,11 +26,16 @@ import {
   Check,
   X,
   TrendingUp,
+  Heart,
+  Users,
+  Send,
+  Star,
+  Briefcase,
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<"overview" | "brands" | "applications">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "brands" | "applications" | "interests">("overview");
 
   // Brands State
   const [brands, setBrands] = useState<BrandItem[]>(INITIAL_BRANDS);
@@ -79,6 +85,7 @@ export default function AdminDashboard() {
       isActive: true,
       contactEmail: newBrand.contactEmail,
       website: newBrand.website,
+      likesCount: 0,
     };
 
     setBrands((prev) => [created, ...prev]);
@@ -207,6 +214,19 @@ export default function AdminDashboard() {
                   {pendingCount}
                 </span>
               )}
+            </button>
+            <button
+              onClick={() => setActiveTab("interests")}
+              className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
+                activeTab === "interests"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-white/70 hover:text-white"
+              }`}
+            >
+              ❤️ Creator Likes Queue
+              <span className="px-2 py-0.5 rounded-full text-xs bg-red-500 text-white font-bold">
+                {INITIAL_CREATORS.reduce((acc, c) => acc + c.likedBrandIds.length, 0)}
+              </span>
             </button>
           </div>
         </div>
@@ -676,6 +696,152 @@ export default function AdminDashboard() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: CREATOR LIKES QUEUE (HOT LEADS) */}
+        {activeTab === "interests" && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-border">
+              <div>
+                <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                  Creator Likes &amp; Expressed Interest Queue
+                </h2>
+                <p className="text-xs text-text-secondary mt-0.5">
+                  Creators who bookmarked or expressed interest in active brand briefs. Reach out directly with fast-track collaboration offers.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Link href="/creators">
+                  <Button variant="outline" size="sm" className="text-xs font-bold">
+                    <Users className="w-3.5 h-3.5 mr-1.5" />
+                    Open Creator Roster
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Interested Creators Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {INITIAL_CREATORS.flatMap((creator) =>
+                creator.likedBrandIds.map((brandId) => {
+                  const targetBrand = brands.find((b) => b.id === brandId);
+                  if (!targetBrand) return null;
+
+                  return (
+                    <Card key={`${creator.id}-${brandId}`} className="border-border hover:shadow-lg transition-all flex flex-col justify-between">
+                      <CardContent className="p-6">
+                        {/* Target Brand Header Banner */}
+                        <div className="flex items-center justify-between p-3 rounded-2xl bg-red-50/70 border border-red-100 mb-4">
+                          <div className="flex items-center gap-2">
+                            <img
+                              src={targetBrand.logo}
+                              alt={targetBrand.name}
+                              className="w-7 h-7 rounded-lg object-cover bg-white border border-border"
+                            />
+                            <div>
+                              <div className="text-xs font-bold text-primary">
+                                Interested in {targetBrand.name}
+                              </div>
+                              <span className="text-[10px] text-red-600 font-semibold">
+                                {targetBrand.budgetTier} Tier Brief
+                              </span>
+                            </div>
+                          </div>
+                          <span className="p-1.5 rounded-full bg-red-100 text-red-600">
+                            <Heart className="w-3.5 h-3.5 fill-red-500 text-red-500" />
+                          </span>
+                        </div>
+
+                        {/* Creator Info */}
+                        <div className="flex items-start gap-3.5 mb-4">
+                          <img
+                            src={creator.avatar}
+                            alt={creator.name}
+                            className="w-12 h-12 rounded-2xl object-cover border border-border"
+                          />
+                          <div>
+                            <h3 className="font-extrabold text-sm text-primary">
+                              {creator.name}
+                            </h3>
+                            <p className="text-xs font-semibold text-accent">
+                              {creator.handle}
+                            </p>
+                            <span className="text-[11px] text-text-secondary">
+                              {creator.location}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Social Metrics */}
+                        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-gray-50 border border-border text-center text-xs mb-4">
+                          <div>
+                            <span className="text-text-secondary text-[10px] font-medium block">Followers</span>
+                            <span className="font-black text-primary">
+                              {(creator.igFollowers / 1000).toFixed(0)}k
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-text-secondary text-[10px] font-medium block">Engagement Rate</span>
+                            <span className="font-black text-green-600">
+                              {creator.igEngagementRate}% ER
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Past Experience */}
+                        <div className="space-y-1.5 border-t border-border pt-3">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
+                            Past Brand Collabs:
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {creator.brandCollaborations.slice(0, 2).map((collab, i) => (
+                              <span
+                                key={i}
+                                className="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] font-bold text-primary"
+                              >
+                                {collab.brandName}
+                              </span>
+                            ))}
+                            {creator.brandCollaborations.length > 2 && (
+                              <span className="px-1.5 py-0.5 rounded-md bg-gray-100 text-[10px] font-medium text-text-secondary">
+                                +{creator.brandCollaborations.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+
+                      {/* Card Action */}
+                      <div className="p-4 bg-gray-50 border-t border-border flex items-center gap-2">
+                        <Link href={`/creators/${creator.id}`} className="flex-1">
+                          <Button variant="outline" size="sm" className="w-full text-xs font-bold">
+                            Scorecard
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="accent"
+                          size="sm"
+                          className="flex-1 text-xs font-bold shadow-md shadow-accent/20"
+                          onClick={() => {
+                            toast({
+                              title: `⚡ Deal Invite Dispatched!`,
+                              description: `Fast-track pitch invite for ${targetBrand.name} sent to ${creator.name} (${creator.email}).`,
+                              type: "success",
+                            });
+                          }}
+                        >
+                          <Send className="w-3 h-3 mr-1" />
+                          Send Deal
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })
+              )}
             </div>
           </div>
         )}

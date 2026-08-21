@@ -3,9 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { useToast } from "@/components/ui/toast";
 import { INITIAL_BRANDS, BrandItem } from "@/lib/mock-data";
 import {
   Search,
@@ -13,17 +11,63 @@ import {
   ArrowRight,
   ExternalLink,
   CheckCircle2,
-  Clock,
   Layers,
   Award,
-  Share2,
+  Heart,
+  Users,
 } from "lucide-react";
 
 export default function BrandsPage() {
+  const { toast } = useToast();
+  const [brands, setBrands] = useState<BrandItem[]>(INITIAL_BRANDS);
+  const [likedBrandIds, setLikedBrandIds] = useState<Record<string, boolean>>({
+    '1': true, // Rohan liked Britannia
+  });
   const [search, setSearch] = useState("");
   const [industryFilter, setIndustryFilter] = useState("ALL");
   const [budgetFilter, setBudgetFilter] = useState("ALL");
   const [selectedBrand, setSelectedBrand] = useState<BrandItem | null>(null);
+
+  // Toggle Express Interest / Like
+  const handleToggleLike = (brandId: string, brandName: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+
+    const isCurrentlyLiked = !!likedBrandIds[brandId];
+    const newLikedState = !isCurrentlyLiked;
+
+    setLikedBrandIds((prev) => ({ ...prev, [brandId]: newLikedState }));
+
+    setBrands((prevBrands) =>
+      prevBrands.map((b) =>
+        b.id === brandId
+          ? { ...b, likesCount: b.likesCount + (newLikedState ? 1 : -1) }
+          : b
+      )
+    );
+
+    if (selectedBrand && selectedBrand.id === brandId) {
+      setSelectedBrand((prev) =>
+        prev
+          ? { ...prev, likesCount: prev.likesCount + (newLikedState ? 1 : -1) }
+          : null
+      );
+    }
+
+    if (newLikedState) {
+      toast({
+        title: `❤️ Expressed Interest in ${brandName}`,
+        description:
+          "Your creator profile is now highlighted on the Schbang brand team's radar for direct outreach!",
+        type: "success",
+      });
+    } else {
+      toast({
+        title: `Removed Interest in ${brandName}`,
+        description: "You have unbookmarked this brand brief.",
+        type: "info",
+      });
+    }
+  };
 
   // Close drawer on Escape key and clean up body overflow
   useEffect(() => {
@@ -44,7 +88,7 @@ export default function BrandsPage() {
     };
   }, [selectedBrand]);
 
-  const filteredBrands = INITIAL_BRANDS.filter((brand) => {
+  const filteredBrands = brands.filter((brand) => {
     const matchesSearch =
       brand.name.toLowerCase().includes(search.toLowerCase()) ||
       brand.description.toLowerCase().includes(search.toLowerCase()) ||
@@ -69,7 +113,7 @@ export default function BrandsPage() {
               Explore Brand Briefs
             </h1>
             <p className="text-white/70 text-base leading-relaxed">
-              Browse partnership briefs from marquee brands managed by Schbang. Click any card to preview campaign requirements and apply.
+              Browse partnership briefs from marquee brands managed by Schbang. Like/Express interest to appear on the brand manager&apos;s direct outreach list, or click to apply.
             </p>
           </div>
 
@@ -97,7 +141,7 @@ export default function BrandsPage() {
                 <option value="Lifestyle" className="bg-slate-900 text-white">Lifestyle & DIY</option>
                 <option value="Beauty" className="bg-slate-900 text-white">Beauty & Skincare</option>
                 <option value="Finance" className="bg-slate-900 text-white">Finance & FinTech</option>
-                <option value="Fashion" className="bg-slate-900 text-white">Fashion & Apparel</option>
+                <option value="Fashion" className="bg-slate-900 text-white">Fashion & E-Commerce</option>
               </select>
             </div>
 
@@ -122,9 +166,16 @@ export default function BrandsPage() {
       {/* Brands Grid */}
       <div className="container mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm font-medium text-text-secondary">
-            Showing <strong className="text-primary">{filteredBrands.length}</strong> available brand briefs
-          </p>
+          <div className="flex items-center gap-3">
+            <p className="text-sm font-medium text-text-secondary">
+              Showing <strong className="text-primary">{filteredBrands.length}</strong> available brand briefs
+            </p>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold flex items-center gap-1">
+              <Users className="w-3 h-3" />
+              Creator Express Interest Active
+            </span>
+          </div>
+
           {(search || industryFilter !== "ALL" || budgetFilter !== "ALL") && (
             <button
               onClick={() => {
@@ -140,87 +191,105 @@ export default function BrandsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBrands.map((brand) => (
-            <div
-              key={brand.id}
-              onClick={() => setSelectedBrand(brand)}
-              className="group cursor-pointer bg-white rounded-2xl border border-border overflow-hidden hover:shadow-2xl hover:border-accent/40 transform hover:-translate-y-1.5 transition-all duration-300 flex flex-col relative"
-            >
-              {/* Cover Banner with Badge */}
-              <div className="h-44 relative bg-gray-100 overflow-hidden">
-                <img
-                  src={brand.coverImage}
-                  alt={brand.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                
-                {/* Budget Pill */}
-                <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider border border-white/20">
-                  {brand.budgetTier} Tier
+          {filteredBrands.map((brand) => {
+            const isLiked = !!likedBrandIds[brand.id];
+
+            return (
+              <div
+                key={brand.id}
+                onClick={() => setSelectedBrand(brand)}
+                className="group cursor-pointer bg-white rounded-3xl border border-border overflow-hidden hover:shadow-2xl hover:border-accent/40 transform hover:-translate-y-1.5 transition-all duration-300 flex flex-col relative"
+              >
+                {/* Cover Banner with Budget & Express Interest Heart */}
+                <div className="h-44 relative bg-gray-100 overflow-hidden">
+                  <img
+                    src={brand.coverImage}
+                    alt={brand.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                  {/* Budget Pill */}
+                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider border border-white/20">
+                    {brand.budgetTier} Tier
+                  </div>
+
+                  {/* Express Interest Heart Button with Total Likes */}
+                  <button
+                    onClick={(e) => handleToggleLike(brand.id, brand.name, e)}
+                    className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 backdrop-blur-md border transition-all duration-200 shadow-md ${
+                      isLiked
+                        ? "bg-red-500 text-white border-red-400 scale-105"
+                        : "bg-black/70 text-white/90 border-white/20 hover:bg-black/90 hover:text-white"
+                    }`}
+                    title={isLiked ? "Remove interest" : "Express interest in this brief"}
+                  >
+                    <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-white text-white" : "text-white"}`} />
+                    <span>{brand.likesCount} Likes</span>
+                  </button>
+
+                  {/* Industry Tag */}
+                  <div className="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+                    <span>{brand.industry}</span>
+                  </div>
                 </div>
 
-                {/* Industry Tag */}
-                <div className="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                  <span>{brand.industry}</span>
-                </div>
-              </div>
+                {/* Card Body */}
+                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <div className="flex items-center gap-3 mb-3">
+                      <img
+                        src={brand.logo}
+                        alt={brand.name}
+                        className="w-12 h-12 rounded-xl border border-border object-cover bg-white shadow-sm"
+                      />
+                      <div>
+                        <h3 className="font-bold text-lg text-primary group-hover:text-accent transition-colors">
+                          {brand.name}
+                        </h3>
+                        <span className="text-[11px] font-medium text-text-secondary uppercase tracking-wider">
+                          Schbang Account
+                        </span>
+                      </div>
+                    </div>
 
-              {/* Card Body */}
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <img
-                      src={brand.logo}
-                      alt={brand.name}
-                      className="w-12 h-12 rounded-xl border border-border object-cover bg-white shadow-sm"
-                    />
-                    <div>
-                      <h3 className="font-bold text-lg text-primary group-hover:text-accent transition-colors">
-                        {brand.name}
-                      </h3>
-                      <span className="text-[11px] font-medium text-text-secondary uppercase tracking-wider">
-                        Schbang Account
-                      </span>
+                    <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
+                      {brand.description}
+                    </p>
+                  </div>
+
+                  {/* Deliverables Tags */}
+                  <div className="pt-3 border-t border-border/80">
+                    <div className="text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-2">
+                      Open Deliverables
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {brand.campaignTypes.slice(0, 2).map((type, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2.5 py-0.5 rounded-md bg-gray-100 text-[11px] font-medium text-text-secondary"
+                        >
+                          {type}
+                        </span>
+                      ))}
+                      {brand.campaignTypes.length > 2 && (
+                        <span className="px-2 py-0.5 rounded-md bg-accent/10 text-[11px] font-bold text-accent">
+                          +{brand.campaignTypes.length - 2} more
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
-                    {brand.description}
-                  </p>
-                </div>
-
-                {/* Deliverables Tags */}
-                <div className="pt-3 border-t border-border/80">
-                  <div className="text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-2">
-                    Open Deliverables
+                  {/* Card Action */}
+                  <div className="pt-2 flex items-center justify-between text-xs font-bold text-accent group-hover:translate-x-1 transition-transform">
+                    <span>Quick View Brief</span>
+                    <ArrowRight className="w-4 h-4" />
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {brand.campaignTypes.slice(0, 2).map((type, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2.5 py-0.5 rounded-md bg-gray-100 text-[11px] font-medium text-text-secondary"
-                      >
-                        {type}
-                      </span>
-                    ))}
-                    {brand.campaignTypes.length > 2 && (
-                      <span className="px-2 py-0.5 rounded-md bg-accent/10 text-[11px] font-bold text-accent">
-                        +{brand.campaignTypes.length - 2} more
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Card Action */}
-                <div className="pt-2 flex items-center justify-between text-xs font-bold text-accent group-hover:translate-x-1 transition-transform">
-                  <span>Quick View Brief</span>
-                  <ArrowRight className="w-4 h-4" />
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {filteredBrands.length === 0 && (
@@ -270,13 +339,28 @@ export default function BrandsPage() {
                   </span>
                 </div>
 
-                <button
-                  onClick={() => setSelectedBrand(null)}
-                  className="p-1.5 rounded-xl text-text-secondary hover:text-primary hover:bg-gray-200 transition-colors"
-                  aria-label="Close drawer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Express Interest in Drawer */}
+                  <button
+                    onClick={() => handleToggleLike(selectedBrand.id, selectedBrand.name)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all ${
+                      likedBrandIds[selectedBrand.id]
+                        ? "bg-red-500 text-white border-red-500"
+                        : "bg-white text-text-secondary border-border hover:border-red-400 hover:text-red-500"
+                    }`}
+                  >
+                    <Heart className={`w-4 h-4 ${likedBrandIds[selectedBrand.id] ? "fill-white" : ""}`} />
+                    <span>{selectedBrand.likesCount} Expressed Interest</span>
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedBrand(null)}
+                    className="p-1.5 rounded-xl text-text-secondary hover:text-primary hover:bg-gray-200 transition-colors"
+                    aria-label="Close drawer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
 
               {/* Drawer Scrollable Content */}

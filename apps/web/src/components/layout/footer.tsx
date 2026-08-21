@@ -29,6 +29,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link href="/creators" className="hover:text-accent transition-colors font-semibold text-primary">
+                  Verified Creator Roster
+                </Link>
+              </li>
+              <li>
                 <Link href="/auth/register" className="hover:text-accent transition-colors">
                   Join Creator Network
                 </Link>

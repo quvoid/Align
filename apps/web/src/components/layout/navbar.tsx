@@ -21,6 +21,12 @@ export const Navbar = () => {
         
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-text-secondary">
           <Link href="/brands" className="hover:text-primary transition-colors">Explore Brands</Link>
+          <Link href="/creators" className="hover:text-primary transition-colors flex items-center gap-1.5 font-semibold text-primary">
+            Find Creators
+            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-accent text-white uppercase tracking-wider">
+              New
+            </span>
+          </Link>
           {session?.user && (
             <Link href="/dashboard" className="hover:text-primary transition-colors">Creator Dashboard</Link>
           )}
