@@ -890,7 +890,7 @@ export default function AdminDashboard() {
                 { value: "Mega", label: "Mega (1M+)" },
               ]}
               value={newBrand.budgetTier}
-              onChange={(e) => setNewBrand({ ...newBrand, budgetTier: e.target.value as any })}
+              onChange={(e) => setNewBrand({ ...newBrand, budgetTier: e.target.value as BrandItem["budgetTier"] })}
             />
             <Input
               label="Contact Manager Email"

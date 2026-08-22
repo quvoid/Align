@@ -40,7 +40,7 @@ export const Navbar = () => {
               Creator Dashboard
             </Link>
           )}
-          {(session?.user as any)?.role === 'ADMIN' && (
+          {session?.user?.role === 'ADMIN' && (
             <Link href="/admin" className="hover:text-primary transition-colors flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-accent" />
               Admin Portal
@@ -122,7 +122,7 @@ export const Navbar = () => {
               </Link>
             )}
 
-            {(session?.user as any)?.role === 'ADMIN' && (
+            {session?.user?.role === 'ADMIN' && (
               <Link
                 href="/admin"
                 onClick={() => setMobileMenuOpen(false)}

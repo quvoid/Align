@@ -70,13 +70,13 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role || "CREATOR";
+        token.role = user.role || "CREATOR";
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
-        (session.user as any).role = token.role || "CREATOR";
+        session.user.role = token.role || "CREATOR";
       }
       return session;
     },

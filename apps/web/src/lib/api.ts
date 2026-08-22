@@ -1,8 +1,15 @@
-import { INITIAL_BRANDS, INITIAL_APPLICATIONS } from './mock-data';
+import {
+  INITIAL_BRANDS,
+  INITIAL_APPLICATIONS,
+  INITIAL_CREATORS,
+  type BrandItem,
+  type ApplicationItem,
+  type CreatorItem,
+} from './mock-data';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
 
-async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+async function fetchApi<T>(endpoint: string, fallbackData?: T, options: RequestInit = {}): Promise<T> {
   const url = `${API_URL}${endpoint}`;
   
   // Try real API with a quick 1.2s timeout so the UI never hangs
@@ -22,31 +29,52 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
     clearTimeout(timeoutId);
     
     if (res.ok) {
-      return await res.json();
+      return (await res.json()) as T;
     }
   } catch {
-    // Graceful fallback to mock data without blocking render
+    // Graceful fallback to mock data
   }
 
-  // Instant fallback to mock data
-  if (endpoint.includes('/brands/')) {
-    const slug = endpoint.split('/brands/')[1];
-    return INITIAL_BRANDS.find(b => b.slug === slug) as any;
-  }
-  if (endpoint.includes('/brands')) {
-    return INITIAL_BRANDS as any;
-  }
-  if (endpoint.includes('/applications')) {
-    return INITIAL_APPLICATIONS as any;
+  if (fallbackData !== undefined) {
+    return fallbackData;
   }
 
-  throw new Error('API route not available');
+  throw new Error(`API route ${endpoint} not available`);
 }
 
 export const api = {
-  getBrands: () => fetchApi<any>('/brands'),
-  getBrandBySlug: (slug: string) => fetchApi<any>(`/brands/${slug}`),
-  submitApplication: (data: any) => fetchApi<any>('/applications', { method: 'POST', body: JSON.stringify(data) }),
-  getMyApplications: () => fetchApi<any>('/applications/me'),
-  updateProfile: (data: any) => fetchApi<any>('/users/profile', { method: 'PUT', body: JSON.stringify(data) }),
+  getBrands: (): Promise<BrandItem[]> =>
+    fetchApi<BrandItem[]>('/brands', INITIAL_BRANDS),
+
+  getBrandBySlug: (slug: string): Promise<BrandItem | undefined> =>
+    fetchApi<BrandItem | undefined>(
+      `/brands/${slug}`,
+      INITIAL_BRANDS.find((b) => b.slug === slug)
+    ),
+
+  getCreators: (): Promise<CreatorItem[]> =>
+    fetchApi<CreatorItem[]>('/creators', INITIAL_CREATORS),
+
+  getCreatorById: (id: string): Promise<CreatorItem | undefined> =>
+    fetchApi<CreatorItem | undefined>(
+      `/creators/${id}`,
+      INITIAL_CREATORS.find((c) => c.id === id)
+    ),
+
+  submitApplication: (data: Record<string, unknown>): Promise<{ success: boolean }> =>
+    fetchApi<{ success: boolean }>(
+      '/applications',
+      { success: true },
+      { method: 'POST', body: JSON.stringify(data) }
+    ),
+
+  getMyApplications: (): Promise<ApplicationItem[]> =>
+    fetchApi<ApplicationItem[]>('/applications/me', INITIAL_APPLICATIONS),
+
+  updateProfile: (data: Record<string, unknown>): Promise<{ success: boolean }> =>
+    fetchApi<{ success: boolean }>(
+      '/users/profile',
+      { success: true },
+      { method: 'PUT', body: JSON.stringify(data) }
+    ),
 };
