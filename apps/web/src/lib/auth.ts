@@ -56,7 +56,7 @@ export const authConfig: NextAuthConfig = {
         }
 
         // 4. Default dynamic creator login
-        const displayName = email.split("@")[0];
+        const displayName = email.split("@")[0] || "creator";
         return {
           id: `user_${Date.now()}`,
           name: displayName.charAt(0).toUpperCase() + displayName.slice(1),

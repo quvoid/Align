@@ -1,14 +1,19 @@
 "use client";
+
+import { useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
+import { Menu, X, Sparkles, Building2, LayoutDashboard, ShieldCheck, LogIn, UserPlus, LogOut } from 'lucide-react';
 
 export const Navbar = () => {
   const { data: session } = useSession();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-white/85 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <div className="flex items-center">
             <span className="font-extrabold text-2xl tracking-tight text-primary">Align</span>
@@ -19,8 +24,11 @@ export const Navbar = () => {
           </span>
         </Link>
         
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-text-secondary">
-          <Link href="/brands" className="hover:text-primary transition-colors">Explore Brands</Link>
+          <Link href="/brands" className="hover:text-primary transition-colors">
+            Explore Brands
+          </Link>
           <Link href="/creators" className="hover:text-primary transition-colors flex items-center gap-1.5 font-semibold text-primary">
             Find Creators
             <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-accent text-white uppercase tracking-wider">
@@ -28,18 +36,28 @@ export const Navbar = () => {
             </span>
           </Link>
           {session?.user && (
-            <Link href="/dashboard" className="hover:text-primary transition-colors">Creator Dashboard</Link>
+            <Link href="/dashboard" className="hover:text-primary transition-colors">
+              Creator Dashboard
+            </Link>
           )}
           {(session?.user as any)?.role === 'ADMIN' && (
-            <Link href="/admin" className="hover:text-primary transition-colors">Admin Portal</Link>
+            <Link href="/admin" className="hover:text-primary transition-colors flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+              Admin Portal
+            </Link>
           )}
         </nav>
 
-        <div className="flex items-center gap-3">
+        {/* Desktop Auth CTA */}
+        <div className="hidden md:flex items-center gap-3">
           {session ? (
             <div className="flex items-center gap-3">
-              <span className="text-sm text-text-primary font-medium hidden sm:block">{session.user?.name}</span>
-              <Button variant="ghost" size="sm" onClick={() => signOut()}>Sign Out</Button>
+              <span className="text-xs text-text-primary font-bold hidden sm:block bg-gray-100 px-3 py-1.5 rounded-full border border-border">
+                {session.user?.name}
+              </span>
+              <Button variant="ghost" size="sm" onClick={() => signOut()}>
+                Sign Out
+              </Button>
             </div>
           ) : (
             <>
@@ -47,12 +65,113 @@ export const Navbar = () => {
                 <Button variant="ghost" size="sm">Log in</Button>
               </Link>
               <Link href="/auth/register">
-                <Button variant="accent" size="sm">Join Align</Button>
+                <Button variant="accent" size="sm" className="shadow-sm shadow-accent/20">
+                  Join Align
+                </Button>
               </Link>
             </>
           )}
         </div>
+
+        {/* Mobile Hamburger Toggle */}
+        <div className="flex items-center md:hidden gap-2">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-xl text-primary hover:bg-gray-100 transition-colors"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-b border-border bg-white px-4 py-6 space-y-4 animate-in slide-in-from-top duration-200 shadow-xl">
+          <nav className="space-y-3">
+            <Link
+              href="/brands"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2.5 p-2 rounded-xl text-sm font-semibold text-primary hover:bg-gray-50"
+            >
+              <Building2 className="w-4 h-4 text-accent" />
+              Explore Brand Briefs
+            </Link>
+            <Link
+              href="/creators"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-between p-2 rounded-xl text-sm font-semibold text-primary hover:bg-gray-50"
+            >
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4 text-accent" />
+                Find Creators Directory
+              </div>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent text-white uppercase">
+                New
+              </span>
+            </Link>
+
+            {session?.user && (
+              <Link
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2.5 p-2 rounded-xl text-sm font-semibold text-primary hover:bg-gray-50"
+              >
+                <LayoutDashboard className="w-4 h-4 text-accent" />
+                Creator Dashboard
+              </Link>
+            )}
+
+            {(session?.user as any)?.role === 'ADMIN' && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2.5 p-2 rounded-xl text-sm font-semibold text-primary hover:bg-gray-50"
+              >
+                <ShieldCheck className="w-4 h-4 text-accent" />
+                Admin Command Center
+              </Link>
+            )}
+          </nav>
+
+          <div className="border-t border-border pt-4">
+            {session ? (
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-text-secondary px-2">
+                  Signed in as <span className="text-primary">{session.user?.name}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-center"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    signOut();
+                  }}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/auth/signin" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full">
+                    <LogIn className="w-4 h-4 mr-1.5" />
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="accent" size="sm" className="w-full">
+                    <UserPlus className="w-4 h-4 mr-1.5" />
+                    Join
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };
