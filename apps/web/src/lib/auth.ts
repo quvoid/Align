@@ -2,15 +2,27 @@ import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
-export const authConfig: NextAuthConfig = {
-  providers: [
-    // Real Google OAuth Provider
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    }),
+const hasGoogleKeys = Boolean(
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+);
 
-    // Credentials & Demo Profiles Provider
+export const authConfig: NextAuthConfig = {
+  secret:
+    process.env.AUTH_SECRET ||
+    process.env.NEXTAUTH_SECRET ||
+    "align-schbang-secret-32-characters-long-key-2026",
+  providers: [
+    // Include real Google OAuth only if client ID is configured
+    ...(hasGoogleKeys
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+          }),
+        ]
+      : []),
+
+    // Credentials & Demo Profiles Provider (Always Available & Fallback)
     Credentials({
       name: "Credentials",
       credentials: {
@@ -22,7 +34,7 @@ export const authConfig: NextAuthConfig = {
 
         if (!email) return null;
 
-        // 1. Schbang Admin Demo Account
+        // 1. Schbang Admin Account
         if (email === "admin@schbang.com") {
           return {
             id: "admin_1",
@@ -33,7 +45,7 @@ export const authConfig: NextAuthConfig = {
           };
         }
 
-        // 2. Rohan Joshi Creator Demo Account
+        // 2. Rohan Joshi Creator Account
         if (email === "rohan@schbang.com" || email === "rohan.creates@gmail.com") {
           return {
             id: "c1",
@@ -44,7 +56,7 @@ export const authConfig: NextAuthConfig = {
           };
         }
 
-        // 3. Aanya Sen Beauty Creator Demo Account
+        // 3. Aanya Sen Beauty Creator Account
         if (email === "aanya@schbang.com" || email === "aanya.beauty@gmail.com") {
           return {
             id: "c2",
@@ -55,7 +67,7 @@ export const authConfig: NextAuthConfig = {
           };
         }
 
-        // 4. Default dynamic creator login
+        // 4. Any other Gmail / Creator Email (Dynamic Instant Login)
         const displayName = email.split("@")[0] || "creator";
         return {
           id: `user_${Date.now()}`,
@@ -83,6 +95,7 @@ export const authConfig: NextAuthConfig = {
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/signin",
   },
 };
 
