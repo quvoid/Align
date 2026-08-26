@@ -45,11 +45,7 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const res = await signIn("google", { callbackUrl: "/dashboard", redirect: true });
-      if (res?.error) {
-        // Fallback demo login if Google credentials unconfigured
-        await loginWithEmail("creator@google.com", "password123", "/dashboard");
-      }
+      await signIn("google", { callbackUrl: "/dashboard" });
     } catch {
       await loginWithEmail("creator@google.com", "password123", "/dashboard");
     }
