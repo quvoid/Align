@@ -1,284 +1,232 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/toast";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import {
-  Instagram,
-  Youtube,
-  Save,
-  ShieldCheck,
-  Eye,
-  CheckCircle2,
-  Sparkles,
-} from "lucide-react";
+import { useToast } from "@/components/ui/toast";
+import { getUserData, updateProfile, type CreatorProfile } from "@/lib/user-store";
+import { Instagram, Youtube, Save, ShieldCheck, Sparkles, Loader2 } from "lucide-react";
 
 export default function ProfilePage() {
-  const { toast } = useToast();
   const { data: session } = useSession();
+  const { toast } = useToast();
+  const [profile, setProfile] = useState<CreatorProfile | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const userName = session?.user?.name || "Creator";
-  const userEmail = session?.user?.email || "";
-  const defaultHandle = session?.user?.name
-    ? `@${session.user.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}`
-    : "@yourhandle";
-
-  const isRohanDemo = userEmail === "rohan@schbang.com" || userEmail === "rohan.creates@gmail.com";
-
-  const [profile, setProfile] = useState({
-    name: isRohanDemo ? "Rohan Joshi" : userName,
-    handle: isRohanDemo ? "@rohan_joshicomics" : defaultHandle,
-    email: userEmail,
-    avatar:
-      session?.user?.image ||
-      (isRohanDemo
-        ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop"
-        : `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`),
-    location: "Mumbai, India",
-    bio: isRohanDemo
-      ? "Stand-up comedian & storyteller creating relatable humorous sketches around everyday Indian family moments."
-      : "",
-    niche: isRohanDemo ? "Comedy, Food & FMCG, Lifestyle" : "",
-    igHandle: isRohanDemo ? "@rohan_joshicomics" : "",
-    igFollowers: isRohanDemo ? "145000" : "",
-    igER: isRohanDemo ? "6.8" : "",
-    ytChannel: isRohanDemo ? "Rohan Joshi Official" : "",
-    ytSubscribers: isRohanDemo ? "85000" : "",
-    ytAvgViews: isRohanDemo ? "42k" : "",
-    fbFollowers: isRohanDemo ? "12000" : "",
-    mediaKitUrl: isRohanDemo ? "https://drive.google.com/your-media-kit" : "",
-  });
-
-  // Load saved profile if available
   useEffect(() => {
-    if (userEmail && typeof window !== "undefined") {
-      const saved = localStorage.getItem(`align_profile_${userEmail}`);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          setProfile((prev) => ({ ...prev, ...parsed }));
-        } catch {}
-      } else if (!isRohanDemo && userName) {
-        setProfile((prev) => ({
-          ...prev,
-          name: userName,
-          email: userEmail,
-          handle: defaultHandle,
-          avatar: session?.user?.image || prev.avatar,
-        }));
-      }
+    if (session?.user?.email) {
+      const data = getUserData(
+        session.user.email,
+        session.user.name || undefined,
+        session.user.image || undefined
+      );
+      setProfile(data.profile);
     }
-  }, [userEmail, userName, isRohanDemo, defaultHandle, session?.user?.image]);
+  }, [session]);
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = () => {
+    if (!session?.user?.email || !profile) return;
+    
     setLoading(true);
-
-    if (userEmail && typeof window !== "undefined") {
-      localStorage.setItem(`align_profile_${userEmail}`, JSON.stringify(profile));
-    }
-
+    updateProfile(session.user.email, profile);
+    
     setTimeout(() => {
       setLoading(false);
       toast({
-        title: "✨ Creator Profile Updated!",
-        description:
-          "Your social metrics & biography are saved and synchronized with your creator account.",
+        title: "Profile Saved",
+        description: "Your creator profile has been updated successfully.",
         type: "success",
       });
     }, 500);
   };
 
+  const updateField = (field: keyof CreatorProfile, value: string) => {
+    if (!profile) return;
+    setProfile({ ...profile, [field]: value });
+  };
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-background min-h-screen py-10 pb-24">
-      <div className="container mx-auto px-4 max-w-4xl">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-black text-primary tracking-tight">
-              My Creator Profile &amp; Media Kit
-            </h1>
-            <p className="text-text-secondary text-sm mt-1">
-              Keep your verified handles and audience metrics up to date for brand brief pitching.
-            </p>
+    <div className="min-h-screen bg-background pb-20">
+      <div className="bg-primary text-white py-12 border-b border-white/10">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2 flex items-center gap-2">
+                <Sparkles className="w-8 h-8 text-accent" />
+                My Creator Profile & Media Kit
+              </h1>
+              <p className="text-white/70 text-base">
+                Manage your public creator identity and verified analytics.
+              </p>
+            </div>
+            <Link href="/brands">
+              <Button variant="accent" className="font-bold">
+                Browse Open Brand Briefs
+              </Button>
+            </Link>
           </div>
-
-          <Link href="/brands">
-            <Button variant="outline" size="sm" className="text-xs font-bold">
-              <Sparkles className="w-4 h-4 mr-1.5 text-accent" />
-              Browse Open Brand Briefs
-            </Button>
-          </Link>
         </div>
+      </div>
 
-        <form onSubmit={handleSave} className="space-y-8">
-          {/* 1. Basic Identity */}
-          <Card className="rounded-3xl border-border shadow-xs overflow-hidden bg-white">
-            <div className="p-6 border-b border-border bg-gray-50/70">
-              <h2 className="text-base font-bold text-primary flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-accent" />
-                Basic Creator Details
-              </h2>
-              <p className="text-xs text-text-secondary mt-0.5">
-                Your primary branding, avatar, and geographic location.
-              </p>
+      <div className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+        {/* Section 1: Basic Creator Details */}
+        <Card className="rounded-3xl border-border shadow-xs">
+          <CardContent className="p-6 md:p-8 space-y-6">
+            <div className="flex items-center gap-2 border-b border-border pb-4 mb-6">
+              <ShieldCheck className="w-6 h-6 text-primary" />
+              <h2 className="text-xl font-bold text-primary">Basic Creator Details</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Full Name"
+                value={profile.name || ""}
+                onChange={(e) => updateField("name", e.target.value)}
+                placeholder="Your full name"
+              />
+              <Input
+                label="Creator Handle"
+                value={profile.handle || ""}
+                onChange={(e) => updateField("handle", e.target.value)}
+                placeholder="@yourhandle"
+              />
+              <Input
+                label="Email Address"
+                value={profile.email || ""}
+                onChange={(e) => updateField("email", e.target.value)}
+                placeholder="you@example.com"
+                disabled
+              />
+              <Input
+                label="Location"
+                value={profile.location || ""}
+                onChange={(e) => updateField("location", e.target.value)}
+                placeholder="City, Country"
+              />
+            </div>
+            
+            <div className="pt-2">
+              <Input
+                label="Primary Niche"
+                value={profile.niche || ""}
+                onChange={(e) => updateField("niche", e.target.value)}
+                placeholder="e.g., Tech, Lifestyle, Fashion"
+              />
             </div>
 
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Creator Full Name"
-                  value={profile.name}
-                  placeholder="e.g. Omkar Rakshe"
-                  onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                  required
-                />
-                <Input
-                  label="Primary Creator Handle"
-                  value={profile.handle}
-                  placeholder="@yourhandle"
-                  onChange={(e) => setProfile({ ...profile, handle: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Contact Email"
-                  type="email"
-                  value={profile.email}
-                  onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                  required
-                />
-                <Input
-                  label="Base City / State"
-                  value={profile.location}
-                  placeholder="e.g. Mumbai, Maharashtra"
-                  onChange={(e) => setProfile({ ...profile, location: e.target.value })}
-                  required
-                />
-              </div>
-
+            <div className="pt-2">
               <Textarea
-                label="Creator Biography & Pitch"
-                rows={3}
-                value={profile.bio}
-                onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                placeholder="Describe your content style, audience demographics, and past collaboration highlights..."
+                label="Bio"
+                value={profile.bio || ""}
+                onChange={(e) => updateField("bio", e.target.value)}
+                placeholder="A short introduction about you..."
+                rows={4}
               />
+            </div>
+          </CardContent>
+        </Card>
 
+        {/* Section 2: Instagram Analytics */}
+        <Card className="rounded-3xl border-border shadow-xs">
+          <CardContent className="p-6 md:p-8 space-y-6">
+            <div className="flex items-center gap-2 border-b border-border pb-4 mb-6">
+              <Instagram className="w-6 h-6 text-pink-600" />
+              <h2 className="text-xl font-bold text-primary">Instagram Analytics</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Input
-                label="Content Niches (comma separated)"
-                value={profile.niche}
-                placeholder="e.g. Tech, Lifestyle, Food & FMCG"
-                onChange={(e) => setProfile({ ...profile, niche: e.target.value })}
+                label="Instagram Handle"
+                value={profile.igHandle || ""}
+                onChange={(e) => updateField("igHandle", e.target.value)}
+                placeholder="@yourig"
               />
-            </CardContent>
-          </Card>
+              <Input
+                label="Followers"
+                type="number"
+                value={profile.igFollowers?.toString() || ""}
+                onChange={(e) => updateField("igFollowers", e.target.value)}
+                placeholder="e.g. 50000"
+              />
+              <Input
+                label="Avg Engagement Rate (%)"
+                type="number"
+                step="0.1"
+                value={profile.igER?.toString() || ""}
+                onChange={(e) => updateField("igER", e.target.value)}
+                placeholder="e.g. 4.5"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* 2. Instagram Metrics */}
-          <Card className="rounded-3xl border-border shadow-xs overflow-hidden bg-white">
-            <div className="p-6 border-b border-border bg-gray-50/70">
-              <h2 className="text-base font-bold text-primary flex items-center gap-2">
-                <Instagram className="w-5 h-5 text-pink-600" />
-                Instagram Analytics
-              </h2>
-              <p className="text-xs text-text-secondary mt-0.5">
-                Metrics pulled for brand campaign matching.
-              </p>
+        {/* Section 3: YouTube & Channels */}
+        <Card className="rounded-3xl border-border shadow-xs">
+          <CardContent className="p-6 md:p-8 space-y-6">
+            <div className="flex items-center gap-2 border-b border-border pb-4 mb-6">
+              <Youtube className="w-6 h-6 text-red-600" />
+              <h2 className="text-xl font-bold text-primary">YouTube & Channels</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Input
+                label="Channel Name"
+                value={profile.ytChannel || ""}
+                onChange={(e) => updateField("ytChannel", e.target.value)}
+                placeholder="Channel Name"
+              />
+              <Input
+                label="Subscribers"
+                type="number"
+                value={profile.ytSubscribers?.toString() || ""}
+                onChange={(e) => updateField("ytSubscribers", e.target.value)}
+                placeholder="e.g. 100000"
+              />
+              <Input
+                label="Avg Views"
+                type="number"
+                value={profile.ytAvgViews?.toString() || ""}
+                onChange={(e) => updateField("ytAvgViews", e.target.value)}
+                placeholder="e.g. 25000"
+              />
             </div>
 
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input
-                  label="Instagram Handle"
-                  placeholder="@handle"
-                  value={profile.igHandle}
-                  onChange={(e) => setProfile({ ...profile, igHandle: e.target.value })}
-                />
-                <Input
-                  label="Followers Count"
-                  type="number"
-                  placeholder="e.g. 50000"
-                  value={profile.igFollowers}
-                  onChange={(e) => setProfile({ ...profile, igFollowers: e.target.value })}
-                />
-                <Input
-                  label="Avg Engagement Rate (%)"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g. 5.4"
-                  value={profile.igER}
-                  onChange={(e) => setProfile({ ...profile, igER: e.target.value })}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 3. YouTube & Other Channels */}
-          <Card className="rounded-3xl border-border shadow-xs overflow-hidden bg-white">
-            <div className="p-6 border-b border-border bg-gray-50/70">
-              <h2 className="text-base font-bold text-primary flex items-center gap-2">
-                <Youtube className="w-5 h-5 text-red-600" />
-                YouTube &amp; Additional Channels
-              </h2>
-              <p className="text-xs text-text-secondary mt-0.5">
-                Long-form content metrics and portfolio links.
-              </p>
-            </div>
-
-            <CardContent className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input
-                  label="YouTube Channel Name"
-                  placeholder="e.g. Channel Name"
-                  value={profile.ytChannel}
-                  onChange={(e) => setProfile({ ...profile, ytChannel: e.target.value })}
-                />
-                <Input
-                  label="Subscribers Count"
-                  type="number"
-                  placeholder="e.g. 25000"
-                  value={profile.ytSubscribers}
-                  onChange={(e) => setProfile({ ...profile, ytSubscribers: e.target.value })}
-                />
-                <Input
-                  label="Average Views Per Video"
-                  placeholder="e.g. 15k"
-                  value={profile.ytAvgViews}
-                  onChange={(e) => setProfile({ ...profile, ytAvgViews: e.target.value })}
-                />
-              </div>
-
+            <div className="pt-4 border-t border-border">
               <Input
-                label="External Media Kit / Portfolio Link (Google Drive / Notion)"
-                value={profile.mediaKitUrl}
-                placeholder="https://drive.google.com/..."
-                onChange={(e) => setProfile({ ...profile, mediaKitUrl: e.target.value })}
+                label="Media Kit URL"
+                value={profile.mediaKitUrl || ""}
+                onChange={(e) => updateField("mediaKitUrl", e.target.value)}
+                placeholder="https://link-to-your-media-kit.com"
               />
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Sticky Save Bar */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border">
-            <Button
-              type="submit"
-              variant="accent"
-              size="lg"
-              isLoading={loading}
-              className="shadow-xl shadow-accent/25 px-8 font-bold text-sm"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Save Creator Profile
-            </Button>
-          </div>
-        </form>
+        {/* Action Bottom */}
+        <div className="flex justify-end pt-4">
+          <Button 
+            variant="accent" 
+            size="lg" 
+            onClick={handleSave} 
+            disabled={loading}
+            className="w-full md:w-auto text-base font-bold px-8"
+          >
+            {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
+            Save Creator Profile
+          </Button>
+        </div>
       </div>
     </div>
   );

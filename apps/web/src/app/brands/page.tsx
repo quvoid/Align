@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { INITIAL_BRANDS, BrandItem } from "@/lib/mock-data";
+import { getUserData, toggleLike as toggleLikeStore } from "@/lib/user-store";
 import {
   Search,
   X,
@@ -18,29 +20,50 @@ import {
 } from "lucide-react";
 
 export default function BrandsPage() {
+  const { data: session } = useSession();
   const { toast } = useToast();
+  
   const [brands, setBrands] = useState<BrandItem[]>(INITIAL_BRANDS);
-  const [likedBrandIds, setLikedBrandIds] = useState<Record<string, boolean>>({
-    '1': true, // Rohan liked Britannia
-  });
+  const [likedBrandIds, setLikedBrandIds] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
   const [industryFilter, setIndustryFilter] = useState("ALL");
   const [budgetFilter, setBudgetFilter] = useState("ALL");
   const [selectedBrand, setSelectedBrand] = useState<BrandItem | null>(null);
 
-  // Toggle Express Interest / Like
-  const handleToggleLike = (brandId: string, brandName: string, e?: React.MouseEvent) => {
+  useEffect(() => {
+    if (session?.user?.email) {
+      const data = getUserData(session.user.email);
+      const likesRecord: Record<string, boolean> = {};
+      data.likedBrandIds.forEach(id => {
+        likesRecord[id] = true;
+      });
+      setLikedBrandIds(likesRecord);
+    } else {
+      setLikedBrandIds({});
+    }
+  }, [session]);
+
+  const handleToggleLike = useCallback((brandId: string, brandName: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
 
-    const isCurrentlyLiked = !!likedBrandIds[brandId];
-    const newLikedState = !isCurrentlyLiked;
+    if (!session?.user?.email) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to express interest in brands.",
+        type: "error",
+      });
+      return;
+    }
 
-    setLikedBrandIds((prev) => ({ ...prev, [brandId]: newLikedState }));
+    const email = session.user.email;
+    const isLiked = toggleLikeStore(email, brandId);
+
+    setLikedBrandIds((prev) => ({ ...prev, [brandId]: isLiked }));
 
     setBrands((prevBrands) =>
       prevBrands.map((b) =>
         b.id === brandId
-          ? { ...b, likesCount: b.likesCount + (newLikedState ? 1 : -1) }
+          ? { ...b, likesCount: b.likesCount + (isLiked ? 1 : -1) }
           : b
       )
     );
@@ -48,16 +71,15 @@ export default function BrandsPage() {
     if (selectedBrand && selectedBrand.id === brandId) {
       setSelectedBrand((prev) =>
         prev
-          ? { ...prev, likesCount: prev.likesCount + (newLikedState ? 1 : -1) }
+          ? { ...prev, likesCount: prev.likesCount + (isLiked ? 1 : -1) }
           : null
       );
     }
 
-    if (newLikedState) {
+    if (isLiked) {
       toast({
         title: `❤️ Expressed Interest in ${brandName}`,
-        description:
-          "Your creator profile is now highlighted on the Schbang brand team's radar for direct outreach!",
+        description: "Your creator profile is now highlighted on the Schbang brand team's radar for direct outreach!",
         type: "success",
       });
     } else {
@@ -67,9 +89,8 @@ export default function BrandsPage() {
         type: "info",
       });
     }
-  };
+  }, [session, selectedBrand, toast]);
 
-  // Close drawer on Escape key and clean up body overflow
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSelectedBrand(null);
@@ -105,7 +126,6 @@ export default function BrandsPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header Banner */}
       <div className="bg-primary text-white py-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
@@ -117,7 +137,6 @@ export default function BrandsPage() {
             </p>
           </div>
 
-          {/* Search & Filter Bar */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-3 bg-white/5 p-3 rounded-2xl border border-white/15 backdrop-blur-md">
             <div className="md:col-span-2 relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
@@ -163,7 +182,6 @@ export default function BrandsPage() {
         </div>
       </div>
 
-      {/* Brands Grid */}
       <div className="container mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -200,7 +218,6 @@ export default function BrandsPage() {
                 onClick={() => setSelectedBrand(brand)}
                 className="group cursor-pointer bg-white rounded-3xl border border-border overflow-hidden hover:shadow-2xl hover:border-accent/40 transform hover:-translate-y-1.5 transition-all duration-300 flex flex-col relative"
               >
-                {/* Cover Banner with Budget & Express Interest Heart */}
                 <div className="h-44 relative bg-gray-100 overflow-hidden">
                   <img
                     src={brand.coverImage}
@@ -209,12 +226,10 @@ export default function BrandsPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                  {/* Budget Pill */}
                   <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider border border-white/20">
                     {brand.budgetTier} Tier
                   </div>
 
-                  {/* Express Interest Heart Button with Total Likes */}
                   <button
                     onClick={(e) => handleToggleLike(brand.id, brand.name, e)}
                     className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 backdrop-blur-md border transition-all duration-200 shadow-md ${
@@ -228,14 +243,12 @@ export default function BrandsPage() {
                     <span>{brand.likesCount} Likes</span>
                   </button>
 
-                  {/* Industry Tag */}
                   <div className="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
                     <span>{brand.industry}</span>
                   </div>
                 </div>
 
-                {/* Card Body */}
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
                     <div className="flex items-center gap-3 mb-3">
@@ -259,7 +272,6 @@ export default function BrandsPage() {
                     </p>
                   </div>
 
-                  {/* Deliverables Tags */}
                   <div className="pt-3 border-t border-border/80">
                     <div className="text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-2">
                       Open Deliverables
@@ -281,7 +293,6 @@ export default function BrandsPage() {
                     </div>
                   </div>
 
-                  {/* Card Action */}
                   <div className="pt-2 flex items-center justify-between text-xs font-bold text-accent group-hover:translate-x-1 transition-transform">
                     <span>Quick View Brief</span>
                     <ArrowRight className="w-4 h-4" />
@@ -314,12 +325,8 @@ export default function BrandsPage() {
         )}
       </div>
 
-      {/* ======================================================== */}
-      {/* SLIDE-OVER BRIEF DRAWER                                  */}
-      {/* ======================================================== */}
       {selectedBrand && (
         <div className="fixed inset-0 z-50 overflow-hidden">
-          {/* Backdrop Blur */}
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
             onClick={() => setSelectedBrand(null)}
@@ -328,7 +335,6 @@ export default function BrandsPage() {
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
             <div className="w-screen max-w-xl bg-white shadow-2xl border-l border-border flex flex-col animate-in slide-in-from-right duration-300">
-              {/* Drawer Top Bar */}
               <div className="p-5 border-b border-border flex items-center justify-between bg-gray-50/80">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-accent">
@@ -340,7 +346,6 @@ export default function BrandsPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {/* Express Interest in Drawer */}
                   <button
                     onClick={() => handleToggleLike(selectedBrand.id, selectedBrand.name)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all ${
@@ -363,9 +368,7 @@ export default function BrandsPage() {
                 </div>
               </div>
 
-              {/* Drawer Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                {/* Hero Header */}
                 <div className="relative rounded-2xl overflow-hidden border border-border">
                   <div className="h-36 bg-gray-100">
                     <img
@@ -397,7 +400,6 @@ export default function BrandsPage() {
                   </div>
                 </div>
 
-                {/* About the Campaign */}
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-2 flex items-center gap-1.5">
                     <Award className="w-4 h-4 text-accent" />
@@ -408,7 +410,6 @@ export default function BrandsPage() {
                   </p>
                 </div>
 
-                {/* Creator Requirements */}
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-2 flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-green-600" />
@@ -422,7 +423,6 @@ export default function BrandsPage() {
                   </div>
                 </div>
 
-                {/* Open Deliverables */}
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-2.5">
                     Deliverables Requested
@@ -440,7 +440,6 @@ export default function BrandsPage() {
                   </div>
                 </div>
 
-                {/* Brand Contact & Official Site */}
                 <div className="text-xs text-text-secondary border-t border-border pt-4 space-y-1.5">
                   <div className="flex justify-between">
                     <span>Agency Coordination:</span>
@@ -465,7 +464,6 @@ export default function BrandsPage() {
                 </div>
               </div>
 
-              {/* Drawer Sticky Footer CTA */}
               <div className="p-5 border-t border-border bg-gray-50 flex items-center justify-between gap-4">
                 <Button
                   variant="outline"

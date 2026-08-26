@@ -5,10 +5,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
 import { useToast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
-import { INITIAL_BRANDS } from "@/lib/mock-data";
+import { INITIAL_BRANDS, ApplicationItem } from "@/lib/mock-data";
+import { getUserData, addApplication } from "@/lib/user-store";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import {
   CheckCircle,
   ArrowRight,
@@ -19,6 +21,7 @@ import {
   Twitter,
   Send,
   User,
+  AlertCircle,
 } from "lucide-react";
 
 const STEPS = [
@@ -50,17 +53,16 @@ export default function ApplyPage({
   const resolvedParams = use(params);
   const { toast } = useToast();
   const router = useRouter();
+  const { data: session } = useSession();
   const [step, setStep] = useState(1);
 
-  // Ensure body scroll is unlocked on mount
+  const brand = INITIAL_BRANDS.find((b) => b.slug === resolvedParams.slug);
+
   useEffect(() => {
     document.body.style.overflow = "unset";
   }, []);
 
-  const brand = INITIAL_BRANDS.find((b) => b.slug === resolvedParams.slug);
-
   const [form, setForm] = useState({
-    // Personal
     name: "",
     email: "",
     phone: "",
@@ -68,30 +70,63 @@ export default function ApplyPage({
     niche: "",
     bio: "",
     website: "",
-    // Instagram
     igHandle: "",
     igFollowers: "",
     igEngagementRate: "",
     igAvgLikes: "",
     igAvgComments: "",
-    // YouTube
     ytChannel: "",
     ytSubscribers: "",
     ytAvgViews: "",
     ytEngagementRate: "",
-    // Facebook
     fbPage: "",
     fbFollowers: "",
     fbEngagementRate: "",
-    // X/Twitter
     xHandle: "",
     xFollowers: "",
     xEngagementRate: "",
-    // Proposal
     proposal: "",
     expectedRate: "",
     deliverables: [] as string[],
   });
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      const data = getUserData(session.user.email);
+      const profile = data.profile;
+      
+      setForm((prev) => ({
+        ...prev,
+        name: profile.name || prev.name,
+        email: profile.email || prev.email,
+        phone: profile.phone || prev.phone,
+        location: profile.location || prev.location,
+        niche: profile.niche || prev.niche,
+        bio: profile.bio || prev.bio,
+        website: profile.website || prev.website,
+        igHandle: profile.igHandle || prev.igHandle,
+        igFollowers: profile.igFollowers?.toString() || prev.igFollowers,
+        igEngagementRate: profile.igER?.toString() || prev.igEngagementRate,
+        ytChannel: profile.ytChannel || prev.ytChannel,
+        ytSubscribers: profile.ytSubscribers?.toString() || prev.ytSubscribers,
+        ytAvgViews: profile.ytAvgViews?.toString() || prev.ytAvgViews,
+        fbFollowers: profile.fbFollowers?.toString() || prev.fbFollowers,
+      }));
+    }
+  }, [session]);
+
+  if (!brand) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Brand Brief Not Found</h1>
+        <p className="text-text-secondary mb-6">The campaign you are looking for does not exist.</p>
+        <Link href="/brands">
+          <Button variant="primary">Return to Brands</Button>
+        </Link>
+      </div>
+    );
+  }
 
   const updateField = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -111,11 +146,9 @@ export default function ApplyPage({
       case 1:
         return form.name && form.email;
       case 2:
-        return true; // Instagram is optional
       case 3:
-        return true; // YouTube is optional
       case 4:
-        return true; // Other platforms optional
+        return true; 
       case 5:
         return form.proposal.length >= 50 && form.deliverables.length > 0;
       default:
@@ -124,17 +157,47 @@ export default function ApplyPage({
   };
 
   const handleSubmit = async () => {
+    if (!session?.user?.email) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to submit your application.",
+        type: "error",
+      });
+      return;
+    }
+
     try {
-      // In production, this would call the API
-      // await submitApplication(resolvedParams.slug, form);
+      const newApplication: ApplicationItem = {
+        id: `app_${Date.now().toString()}`,
+        creatorName: form.name,
+        creatorEmail: session.user.email,
+        brandId: brand.id,
+        brandName: brand.name,
+        status: "PENDING",
+        date: new Date().toISOString().slice(0, 10),
+        proposal: form.proposal,
+        expectedRate: Number(form.expectedRate) || 0,
+        deliverables: form.deliverables,
+        metrics: {
+          instagramHandle: form.igHandle || undefined,
+          instagramFollowers: form.igFollowers ? Number(form.igFollowers) : undefined,
+          instagramER: form.igEngagementRate ? `${form.igEngagementRate}%` : undefined,
+          youtubeChannel: form.ytChannel || undefined,
+          youtubeSubscribers: form.ytSubscribers ? Number(form.ytSubscribers) : undefined,
+          facebookFollowers: form.fbFollowers ? Number(form.fbFollowers) : undefined,
+        },
+      };
+
+      addApplication(session.user.email, newApplication);
+
       toast({
         title: "Application Submitted!",
-        description:
-          "Your collaboration proposal has been sent. We'll review it and get back to you soon.",
+        description: "Your collaboration proposal has been sent. We'll review it and get back to you soon.",
         type: "success",
       });
-      router.push("/dashboard");
-    } catch {
+      
+      window.location.href = "/dashboard";
+    } catch (e) {
       toast({
         title: "Submission Failed",
         description: "Something went wrong. Please try again.",
@@ -145,20 +208,17 @@ export default function ApplyPage({
 
   return (
     <div className="min-h-screen bg-background pb-32">
-      {/* Brand Header */}
       <div className="bg-primary text-white py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
-            {brand && (
-              <img
-                src={brand.logo}
-                alt={brand.name}
-                className="w-14 h-14 rounded-xl border-2 border-white/20 object-cover bg-white"
-              />
-            )}
+            <img
+              src={brand.logo}
+              alt={brand.name}
+              className="w-14 h-14 rounded-xl border-2 border-white/20 object-cover bg-white"
+            />
             <div>
               <h1 className="text-2xl font-bold">
-                Align with {brand?.name || resolvedParams.slug}
+                Align with {brand.name}
               </h1>
               <p className="text-white/70 text-sm">
                 Submit your verified metrics and proposal to the Schbang brand team
@@ -168,7 +228,6 @@ export default function ApplyPage({
         </div>
       </div>
 
-      {/* Progress Steps */}
       <div className="border-b border-border bg-white sticky top-0 z-10">
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto py-4 gap-1">
@@ -202,11 +261,9 @@ export default function ApplyPage({
         </div>
       </div>
 
-      {/* Form Content */}
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <Card>
           <CardContent className="p-6 md:p-8">
-            {/* Step 1: Personal Info */}
             {step === 1 && (
               <div className="space-y-6">
                 <div>
@@ -265,7 +322,6 @@ export default function ApplyPage({
               </div>
             )}
 
-            {/* Step 2: Instagram */}
             {step === 2 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-3 mb-2">
@@ -298,9 +354,7 @@ export default function ApplyPage({
                     type="number"
                     placeholder="e.g. 4.5"
                     value={form.igEngagementRate}
-                    onChange={(e) =>
-                      updateField("igEngagementRate", e.target.value)
-                    }
+                    onChange={(e) => updateField("igEngagementRate", e.target.value)}
                   />
                   <Input
                     label="Average Likes per Post"
@@ -314,15 +368,12 @@ export default function ApplyPage({
                     type="number"
                     placeholder="e.g. 150"
                     value={form.igAvgComments}
-                    onChange={(e) =>
-                      updateField("igAvgComments", e.target.value)
-                    }
+                    onChange={(e) => updateField("igAvgComments", e.target.value)}
                   />
                 </div>
               </div>
             )}
 
-            {/* Step 3: YouTube */}
             {step === 3 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-3 mb-2">
@@ -348,9 +399,7 @@ export default function ApplyPage({
                     type="number"
                     placeholder="e.g. 100000"
                     value={form.ytSubscribers}
-                    onChange={(e) =>
-                      updateField("ytSubscribers", e.target.value)
-                    }
+                    onChange={(e) => updateField("ytSubscribers", e.target.value)}
                   />
                   <Input
                     label="Average Views per Video"
@@ -365,14 +414,11 @@ export default function ApplyPage({
                   type="number"
                   placeholder="e.g. 6.2"
                   value={form.ytEngagementRate}
-                  onChange={(e) =>
-                    updateField("ytEngagementRate", e.target.value)
-                  }
+                  onChange={(e) => updateField("ytEngagementRate", e.target.value)}
                 />
               </div>
             )}
 
-            {/* Step 4: Other Platforms */}
             {step === 4 && (
               <div className="space-y-8">
                 <div>
@@ -382,7 +428,6 @@ export default function ApplyPage({
                   </p>
                 </div>
 
-                {/* Facebook */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
@@ -402,9 +447,7 @@ export default function ApplyPage({
                       type="number"
                       placeholder="e.g. 30000"
                       value={form.fbFollowers}
-                      onChange={(e) =>
-                        updateField("fbFollowers", e.target.value)
-                      }
+                      onChange={(e) => updateField("fbFollowers", e.target.value)}
                     />
                   </div>
                   <Input
@@ -412,15 +455,12 @@ export default function ApplyPage({
                     type="number"
                     placeholder="e.g. 3.1"
                     value={form.fbEngagementRate}
-                    onChange={(e) =>
-                      updateField("fbEngagementRate", e.target.value)
-                    }
+                    onChange={(e) => updateField("fbEngagementRate", e.target.value)}
                   />
                 </div>
 
                 <hr className="border-border" />
 
-                {/* X/Twitter */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
@@ -440,9 +480,7 @@ export default function ApplyPage({
                       type="number"
                       placeholder="e.g. 15000"
                       value={form.xFollowers}
-                      onChange={(e) =>
-                        updateField("xFollowers", e.target.value)
-                      }
+                      onChange={(e) => updateField("xFollowers", e.target.value)}
                     />
                   </div>
                   <Input
@@ -450,22 +488,18 @@ export default function ApplyPage({
                     type="number"
                     placeholder="e.g. 2.8"
                     value={form.xEngagementRate}
-                    onChange={(e) =>
-                      updateField("xEngagementRate", e.target.value)
-                    }
+                    onChange={(e) => updateField("xEngagementRate", e.target.value)}
                   />
                 </div>
               </div>
             )}
 
-            {/* Step 5: Proposal */}
             {step === 5 && (
               <div className="space-y-6">
                 <div>
                   <h2 className="text-xl font-bold mb-1">Your Proposal</h2>
                   <p className="text-text-secondary text-sm">
-                    Tell the brand why you&apos;re the perfect fit for this
-                    collaboration.
+                    Tell the brand why you&apos;re the perfect fit for this collaboration.
                   </p>
                 </div>
                 <Textarea
@@ -518,7 +552,6 @@ export default function ApplyPage({
               </div>
             )}
 
-            {/* Step 6: Review */}
             {step === 6 && (
               <div className="space-y-6">
                 <div>
@@ -529,7 +562,6 @@ export default function ApplyPage({
                 </div>
 
                 <div className="space-y-4">
-                  {/* Personal */}
                   <div className="bg-gray-50 rounded-xl p-4">
                     <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-wider mb-3">
                       Personal Info
@@ -558,7 +590,6 @@ export default function ApplyPage({
                     </div>
                   </div>
 
-                  {/* Social Metrics Summary */}
                   {form.igHandle && (
                     <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4">
                       <h3 className="font-semibold text-sm text-purple-700 uppercase tracking-wider mb-3">
@@ -577,12 +608,8 @@ export default function ApplyPage({
                         </div>
                         {form.igEngagementRate && (
                           <div>
-                            <span className="text-text-secondary">
-                              Engagement:
-                            </span>{" "}
-                            <span className="font-medium">
-                              {form.igEngagementRate}%
-                            </span>
+                            <span className="text-text-secondary">Engagement:</span>{" "}
+                            <span className="font-medium">{form.igEngagementRate}%</span>
                           </div>
                         )}
                       </div>
@@ -609,7 +636,6 @@ export default function ApplyPage({
                     </div>
                   )}
 
-                  {/* Proposal */}
                   <div className="bg-accent/5 rounded-xl p-4">
                     <h3 className="font-semibold text-sm text-accent uppercase tracking-wider mb-3">
                       Proposal
@@ -617,9 +643,7 @@ export default function ApplyPage({
                     <p className="text-sm mb-3">{form.proposal}</p>
                     {form.expectedRate && (
                       <p className="text-sm">
-                        <span className="text-text-secondary">
-                          Expected Rate:
-                        </span>{" "}
+                        <span className="text-text-secondary">Expected Rate:</span>{" "}
                         <span className="font-medium">
                           ₹{Number(form.expectedRate).toLocaleString()}
                         </span>
@@ -640,7 +664,6 @@ export default function ApplyPage({
               </div>
             )}
 
-            {/* Navigation */}
             <div className="flex justify-between items-center mt-8 pt-6 border-t border-border">
               <Button
                 variant="ghost"

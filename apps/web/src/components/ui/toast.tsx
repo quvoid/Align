@@ -3,17 +3,23 @@ import { createContext, useContext, useState, useCallback, ReactNode } from 'rea
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 
-type ToastType = 'success' | 'error' | 'info';
+export type ToastType = 'success' | 'error' | 'info';
 
-interface Toast {
+export interface Toast {
   id: string;
   title: string;
   description?: string;
-  type: ToastType;
+  type?: ToastType;
+}
+
+export interface ToastOptions {
+  title: string;
+  description?: string;
+  type?: ToastType;
 }
 
 interface ToastContextType {
-  toast: (options: Omit<Toast, 'id'>) => void;
+  toast: (options: ToastOptions) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -21,7 +27,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const toast = useCallback(({ title, description, type }: Omit<Toast, 'id'>) => {
+  const toast = useCallback(({ title, description, type = 'info' }: ToastOptions) => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, title, description, type }]);
     setTimeout(() => {
@@ -40,7 +46,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
               "p-4 rounded-xl shadow-lg border flex justify-between items-start",
               t.type === 'success' && "bg-white border-success/20 text-text-primary",
               t.type === 'error' && "bg-white border-error/20 text-text-primary",
-              t.type === 'info' && "bg-white border-border text-text-primary"
+              (t.type === 'info' || !t.type) && "bg-white border-border text-text-primary"
             )}
           >
             <div>

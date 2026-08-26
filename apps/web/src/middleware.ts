@@ -4,24 +4,30 @@ import { NextResponse } from "next/server";
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const role = req.auth?.user?.role;
-  const isDashboardRoute = req.nextUrl.pathname.startsWith('/dashboard');
-  const isAdminRoute = req.nextUrl.pathname.startsWith('/admin');
-  
-  // If unauthenticated, redirect cleanly to signin
+  const pathname = req.nextUrl.pathname;
+
+  const isDashboardRoute = pathname.startsWith("/dashboard");
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isCreatorsRoute = pathname.startsWith("/creators");
+
+  // If unauthenticated, redirect to signin for protected routes
   if (!isLoggedIn && (isDashboardRoute || isAdminRoute)) {
-    const signInUrl = new URL('/auth/signin', req.nextUrl);
-    return NextResponse.redirect(signInUrl);
+    return NextResponse.redirect(new URL("/auth/signin", req.nextUrl));
   }
-  
-  // If non-admin logged-in user tries to access /admin, redirect to /dashboard (prevents infinite sign-in loop)
-  if (isAdminRoute && role !== 'ADMIN') {
-    const dashboardUrl = new URL('/dashboard', req.nextUrl);
-    return NextResponse.redirect(dashboardUrl);
+
+  // Non-admin users cannot access /admin → redirect to /dashboard
+  if (isAdminRoute && role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
-  
+
+  // Creators cannot access /creators talent directory → redirect to /brands
+  if (isCreatorsRoute && isLoggedIn && role === "CREATOR") {
+    return NextResponse.redirect(new URL("/brands", req.nextUrl));
+  }
+
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/admin/:path*'],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/creators/:path*"],
 };
