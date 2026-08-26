@@ -6,7 +6,7 @@ import { INITIAL_BRANDS } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ShieldCheck, Sparkles, Building2 } from 'lucide-react';
 
 export default function BrandDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -27,8 +27,64 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
   // Related briefs for internal SEO linking
   const relatedBrands = INITIAL_BRANDS.filter(b => b.slug !== brand.slug).slice(0, 3);
 
+  // Schema.org Structured Data for Google Rich Snippets & AI GEO Search
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://align.schbang.com"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Brand Briefs",
+            "item": "https://align.schbang.com/brands"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": `${brand.name} Creator Campaign`,
+            "item": `https://align.schbang.com/brands/${brand.slug}`
+          }
+        ]
+      },
+      {
+        "@type": "Product",
+        "name": `${brand.name} Influencer Campaign Brief`,
+        "description": brand.description,
+        "image": brand.logo,
+        "brand": {
+          "@type": "Brand",
+          "name": brand.name
+        },
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Schbang Digital Solutions",
+            "url": "https://schbang.com"
+          }
+        }
+      }
+    ]
+  };
+
   return (
     <div className="bg-background min-h-screen pb-20">
+      {/* Inject Schema.org JSON-LD for Google Rich Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Breadcrumb Navigation for SEO */}
       <div className="bg-white border-b border-border py-3">
         <div className="container mx-auto px-4">
@@ -71,7 +127,8 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
                 <Badge variant={brand.budgetTier === 'Mega' || brand.budgetTier === 'Macro' ? 'approved' : brand.budgetTier === 'Mid-Tier' ? 'under_review' : 'default'}>
                   {brand.budgetTier} Tier
                 </Badge>
-                <span className="text-xs text-text-secondary font-medium ml-1">
+                <span className="text-xs text-text-secondary font-medium ml-1 flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-accent" />
                   Managed by Schbang
                 </span>
               </div>
@@ -80,6 +137,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
 
           <Link href={`/apply/${brand.slug}`} className="w-full md:w-auto">
             <Button variant="accent" size="lg" className="w-full md:w-auto shadow-xl shadow-accent/25 py-6 px-8 text-sm font-bold">
+              <Sparkles className="w-4 h-4 mr-2" />
               Apply for this Campaign
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -110,7 +168,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
           <div>
             <div className="bg-white rounded-3xl p-6 border border-border shadow-sm space-y-6">
               <div>
-                <h3 className="font-bold text-primary text-sm mb-3">Creator Eligibility</h3>
+                <h3 className="font-bold text-primary text-sm mb-3">Creator Eligibility Criteria</h3>
                 <div className="bg-emerald-50/60 border border-emerald-200/70 p-4 rounded-2xl text-xs text-emerald-950 leading-relaxed font-medium">
                   {brand.requirements}
                 </div>

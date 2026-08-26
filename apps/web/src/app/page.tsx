@@ -2,14 +2,52 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MOCK_BRANDS } from '@/lib/mock-data';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, ShieldCheck, Zap, Users } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Zap, Users, HelpCircle, CheckCircle2 } from 'lucide-react';
 
 export default function Home() {
+  const faqList = [
+    {
+      q: "How does Align by Schbang work for creators?",
+      a: "Align connects creators directly with active campaign briefs from marquee brands managed by Schbang (such as Britannia, NIVEA, Swiggy, Kotak811). Creators browse open briefs, submit verified social analytics and a creative pitch, and receive direct collaboration approvals without intermediaries.",
+    },
+    {
+      q: "What follower count and metrics are required to join?",
+      a: "Align supports creators across all tiers: Nano (<10k), Micro (10k–50k), Mid-Tier (50k–200k), Macro (200k–1M), and Mega (1M+). Each brand campaign specifies its own criteria regarding niche, minimum followers, and average engagement rate (ER%).",
+    },
+    {
+      q: "How do payments and brand agreements work?",
+      a: "Once an application is approved by Schbang campaign leads, creators receive a digital milestone agreement detailing deliverables and payout schedules in INR (₹). Payouts are protected via structured escrow milestones with automated TDS & GST invoicing.",
+    },
+    {
+      q: "How are creator analytics and engagement rates verified?",
+      a: "Creators submit verified Instagram, YouTube, and Facebook platform snapshots during application. Schbang's influencer marketing team audits engagement benchmarks, audience demographics, and on-time reliability before shortlisting.",
+    },
+  ];
+
+  // Schema.org FAQPage Structured Data for Google Rich Snippets & AI GEO Search
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqList.map((faq) => ({
+      "@type": "Question",
+      "name": faq.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.a,
+      },
+    })),
+  };
+
   return (
     <div className="flex flex-col w-full">
-      {/* Hero Section with Scaled-Down Typography & Micro-Animations */}
+      {/* Schema.org FAQPage Rich Snippet */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
+      {/* Hero Section */}
       <section className="relative py-20 md:py-28 bg-black overflow-hidden flex items-center justify-center min-h-[75vh]">
-        {/* Background Video */}
         <video
           autoPlay
           loop
@@ -20,13 +58,10 @@ export default function Home() {
           <source src="/hero-bg.mp4" type="video/mp4" />
         </video>
 
-        {/* Cinematic Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/75 pointer-events-none" />
         <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/85 pointer-events-none" />
 
-        {/* Hero Content */}
         <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
-          {/* Main Headline with Staggered Fade-in & Animated Gradient Shimmer */}
           <h1 className="animate-fade-in-1 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-5 leading-[1.12] drop-shadow-2xl">
             Where Creative Reach Meets <br className="hidden sm:inline" />
             <span className="animate-shimmer text-transparent bg-clip-text bg-gradient-to-r from-accent via-amber-300 via-orange-400 to-accent">
@@ -34,12 +69,10 @@ export default function Home() {
             </span>
           </h1>
 
-          {/* Subtitle with Fade-in-2 */}
           <p className="animate-fade-in-2 text-sm sm:text-base md:text-lg text-white/80 max-w-xl mx-auto mb-8 leading-relaxed font-normal drop-shadow">
             Welcome to <strong className="text-white font-bold">Align</strong>. Pitch your verified social analytics directly to India&apos;s marquee brand briefs managed by Schbang.
           </p>
 
-          {/* Action Buttons with Fade-in-3 */}
           <div className="animate-fade-in-3 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link href="/brands" className="w-full sm:w-auto">
               <Button
@@ -174,8 +207,43 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SEO FAQ & Generative Engine Optimization Section */}
+      <section className="py-24 bg-white border-t border-border">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-2">
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Creator FAQ &amp; Knowledge Base</span>
+            </div>
+            <h2 className="text-3xl font-extrabold tracking-tight text-primary">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-text-secondary text-sm mt-2">
+              Everything you need to know about pitching, campaign verification, and payouts on Align.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {faqList.map((faq, index) => (
+              <div
+                key={index}
+                className="p-6 rounded-2xl border border-border bg-gray-50/70 hover:border-accent/30 transition-colors"
+              >
+                <h3 className="font-bold text-base text-primary mb-2 flex items-start gap-2.5">
+                  <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                  <span>{faq.q}</span>
+                </h3>
+                <p className="text-sm text-text-secondary leading-relaxed pl-7">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="py-24 bg-white text-center border-t border-border">
+      <section className="py-24 bg-background text-center border-t border-border">
         <div className="container mx-auto px-4 max-w-3xl flex flex-col items-center justify-center text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-primary">
             Ready to align with India&apos;s premier brands?
