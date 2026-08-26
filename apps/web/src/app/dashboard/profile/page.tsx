@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,14 +11,11 @@ import Link from "next/link";
 import {
   Instagram,
   Youtube,
-  Facebook,
-  Sparkles,
-  MapPin,
   Save,
-  CheckCircle2,
-  ExternalLink,
   ShieldCheck,
   Eye,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -26,39 +23,76 @@ export default function ProfilePage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
 
+  const userName = session?.user?.name || "Creator";
+  const userEmail = session?.user?.email || "";
+  const defaultHandle = session?.user?.name
+    ? `@${session.user.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}`
+    : "@yourhandle";
+
+  const isRohanDemo = userEmail === "rohan@schbang.com" || userEmail === "rohan.creates@gmail.com";
+
   const [profile, setProfile] = useState({
-    name: session?.user?.name || "Rohan Joshi",
-    handle: "@rohan_joshicomics",
-    email: session?.user?.email || "rohan.creates@gmail.com",
+    name: isRohanDemo ? "Rohan Joshi" : userName,
+    handle: isRohanDemo ? "@rohan_joshicomics" : defaultHandle,
+    email: userEmail,
     avatar:
       session?.user?.image ||
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop",
+      (isRohanDemo
+        ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop"
+        : `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`),
     location: "Mumbai, India",
-    bio: "Stand-up comedian & storyteller creating relatable humorous sketches around everyday Indian family moments.",
-    niche: "Comedy, Food & FMCG, Lifestyle",
-    igHandle: "@rohan_joshicomics",
-    igFollowers: "145000",
-    igER: "6.8",
-    ytChannel: "Rohan Joshi Official",
-    ytSubscribers: "85000",
-    ytAvgViews: "42k",
-    fbFollowers: "12000",
-    mediaKitUrl: "https://drive.google.com/your-media-kit",
+    bio: isRohanDemo
+      ? "Stand-up comedian & storyteller creating relatable humorous sketches around everyday Indian family moments."
+      : "",
+    niche: isRohanDemo ? "Comedy, Food & FMCG, Lifestyle" : "",
+    igHandle: isRohanDemo ? "@rohan_joshicomics" : "",
+    igFollowers: isRohanDemo ? "145000" : "",
+    igER: isRohanDemo ? "6.8" : "",
+    ytChannel: isRohanDemo ? "Rohan Joshi Official" : "",
+    ytSubscribers: isRohanDemo ? "85000" : "",
+    ytAvgViews: isRohanDemo ? "42k" : "",
+    fbFollowers: isRohanDemo ? "12000" : "",
+    mediaKitUrl: isRohanDemo ? "https://drive.google.com/your-media-kit" : "",
   });
+
+  // Load saved profile if available
+  useEffect(() => {
+    if (userEmail && typeof window !== "undefined") {
+      const saved = localStorage.getItem(`align_profile_${userEmail}`);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setProfile((prev) => ({ ...prev, ...parsed }));
+        } catch {}
+      } else if (!isRohanDemo && userName) {
+        setProfile((prev) => ({
+          ...prev,
+          name: userName,
+          email: userEmail,
+          handle: defaultHandle,
+          avatar: session?.user?.image || prev.avatar,
+        }));
+      }
+    }
+  }, [userEmail, userName, isRohanDemo, defaultHandle, session?.user?.image]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (userEmail && typeof window !== "undefined") {
+      localStorage.setItem(`align_profile_${userEmail}`, JSON.stringify(profile));
+    }
 
     setTimeout(() => {
       setLoading(false);
       toast({
         title: "✨ Creator Profile Updated!",
         description:
-          "Your social metrics & biography are synchronized across the Schbang Talent Discovery Network.",
+          "Your social metrics & biography are saved and synchronized with your creator account.",
         type: "success",
       });
-    }, 600);
+    }, 500);
   };
 
   return (
@@ -68,24 +102,24 @@ export default function ProfilePage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-black text-primary tracking-tight">
-              Creator Profile &amp; Media Kit
+              My Creator Profile &amp; Media Kit
             </h1>
             <p className="text-text-secondary text-sm mt-1">
-              Your verified public profile visible to Schbang brand managers and marquee brands.
+              Keep your verified handles and audience metrics up to date for brand brief pitching.
             </p>
           </div>
 
-          <Link href="/creators/c1">
+          <Link href="/brands">
             <Button variant="outline" size="sm" className="text-xs font-bold">
-              <Eye className="w-4 h-4 mr-1.5" />
-              Preview Public Scorecard
+              <Sparkles className="w-4 h-4 mr-1.5 text-accent" />
+              Browse Open Brand Briefs
             </Button>
           </Link>
         </div>
 
         <form onSubmit={handleSave} className="space-y-8">
           {/* 1. Basic Identity */}
-          <Card className="rounded-3xl border-border shadow-xs overflow-hidden">
+          <Card className="rounded-3xl border-border shadow-xs overflow-hidden bg-white">
             <div className="p-6 border-b border-border bg-gray-50/70">
               <h2 className="text-base font-bold text-primary flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-accent" />
@@ -101,6 +135,7 @@ export default function ProfilePage() {
                 <Input
                   label="Creator Full Name"
                   value={profile.name}
+                  placeholder="e.g. Omkar Rakshe"
                   onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                   required
                 />
@@ -136,20 +171,19 @@ export default function ProfilePage() {
                 value={profile.bio}
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                 placeholder="Describe your content style, audience demographics, and past collaboration highlights..."
-                required
               />
 
               <Input
                 label="Content Niches (comma separated)"
                 value={profile.niche}
-                placeholder="e.g. Food & FMCG, Comedy, Lifestyle"
+                placeholder="e.g. Tech, Lifestyle, Food & FMCG"
                 onChange={(e) => setProfile({ ...profile, niche: e.target.value })}
               />
             </CardContent>
           </Card>
 
           {/* 2. Instagram Metrics */}
-          <Card className="rounded-3xl border-border shadow-xs overflow-hidden">
+          <Card className="rounded-3xl border-border shadow-xs overflow-hidden bg-white">
             <div className="p-6 border-b border-border bg-gray-50/70">
               <h2 className="text-base font-bold text-primary flex items-center gap-2">
                 <Instagram className="w-5 h-5 text-pink-600" />
@@ -164,12 +198,14 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Input
                   label="Instagram Handle"
+                  placeholder="@handle"
                   value={profile.igHandle}
                   onChange={(e) => setProfile({ ...profile, igHandle: e.target.value })}
                 />
                 <Input
                   label="Followers Count"
                   type="number"
+                  placeholder="e.g. 50000"
                   value={profile.igFollowers}
                   onChange={(e) => setProfile({ ...profile, igFollowers: e.target.value })}
                 />
@@ -177,6 +213,7 @@ export default function ProfilePage() {
                   label="Avg Engagement Rate (%)"
                   type="number"
                   step="0.1"
+                  placeholder="e.g. 5.4"
                   value={profile.igER}
                   onChange={(e) => setProfile({ ...profile, igER: e.target.value })}
                 />
@@ -185,7 +222,7 @@ export default function ProfilePage() {
           </Card>
 
           {/* 3. YouTube & Other Channels */}
-          <Card className="rounded-3xl border-border shadow-xs overflow-hidden">
+          <Card className="rounded-3xl border-border shadow-xs overflow-hidden bg-white">
             <div className="p-6 border-b border-border bg-gray-50/70">
               <h2 className="text-base font-bold text-primary flex items-center gap-2">
                 <Youtube className="w-5 h-5 text-red-600" />
@@ -200,19 +237,21 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Input
                   label="YouTube Channel Name"
+                  placeholder="e.g. Channel Name"
                   value={profile.ytChannel}
                   onChange={(e) => setProfile({ ...profile, ytChannel: e.target.value })}
                 />
                 <Input
                   label="Subscribers Count"
                   type="number"
+                  placeholder="e.g. 25000"
                   value={profile.ytSubscribers}
                   onChange={(e) => setProfile({ ...profile, ytSubscribers: e.target.value })}
                 />
                 <Input
                   label="Average Views Per Video"
+                  placeholder="e.g. 15k"
                   value={profile.ytAvgViews}
-                  placeholder="e.g. 45k"
                   onChange={(e) => setProfile({ ...profile, ytAvgViews: e.target.value })}
                 />
               </div>
@@ -236,7 +275,7 @@ export default function ProfilePage() {
               className="shadow-xl shadow-accent/25 px-8 font-bold text-sm"
             >
               <Save className="w-4 h-4 mr-2" />
-              Save &amp; Publish Profile
+              Save Creator Profile
             </Button>
           </div>
         </form>

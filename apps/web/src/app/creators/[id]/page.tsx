@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
 import { INITIAL_CREATORS, INITIAL_BRANDS } from "@/lib/mock-data";
+import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -25,6 +26,7 @@ import {
   ChevronRight,
   ShieldCheck,
   Zap,
+  Lock,
 } from "lucide-react";
 
 export default function CreatorProfileDetailPage({
@@ -34,6 +36,7 @@ export default function CreatorProfileDetailPage({
 }) {
   const resolvedParams = use(params);
   const { toast } = useToast();
+  const { data: session } = useSession();
   const creator = INITIAL_CREATORS.find((c) => c.id === resolvedParams.id);
 
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -41,6 +44,37 @@ export default function CreatorProfileDetailPage({
   const [offeredFee, setOfferedFee] = useState("45000");
   const [customMessage, setCustomMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+
+  // If a creator tries to access another creator's scorecard, show permission barrier
+  if (session?.user?.role === "CREATOR") {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center py-16 px-4 bg-background">
+        <div className="max-w-md w-full text-center space-y-5 p-8 bg-white rounded-3xl border border-border shadow-xl">
+          <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
+            <Lock className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-black text-primary">Brand Manager Access Only</h2>
+            <p className="text-xs text-text-secondary mt-2 leading-relaxed">
+              Creator Performance Scorecards and private analytics are restricted to authorized Brand Managers and Schbang Campaign Leads.
+            </p>
+          </div>
+          <div className="space-y-2 pt-3">
+            <Link href="/brands">
+              <Button variant="accent" className="w-full font-bold shadow-lg shadow-accent/25">
+                Browse Brand Briefs &rarr;
+              </Button>
+            </Link>
+            <Link href="/dashboard">
+              <Button variant="outline" className="w-full text-xs font-semibold">
+                Go to My Creator Dashboard
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!creator) {
     return (

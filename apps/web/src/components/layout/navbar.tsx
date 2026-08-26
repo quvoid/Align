@@ -10,6 +10,8 @@ export const Navbar = () => {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const isAdminOrBrand = session?.user?.role === 'ADMIN' || (session?.user as any)?.role === 'BRAND';
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-white/85 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -29,17 +31,24 @@ export const Navbar = () => {
           <Link href="/brands" className="hover:text-primary transition-colors">
             Explore Brands
           </Link>
-          <Link href="/creators" className="hover:text-primary transition-colors flex items-center gap-1.5 font-semibold text-primary">
-            Find Creators
-            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-accent text-white uppercase tracking-wider">
-              New
-            </span>
-          </Link>
+
+          {/* Creators only see their dashboard & brands; Admins & Brand Managers see the Talent Hub */}
+          {isAdminOrBrand && (
+            <Link href="/creators" className="hover:text-primary transition-colors flex items-center gap-1.5 font-semibold text-primary">
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              Find Creators
+              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-primary text-white uppercase tracking-wider">
+                Brand Hub
+              </span>
+            </Link>
+          )}
+
           {session?.user && (
             <Link href="/dashboard" className="hover:text-primary transition-colors">
               Creator Dashboard
             </Link>
           )}
+
           {session?.user?.role === 'ADMIN' && (
             <Link href="/admin" className="hover:text-primary transition-colors flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-accent" />
@@ -52,10 +61,15 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {session ? (
             <div className="flex items-center gap-3">
-              <span className="text-xs text-text-primary font-bold hidden sm:block bg-gray-100 px-3 py-1.5 rounded-full border border-border">
-                {session.user?.name}
-              </span>
-              <Button variant="ghost" size="sm" onClick={() => signOut()}>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-text-primary font-bold hidden sm:block bg-gray-100 px-3 py-1.5 rounded-full border border-border">
+                  {session.user?.name}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-accent/10 text-accent border border-accent/20">
+                  {session.user?.role || "CREATOR"}
+                </span>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: '/auth/signin' })}>
                 Sign Out
               </Button>
             </div>
@@ -97,19 +111,22 @@ export const Navbar = () => {
               <Building2 className="w-4 h-4 text-accent" />
               Explore Brand Briefs
             </Link>
-            <Link
-              href="/creators"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-between p-2 rounded-xl text-sm font-semibold text-primary hover:bg-gray-50"
-            >
-              <div className="flex items-center gap-2.5">
-                <Sparkles className="w-4 h-4 text-accent" />
-                Find Creators Directory
-              </div>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent text-white uppercase">
-                New
-              </span>
-            </Link>
+
+            {isAdminOrBrand && (
+              <Link
+                href="/creators"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-2 rounded-xl text-sm font-semibold text-primary hover:bg-gray-50"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Sparkles className="w-4 h-4 text-accent" />
+                  Find Creators Directory
+                </div>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-white uppercase">
+                  Brand Hub
+                </span>
+              </Link>
+            )}
 
             {session?.user && (
               <Link
@@ -138,7 +155,7 @@ export const Navbar = () => {
             {session ? (
               <div className="space-y-2">
                 <div className="text-xs font-bold text-text-secondary px-2">
-                  Signed in as <span className="text-primary">{session.user?.name}</span>
+                  Signed in as <span className="text-primary">{session.user?.name}</span> ({session.user?.role || "CREATOR"})
                 </div>
                 <Button
                   variant="outline"
@@ -146,7 +163,7 @@ export const Navbar = () => {
                   className="w-full justify-center"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    signOut();
+                    signOut({ callbackUrl: '/auth/signin' });
                   }}
                 >
                   <LogOut className="w-4 h-4 mr-2" />

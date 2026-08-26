@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { INITIAL_CREATORS, CreatorItem } from "@/lib/mock-data";
+import { useSession } from "next-auth/react";
 import {
   Search,
   Users,
@@ -23,16 +24,52 @@ import {
   Building2,
   MapPin,
   ShieldCheck,
+  Lock,
 } from "lucide-react";
 
 export default function CreatorDiscoveryPage() {
   const { toast } = useToast();
+  const { data: session } = useSession();
   const [creators] = useState<CreatorItem[]>(INITIAL_CREATORS);
   const [search, setSearch] = useState("");
   const [nicheFilter, setNicheFilter] = useState("ALL");
   const [tierFilter, setTierFilter] = useState("ALL");
   const [brandFilter, setBrandFilter] = useState("ALL");
   const [invitedCreatorId, setInvitedCreatorId] = useState<string | null>(null);
+
+  // If user is logged in as a normal CREATOR, block talent directory access
+  if (session?.user?.role === "CREATOR") {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center py-16 px-4 bg-background">
+        <div className="max-w-md w-full text-center space-y-5 p-8 bg-white rounded-3xl border border-border shadow-xl">
+          <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
+            <Lock className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-black text-primary">Brand &amp; Agency Portal</h2>
+            <p className="text-xs text-text-secondary mt-2 leading-relaxed">
+              The Creator Talent Discovery Directory is reserved for verified Schbang Brand Managers and Agency Leads scouting creators.
+            </p>
+            <p className="text-xs text-text-secondary mt-1">
+              As a creator, you can browse open briefs, view requirements, and submit pitches under <strong>Explore Brands</strong>.
+            </p>
+          </div>
+          <div className="space-y-2 pt-3">
+            <Link href="/brands">
+              <Button variant="accent" className="w-full font-bold shadow-lg shadow-accent/25">
+                Browse Open Brand Briefs <ArrowRight className="w-4 h-4 ml-1.5" />
+              </Button>
+            </Link>
+            <Link href="/dashboard">
+              <Button variant="outline" className="w-full text-xs font-semibold">
+                Go to My Creator Dashboard
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Filter creators
   const filteredCreators = creators.filter((creator) => {
