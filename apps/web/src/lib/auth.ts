@@ -7,6 +7,7 @@ const hasGoogleKeys = Boolean(
 );
 
 export const authConfig: NextAuthConfig = {
+  trustHost: true,
   secret:
     process.env.AUTH_SECRET ||
     process.env.NEXTAUTH_SECRET ||
