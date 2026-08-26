@@ -7,17 +7,16 @@ export default auth((req) => {
   const isDashboardRoute = req.nextUrl.pathname.startsWith('/dashboard');
   const isAdminRoute = req.nextUrl.pathname.startsWith('/admin');
   
+  // If unauthenticated, redirect cleanly to signin
   if (!isLoggedIn && (isDashboardRoute || isAdminRoute)) {
     const signInUrl = new URL('/auth/signin', req.nextUrl);
-    signInUrl.searchParams.set('callbackUrl', req.nextUrl.pathname);
     return NextResponse.redirect(signInUrl);
   }
   
-  // If creator tries to access admin, redirect to signin with callback so they can switch to admin
+  // If non-admin logged-in user tries to access /admin, redirect to /dashboard (prevents infinite sign-in loop)
   if (isAdminRoute && role !== 'ADMIN') {
-    const signInUrl = new URL('/auth/signin', req.nextUrl);
-    signInUrl.searchParams.set('callbackUrl', '/admin');
-    return NextResponse.redirect(signInUrl);
+    const dashboardUrl = new URL('/dashboard', req.nextUrl);
+    return NextResponse.redirect(dashboardUrl);
   }
   
   return NextResponse.next();

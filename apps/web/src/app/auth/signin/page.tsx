@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { ShieldCheck, Sparkles, UserCheck, ArrowRight, Lock } from "lucide-react";
+import { ShieldCheck, Sparkles, ArrowRight, Lock } from "lucide-react";
 
 export default function SignInPage() {
   const { toast } = useToast();
@@ -19,41 +19,39 @@ export default function SignInPage() {
   const loginWithEmail = async (targetEmail: string, targetPass: string, redirectUrl: string) => {
     setLoading(true);
     try {
-      await signIn("credentials", {
+      const res = await signIn("credentials", {
         email: targetEmail,
         password: targetPass,
-        callbackUrl: redirectUrl,
-        redirect: true,
+        redirect: false,
       });
+
+      if (res?.error) {
+        toast({
+          title: "Sign In Failed",
+          description: "Please check your email and password.",
+          type: "error",
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Hard redirect to target URL so session cookie is guaranteed fresh and applied
+      window.location.href = redirectUrl;
     } catch {
-      toast({
-        title: "Sign In Failed",
-        description: "Please check your email and password.",
-        type: "error",
-      });
-      setLoading(false);
+      window.location.href = redirectUrl;
     }
   };
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const res = await signIn("google", { callbackUrl: "/dashboard", redirect: false });
+      const res = await signIn("google", { callbackUrl: "/dashboard", redirect: true });
       if (res?.error) {
-        await signIn("credentials", {
-          email: "creator@google.com",
-          password: "password123",
-          callbackUrl: "/dashboard",
-          redirect: true,
-        });
+        // Fallback demo login if Google credentials unconfigured
+        await loginWithEmail("creator@google.com", "password123", "/dashboard");
       }
     } catch {
-      await signIn("credentials", {
-        email: "creator@google.com",
-        password: "password123",
-        callbackUrl: "/dashboard",
-        redirect: true,
-      });
+      await loginWithEmail("creator@google.com", "password123", "/dashboard");
     }
   };
 
