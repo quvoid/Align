@@ -2,11 +2,13 @@
 
 import { use } from "react";
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { INITIAL_BRANDS } from '@/lib/mock-data';
+import { getCompetitorsForBrand } from '@/lib/instagram-engine';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ShieldCheck, Sparkles, Building2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ShieldCheck, Sparkles, Building2, Zap } from 'lucide-react';
 
 export default function BrandDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -23,6 +25,10 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
       </div>
     );
   }
+
+  const { data: session } = useSession();
+  const isAdminOrBrand = session?.user?.role === 'ADMIN' || (session?.user as any)?.role === 'BRAND';
+  const competitorConfig = getCompetitorsForBrand(brand.slug);
 
   // Related briefs for internal SEO linking
   const relatedBrands = INITIAL_BRANDS.filter(b => b.slug !== brand.slug).slice(0, 3);
@@ -193,6 +199,49 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
             </div>
           </div>
         </div>
+
+        {/* Competitor Intelligence Section (Admin / Brand Managers Only) */}
+        {isAdminOrBrand && competitorConfig && (
+          <div className="mt-12 p-6 rounded-3xl bg-primary text-white space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-accent uppercase tracking-wider mb-1">
+                  <Zap className="mr-1.5 h-3.5 w-3.5" />
+                  Competitor Intelligence Watchlist
+                </div>
+                <h3 className="text-xl font-bold">
+                  Tracking {competitorConfig.competitors.length} Competitors for {brand.name}
+                </h3>
+                <p className="text-xs text-white/70">
+                  Analyze competitor creator collabs, paid boost ratios, and 12-month historical performance.
+                </p>
+              </div>
+
+              <Link href={`/admin/brands/${brand.slug}/competitors`}>
+                <Button variant="accent" size="sm" className="font-bold text-xs shadow-md shadow-accent/30">
+                  <Zap className="w-3.5 h-3.5 mr-1" /> Open Competitor Hub &rarr;
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+              {competitorConfig.competitors.map((comp) => (
+                <div key={comp.id} className="p-3 bg-white/10 rounded-2xl flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <img src={comp.avatar} alt={comp.name} className="w-8 h-8 rounded-xl object-cover border border-white/20" />
+                    <div>
+                      <span className="font-bold text-xs block text-white">{comp.name}</span>
+                      <span className="text-[10px] text-accent font-semibold">{comp.igHandle}</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 bg-red-500/20 text-red-300 rounded-md border border-red-500/30">
+                    {comp.stats.paidAdSpendRatioPct}% Boosted
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Related Campaigns for Strong Internal SEO Linking */}
         <div className="mt-16 pt-12 border-t border-border">

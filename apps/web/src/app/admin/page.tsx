@@ -10,6 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { INITIAL_BRANDS, INITIAL_APPLICATIONS, INITIAL_CREATORS, BrandItem, ApplicationItem, CreatorItem } from "@/lib/mock-data";
+import { addCompetitorToBrand } from "@/lib/instagram-engine";
 import {
   Building2,
   FileText,
@@ -55,6 +56,7 @@ export default function AdminDashboard() {
     campaignTypes: "Instagram Reel, YouTube Short",
     contactEmail: "",
     website: "",
+    competitors: ["", "", "", ""], // up to 4 competitor IG handles
   });
 
   // Applications State
@@ -89,6 +91,15 @@ export default function AdminDashboard() {
     };
 
     setBrands((prev) => [created, ...prev]);
+
+    // Register competitors for the new brand
+    const competitorHandles = newBrand.competitors.filter((h) => h.trim() !== "");
+    if (competitorHandles.length > 0) {
+      for (const handle of competitorHandles) {
+        addCompetitorToBrand(slug, handle);
+      }
+    }
+
     setIsAddBrandOpen(false);
     setNewBrand({
       name: "",
@@ -101,11 +112,13 @@ export default function AdminDashboard() {
       campaignTypes: "Instagram Reel, YouTube Short",
       contactEmail: "",
       website: "",
+      competitors: ["", "", "", ""],
     });
 
+    const compCount = competitorHandles.length;
     toast({
       title: "Brand Added Successfully!",
-      description: `${created.name} is now active on the Align brand directory.`,
+      description: `${created.name} is now active on Align${compCount > 0 ? ` with ${compCount} competitor${compCount > 1 ? 's' : ''} tracked.` : '.'}`,
       type: "success",
     });
   };
@@ -943,6 +956,32 @@ export default function AdminDashboard() {
               value={newBrand.coverImage}
               onChange={(e) => setNewBrand({ ...newBrand, coverImage: e.target.value })}
             />
+          </div>
+
+          {/* Competitor Tracking Section */}
+          <div className="pt-4 border-t border-border space-y-3">
+            <div>
+              <label className="text-xs font-bold text-primary block mb-1">
+                Track Competitors (Optional — up to 4)
+              </label>
+              <p className="text-[11px] text-text-secondary mb-3">
+                Add competitor Instagram handles to track their creator collaborations, boost detection, and paid partnership data.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {newBrand.competitors.map((comp, idx) => (
+                <Input
+                  key={idx}
+                  placeholder={`Competitor ${idx + 1} IG handle (e.g. @parleg_official)`}
+                  value={comp}
+                  onChange={(e) => {
+                    const updated = [...newBrand.competitors];
+                    updated[idx] = e.target.value;
+                    setNewBrand({ ...newBrand, competitors: updated });
+                  }}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-border">

@@ -5,13 +5,16 @@ import {
   getCreatorAudienceTier,
   classifyCreativeGenre,
   analyzeCompetitorPair,
-  COMPETITIVE_BENCHMARKS,
+  getCompetitorsForBrand,
+  addCompetitorToBrand,
+  removeCompetitorFromBrand,
+  getCompetitorCreatorsLastYear,
+  getBrandVsCompetitor,
 } from '../instagram-engine';
 
 describe('Instagram Intelligence & Paid Collabs Algorithms', () => {
   describe('Paid Boost Detection Engine', () => {
     it('should flag high views with sub-0.35% like rate as heavily boosted', () => {
-      // 1.85M views with 4,810 likes (0.26% like rate) -> Boosted!
       const result = detectBoost(1850000, 4810, 210, 420000);
       expect(result.isBoosted).toBe(true);
       expect(result.likeToViewPct).toBe(0.26);
@@ -19,7 +22,6 @@ describe('Instagram Intelligence & Paid Collabs Algorithms', () => {
     });
 
     it('should flag high view multiplier (>=5x) with sub-0.70% like rate as boosted', () => {
-      // 740k views on 95k followers (7.8x multiplier) with 0.55% like rate
       const result = detectBoost(740000, 4070, 95, 95000);
       expect(result.isBoosted).toBe(true);
       expect(result.viewMultiplier).toBeGreaterThanOrEqual(5.0);
@@ -27,7 +29,6 @@ describe('Instagram Intelligence & Paid Collabs Algorithms', () => {
     });
 
     it('should classify high organic engagement (ER >= 4% & like-to-view >= 2%) as viral organic', () => {
-      // 820k views with 60,680 likes (7.4% like rate) on 145k followers
       const result = detectBoost(820000, 60680, 840, 145000);
       expect(result.isBoosted).toBe(false);
       expect(result.likeToViewPct).toBeGreaterThanOrEqual(2.0);
@@ -85,12 +86,64 @@ describe('Instagram Intelligence & Paid Collabs Algorithms', () => {
     });
   });
 
+  describe('Per-Brand Competitor Tracking Registry', () => {
+    it('should retrieve pre-seeded competitors for Britannia', () => {
+      const config = getCompetitorsForBrand('britannia');
+      expect(config).not.toBeNull();
+      expect(config!.brandName).toBe('Britannia');
+      expect(config!.competitors.length).toBeGreaterThanOrEqual(3);
+      expect(config!.competitors.some((c) => c.name.includes('Parle'))).toBe(true);
+    });
+
+    it('should pull all competitor creators within the last 12 months', () => {
+      const creators = getCompetitorCreatorsLastYear('britannia');
+      expect(creators.length).toBeGreaterThan(0);
+      expect(creators[0].competitorName).toBeDefined();
+      expect(creators[0].views).toBeGreaterThan(0);
+      expect(creators[0].likeToViewPct).toBeGreaterThan(0);
+    });
+
+    it('should calculate brand vs competitor head-to-head correctly', () => {
+      const h2h = getBrandVsCompetitor('britannia', 'tc_parle');
+      expect(h2h).not.toBeNull();
+      expect(h2h!.brandName).toBe('Britannia');
+      expect(h2h!.competitorName).toBe('Parle Products');
+      expect(h2h!.shareOfVoicePct.brand).toBeGreaterThan(0);
+      expect(h2h!.shareOfVoicePct.competitor).toBeGreaterThan(0);
+      expect(h2h!.recommendedCounterPlays.length).toBeGreaterThan(0);
+    });
+
+    it('should support adding and removing custom competitors with max limit of 4', () => {
+      const brandSlug = 'test_brand_' + Date.now();
+      // Add 1st competitor
+      const comp1 = addCompetitorToBrand(brandSlug, '@comp1_test', 'Competitor One');
+      expect(comp1).not.toBeNull();
+      expect(comp1!.name).toBe('Competitor One');
+
+      // Add up to 4
+      addCompetitorToBrand(brandSlug, '@comp2_test', 'Competitor Two');
+      addCompetitorToBrand(brandSlug, '@comp3_test', 'Competitor Three');
+      const comp4 = addCompetitorToBrand(brandSlug, '@comp4_test', 'Competitor Four');
+      expect(comp4).not.toBeNull();
+
+      // 5th should be rejected (max 4)
+      const comp5 = addCompetitorToBrand(brandSlug, '@comp5_test', 'Competitor Five');
+      expect(comp5).toBeNull();
+
+      // Remove comp1
+      const removed = removeCompetitorFromBrand(brandSlug, comp1!.id);
+      expect(removed).toBe(true);
+
+      const updated = getCompetitorsForBrand(brandSlug);
+      expect(updated!.competitors.length).toBe(3);
+    });
+  });
+
   describe('Head-to-Head Benchmarking Analyzer', () => {
     it('should retrieve pre-configured Britannia vs Parle comparison correctly', () => {
       const benchmark = analyzeCompetitorPair('britannia', 'parle');
       expect(benchmark.brandName).toBe('Britannia');
-      expect(benchmark.competitorName).toBe('Parle');
-      expect(benchmark.shareOfVoicePct.brand).toBe(58);
+      expect(benchmark.competitorName).toBe('Parle Products');
       expect(benchmark.competitor.paidAdSpendRatioPct).toBe(62.5);
       expect(benchmark.competitor.topCreators.length).toBeGreaterThan(0);
     });
