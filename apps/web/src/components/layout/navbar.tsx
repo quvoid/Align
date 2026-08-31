@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Sparkles, Building2, LayoutDashboard, ShieldCheck, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Menu, X, Sparkles, Building2, LayoutDashboard, ShieldCheck, LogIn, UserPlus, LogOut, Zap } from 'lucide-react';
 
 export const Navbar = () => {
   const { data: session } = useSession();
@@ -46,6 +46,13 @@ export const Navbar = () => {
           {session?.user && (
             <Link href="/dashboard" className="hover:text-primary transition-colors">
               Creator Dashboard
+            </Link>
+          )}
+
+          {isAdminOrBrand && (
+            <Link href="/admin/competitor-intelligence" className="hover:text-primary transition-colors flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5 text-accent" />
+              Competitor Intel
             </Link>
           )}
 
@@ -136,6 +143,17 @@ export const Navbar = () => {
               >
                 <LayoutDashboard className="w-4 h-4 text-accent" />
                 Creator Dashboard
+              </Link>
+            )}
+
+            {isAdminOrBrand && (
+              <Link
+                href="/admin/competitor-intelligence"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2.5 p-2 rounded-xl text-sm font-semibold text-primary hover:bg-gray-50"
+              >
+                <Zap className="w-4 h-4 text-accent" />
+                Competitor Intelligence
               </Link>
             )}
 

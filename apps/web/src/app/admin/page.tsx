@@ -228,6 +228,12 @@ export default function AdminDashboard() {
                 {INITIAL_CREATORS.reduce((acc, c) => acc + c.likedBrandIds.length, 0)}
               </span>
             </button>
+            <Link
+              href="/admin/competitor-intelligence"
+              className="px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-white/70 hover:text-white flex items-center gap-1.5 transition-all"
+            >
+              ⚡ Competitor Intelligence
+            </Link>
           </div>
         </div>
       </div>
