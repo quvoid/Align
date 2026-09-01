@@ -162,6 +162,129 @@ export interface BrandCompetitorConfig {
 // Mathematical Algorithms from Architecture Guide
 // ─────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────
+// Module A: Meta Ad Library Types
+// ─────────────────────────────────────────────────────────
+
+export interface MetaAdCard {
+  library_id: string;
+  ad_url: string;
+  advertiser: string;
+  is_active: boolean;
+  start_date: string;
+  body: string;
+  is_creator_collab: boolean;
+  creator_name: string | null;
+  longevity?: AdLongevityResult;
+}
+
+export interface MetaAdCreatorSummary {
+  name: string;
+  handle: string;
+  active_ads: number;
+  total_ads: number;
+  sample_start_date: string;
+  sample_ad_url: string;
+}
+
+export interface MetaAdLibraryResult {
+  brand_query: string;
+  total_ads: number;
+  total_creators: number;
+  ads: MetaAdCard[];
+  creators: MetaAdCreatorSummary[];
+  scan_date: string;
+}
+
+// ─────────────────────────────────────────────────────────
+// Module B: Instagram Grid Co-Author Types
+// ─────────────────────────────────────────────────────────
+
+export interface IGGridCollab {
+  post_url: string;
+  creator_handle: string;
+  raw_handle: string;
+  date: string;
+  views: number;
+  likes: number;
+  comments: number;
+  like_to_view_pct: number;
+  is_paid_toggle: boolean;
+  is_boosted: boolean;
+  partnership_tier: string;
+}
+
+// ─────────────────────────────────────────────────────────
+// Module C: Cross-Platform Fusion Types
+// ─────────────────────────────────────────────────────────
+
+export interface UnifiedCreatorEntity {
+  handle: string;
+  raw_handle: string;
+  name: string;
+  on_instagram_grid: boolean;
+  on_meta_adlibrary: boolean;
+  total_grid_posts: number;
+  total_grid_views: number;
+  active_meta_ads: number;
+  total_meta_ads: number;
+  sample_grid_url: string;
+  sample_ad_url: string;
+  source_label: string;
+}
+
+// ─────────────────────────────────────────────────────────
+// Module D: Advanced Intelligence Signal Types
+// ─────────────────────────────────────────────────────────
+
+export interface AdLongevityResult {
+  label: string;
+  days_running: number;
+  category: 'evergreen_hero' | 'proven_scaler' | 'active_test' | 'completed';
+}
+
+export interface PaidSpendMultiplierResult {
+  multiplier: number;
+  velocity_label: string;
+  estimated_spend_bucket: string;
+}
+
+export interface BuyerIntentScore {
+  intent_score_pct: number;
+  total_comments: number;
+  high_intent_comments: number;
+}
+
+export interface CreatorLoyaltyIndex {
+  handle: string;
+  brand_collabs: number;
+  total_appearances: number;
+  rehire_rate_pct: number;
+  loyalty_tier: string;
+}
+
+// ─────────────────────────────────────────────────────────
+// Module E: Report Types
+// ─────────────────────────────────────────────────────────
+
+export interface CompetitorAuditReport {
+  brand_name: string;
+  generated_at: string;
+  summary: {
+    total_creators: number;
+    grid_only: number;
+    meta_only: number;
+    dual_platform: number;
+    total_collabs: number;
+    total_ads: number;
+    avg_intent_score: number;
+  };
+  fused_creators: UnifiedCreatorEntity[];
+  collabs: IGGridCollab[];
+  ads: MetaAdCard[];
+  loyalty_index: CreatorLoyaltyIndex[];
+}
+
 /**
  * Mathematical Boost Detection Engine (Section 5.2 of Guide)
  * Evaluates like-to-view percentage and follower multipliers.
@@ -345,6 +468,466 @@ export function classifyCreativeGenre(
   }
 
   return 'Comedy & Relatable Skits';
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE D: Advanced Competitor Intelligence Signals
+// (Section 6 of Competitor Intelligence Engine Guide)
+// ─────────────────────────────────────────────────────────
+
+/**
+ * Module D.1: Evergreen Hero Winner Score (Ad Longevity)
+ * Calculates if a competitor ad is an evergreen positive-ROAS winner based on run duration.
+ * Direct TypeScript port of the guide's calculate_ad_longevity() Python function.
+ */
+export function calculateAdLongevity(startDateStr: string, isActive: boolean): AdLongevityResult {
+  if (!startDateStr) return { label: 'Unknown', days_running: 0, category: 'completed' };
+
+  const startDt = new Date(startDateStr);
+  const now = new Date();
+  const daysRunning = Math.floor((now.getTime() - startDt.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (isActive && daysRunning >= 90) {
+    return {
+      label: `🏆 Evergreen Hero Winner (${daysRunning}d — Core ROAS Engine)`,
+      days_running: daysRunning,
+      category: 'evergreen_hero',
+    };
+  }
+  if (isActive && daysRunning >= 30) {
+    return {
+      label: `⚡ Proven Scaler (${daysRunning}d — Consistent Spend)`,
+      days_running: daysRunning,
+      category: 'proven_scaler',
+    };
+  }
+  if (isActive) {
+    return {
+      label: `🧪 Active Test (${daysRunning}d)`,
+      days_running: daysRunning,
+      category: 'active_test',
+    };
+  }
+  return {
+    label: `⏹️ Completed / Inactive (${daysRunning}d runtime)`,
+    days_running: daysRunning,
+    category: 'completed',
+  };
+}
+
+/**
+ * Module D.2: Paid Media Multiplier (Spend Velocity)
+ * Formula: Multiplier = Actual Video Views / (Creator Baseline Follower Count × 0.25)
+ *   Multiplier > 50x → Aggressive Performance Ad Spend (₹5L–₹20L+)
+ *   Multiplier 10–50x → Moderate Paid Distribution (₹1L–₹5L)
+ *   Multiplier 2–10x → Light Paid Push / Seeding (₹10K–₹1L)
+ *   Multiplier < 2x → Pure Organic / Barter Distribution
+ */
+export function calculatePaidSpendMultiplier(
+  actualViews: number,
+  creatorFollowers: number
+): PaidSpendMultiplierResult {
+  const baseline = Math.max(creatorFollowers, 1000) * 0.25;
+  const multiplier = Number((actualViews / baseline).toFixed(1));
+
+  if (multiplier >= 50) {
+    return {
+      multiplier,
+      velocity_label: '🔥 Aggressive Performance Ad Spend',
+      estimated_spend_bucket: '₹5L – ₹20L+',
+    };
+  }
+  if (multiplier >= 10) {
+    return {
+      multiplier,
+      velocity_label: '🚀 Moderate Paid Distribution',
+      estimated_spend_bucket: '₹1L – ₹5L',
+    };
+  }
+  if (multiplier >= 2) {
+    return {
+      multiplier,
+      velocity_label: '💡 Light Paid Push / Seeding',
+      estimated_spend_bucket: '₹10K – ₹1L',
+    };
+  }
+  return {
+    multiplier,
+    velocity_label: '🌿 Pure Organic / Barter',
+    estimated_spend_bucket: '₹0 (Organic)',
+  };
+}
+
+/**
+ * Module D.3: Comment Purchase Intent NLP
+ * Scans comment text for buying signals vs vanity noise.
+ * Direct TypeScript port of the guide's calculate_buyer_intent_score() with INTENT_REGEX.
+ */
+const INTENT_REGEX = /\b(price|cost|how much|link|buy|order|available|discount|code|dm|where to get|tarnish|waterproof|fake|gold|worth it|quality|shipping|delivery|size|color|genuine|original|dupe|affordable|budget|expensive|cheap)\b/i;
+
+export function calculateBuyerIntentScore(commentsList: string[]): BuyerIntentScore {
+  if (!commentsList || commentsList.length === 0) {
+    return { intent_score_pct: 0, total_comments: 0, high_intent_comments: 0 };
+  }
+
+  const highIntent = commentsList.filter((c) => INTENT_REGEX.test(c));
+  const score = Number(((highIntent.length / commentsList.length) * 100).toFixed(1));
+
+  return {
+    intent_score_pct: score,
+    total_comments: commentsList.length,
+    high_intent_comments: highIntent.length,
+  };
+}
+
+/**
+ * Module D.4: Creator Re-Hire & Loyalty Index
+ * Counts re-hire appearances across the full collab roster.
+ * Returns loyalty tier: 🔒 Locked Partner (5+), 🤝 Recurring (3-4), 🆕 One-Off (1-2).
+ */
+export function calculateCreatorLoyaltyIndex(
+  creatorHandle: string,
+  allCollabs: IGGridCollab[]
+): CreatorLoyaltyIndex {
+  const normalizedHandle = creatorHandle.toLowerCase().replace(/^@/, '');
+  const appearances = allCollabs.filter(
+    (c) => c.raw_handle.toLowerCase() === normalizedHandle
+  );
+
+  const count = appearances.length;
+  const rehireRate = count > 1 ? Number(((count - 1) / count * 100).toFixed(1)) : 0;
+
+  let loyaltyTier: string;
+  if (count >= 5) {
+    loyaltyTier = '🔒 Locked Partner (5+ Collabs)';
+  } else if (count >= 3) {
+    loyaltyTier = '🤝 Recurring Partner (3-4 Collabs)';
+  } else if (count === 2) {
+    loyaltyTier = '🔄 Re-Hired Once (2 Collabs)';
+  } else {
+    loyaltyTier = '🆕 One-Off / New (1 Collab)';
+  }
+
+  return {
+    handle: `@${normalizedHandle}`,
+    brand_collabs: count,
+    total_appearances: count,
+    rehire_rate_pct: rehireRate,
+    loyalty_tier: loyaltyTier,
+  };
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE A: Simulated Meta Ad Library Engine
+// (TypeScript equivalent of engine_meta_adlibrary.py)
+// ─────────────────────────────────────────────────────────
+
+/** Deterministic seed from a string for reproducible simulation data. */
+function hashSeed(str: string): number {
+  return str.split('').reduce((s, c) => s + c.charCodeAt(0), 0);
+}
+
+const AD_HOOKS = [
+  'Shop our bestsellers today!',
+  'Limited edition — only this week!',
+  'Use code SAVE20 for 20% off!',
+  'Explore the new summer collection ☀️',
+  'Free shipping on orders above ₹999',
+  'Your skin deserves the best 🌿',
+  'New drop alert 🔥',
+  'Trending now — don\'t miss out!',
+  'Join 10L+ happy customers',
+  'The wait is over — now available!',
+  'Flat 40% off — no code needed',
+  'Back in stock — bestselling shades!',
+  'As seen on your favorite creators ✨',
+  'Made with 100% natural ingredients',
+  'Premium quality, everyday prices',
+];
+
+const SAMPLE_CREATORS = [
+  'rohan_joshicomics', 'priya_diaries', 'tanmay_creates', 'kusha_kapila',
+  'aanya_beauty', 'vikram_eats', 'meera_bakes', 'arjun_bites',
+  'divya_lifestyle', 'neha_cooks', 'siddharth_laughs', 'rahul_comedy',
+  'ankit_vines', 'kabir_explores', 'foodie_delhi6',
+];
+
+/**
+ * Simulates a Meta Ad Library scan for any brand.
+ * Generates deterministic but realistic ad card data with creator whitelist detection.
+ */
+export function simulateMetaAdLibraryScan(
+  brandQuery: string,
+  pageId?: string
+): MetaAdLibraryResult {
+  const seed = hashSeed(brandQuery.toLowerCase());
+  const totalAds = 12 + (seed % 30);
+  const ads: MetaAdCard[] = [];
+  const creatorMap: Record<string, MetaAdCreatorSummary> = {};
+
+  for (let i = 0; i < totalAds; i++) {
+    const adSeed = seed + i * 17;
+    const isActive = (adSeed % 3) !== 0; // ~66% active
+    const isCreatorCollab = (adSeed % 4) !== 0; // ~75% are creator collabs
+    const creatorIdx = adSeed % SAMPLE_CREATORS.length;
+    const creatorHandle = isCreatorCollab ? (SAMPLE_CREATORS[creatorIdx] || 'rohan_joshicomics') : null;
+
+    // Generate start date spread across last 180 days
+    const daysAgo = (adSeed % 180);
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - daysAgo);
+    const startDateStr = startDate.toISOString().split('T')[0] || '2026-06-01';
+
+    const longevity = calculateAdLongevity(startDateStr, isActive);
+    const hookIdx = adSeed % AD_HOOKS.length;
+
+    const ad: MetaAdCard = {
+      library_id: `${100000000 + seed + i}`,
+      ad_url: `https://www.facebook.com/ads/library/?id=${100000000 + seed + i}`,
+      advertiser: isCreatorCollab && creatorHandle
+        ? `${creatorHandle} with ${brandQuery}`
+        : brandQuery,
+      is_active: isActive,
+      start_date: startDateStr,
+      body: AD_HOOKS[hookIdx] || AD_HOOKS[0] || 'Explore our latest collection',
+      is_creator_collab: isCreatorCollab,
+      creator_name: creatorHandle ? `@${creatorHandle}` : null,
+      longevity,
+    };
+    ads.push(ad);
+
+    // Aggregate creator summary
+    if (isCreatorCollab && creatorHandle) {
+      const key = creatorHandle.toLowerCase();
+      if (!creatorMap[key]) {
+        creatorMap[key] = {
+          name: creatorHandle.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+          handle: `@${creatorHandle}`,
+          active_ads: isActive ? 1 : 0,
+          total_ads: 1,
+          sample_start_date: startDateStr,
+          sample_ad_url: ad.ad_url,
+        };
+      } else {
+        creatorMap[key].total_ads += 1;
+        if (isActive) creatorMap[key].active_ads += 1;
+      }
+    }
+  }
+
+  const creators = Object.values(creatorMap);
+
+  return {
+    brand_query: brandQuery,
+    total_ads: ads.length,
+    total_creators: creators.length,
+    ads,
+    creators,
+    scan_date: new Date().toISOString().split('T')[0] || '2026-09-01',
+  };
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE B: Simulated Instagram Grid Co-Author Scraper
+// (TypeScript equivalent of engine_instagram_grid.py)
+// ─────────────────────────────────────────────────────────
+
+/**
+ * Simulates an Instagram grid co-author scrape for any brand handle.
+ * Generates deterministic collab data with boost detection and tier classification.
+ */
+export function simulateInstagramGridScan(
+  targetHandle: string,
+  daysBack: number = 365
+): IGGridCollab[] {
+  const cleanHandle = targetHandle.toLowerCase().replace(/^@/, '');
+  const seed = hashSeed(cleanHandle);
+  const numCollabs = 8 + (seed % 18);
+  const collabs: IGGridCollab[] = [];
+
+  for (let i = 0; i < numCollabs; i++) {
+    const collabSeed = seed + i * 23;
+    const creatorIdx = collabSeed % SAMPLE_CREATORS.length;
+    const creatorHandle = SAMPLE_CREATORS[creatorIdx] || 'rohan_joshicomics';
+
+    // Skip self-references
+    if (creatorHandle.toLowerCase() === cleanHandle) continue;
+
+    // Generate date within daysBack window
+    const daysAgo = collabSeed % daysBack;
+    const collabDate = new Date();
+    collabDate.setDate(collabDate.getDate() - daysAgo);
+    const dateStr = collabDate.toISOString().split('T')[0] || '2026-06-01';
+
+    const creatorFollowers = 50000 + (collabSeed % 500000);
+    const views = creatorFollowers * (2 + (collabSeed % 20));
+    const isPaid = (collabSeed % 3) !== 0; // ~66% paid
+    const likeRate = isPaid && (collabSeed % 5) === 0 ? 0.2 + (collabSeed % 15) / 100 : 3.0 + (collabSeed % 60) / 10;
+    const likes = Math.floor(views * likeRate / 100);
+    const comments = Math.floor(likes * 0.015 + collabSeed % 50);
+
+    const boost = detectBoost(views, likes, comments, creatorFollowers);
+    const tier = classifyPartnershipTier(isPaid, boost.isBoosted);
+    const tierInfo = PARTNERSHIP_TIERS[tier];
+
+    collabs.push({
+      post_url: `https://www.instagram.com/p/Sim${cleanHandle.slice(0, 3)}${i}/`,
+      creator_handle: `@${creatorHandle}`,
+      raw_handle: creatorHandle,
+      date: dateStr,
+      views,
+      likes,
+      comments,
+      like_to_view_pct: Number(likeRate.toFixed(3)),
+      is_paid_toggle: isPaid,
+      is_boosted: boost.isBoosted,
+      partnership_tier: tierInfo.badge,
+    });
+  }
+
+  // Sort by date descending
+  collabs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return collabs;
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE C: Cross-Platform Data Fusion & Deduplication
+// (Direct TypeScript port of fuse_datasets() from guide)
+// ─────────────────────────────────────────────────────────
+
+/**
+ * Merges IG Grid collabs + Meta Ad Library creator data into
+ * a single unified, deduplicated creator entity list.
+ */
+export function fuseDatasets(
+  igCollabs: IGGridCollab[],
+  metaData: MetaAdLibraryResult
+): UnifiedCreatorEntity[] {
+  const unifiedCreators: Record<string, UnifiedCreatorEntity> = {};
+
+  // 1. Ingest Instagram Grid Creators
+  for (const c of igCollabs) {
+    const h = c.raw_handle.toLowerCase();
+    if (!unifiedCreators[h]) {
+      unifiedCreators[h] = {
+        handle: `@${h}`,
+        raw_handle: h,
+        name: h.replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase()),
+        on_instagram_grid: true,
+        on_meta_adlibrary: false,
+        total_grid_posts: 1,
+        total_grid_views: c.views,
+        active_meta_ads: 0,
+        total_meta_ads: 0,
+        sample_grid_url: c.post_url,
+        sample_ad_url: '',
+        source_label: 'Instagram Grid Only',
+      };
+    } else {
+      unifiedCreators[h].total_grid_posts += 1;
+      unifiedCreators[h].total_grid_views += c.views;
+    }
+  }
+
+  // 2. Ingest Meta Ad Library Creators (Dark Ads)
+  for (const mc of metaData.creators) {
+    const h = mc.handle.replace(/^@/, '').toLowerCase();
+    if (unifiedCreators[h]) {
+      unifiedCreators[h].on_meta_adlibrary = true;
+      unifiedCreators[h].active_meta_ads = mc.active_ads;
+      unifiedCreators[h].total_meta_ads = mc.total_ads;
+      unifiedCreators[h].sample_ad_url = mc.sample_ad_url;
+      unifiedCreators[h].source_label = 'Instagram Grid + Meta Ads';
+    } else {
+      unifiedCreators[h] = {
+        handle: `@${h}`,
+        raw_handle: h,
+        name: mc.name,
+        on_instagram_grid: false,
+        on_meta_adlibrary: true,
+        total_grid_posts: 0,
+        total_grid_views: 0,
+        active_meta_ads: mc.active_ads,
+        total_meta_ads: mc.total_ads,
+        sample_grid_url: '',
+        sample_ad_url: mc.sample_ad_url,
+        source_label: 'Meta Dark Ad Only',
+      };
+    }
+  }
+
+  return Object.values(unifiedCreators);
+}
+
+// ─────────────────────────────────────────────────────────
+// MODULE E: Competitor Audit Report Generator
+// ─────────────────────────────────────────────────────────
+
+/**
+ * Aggregates all intelligence modules into a single JSON deliverable.
+ */
+export function buildCompetitorAuditReport(
+  brandName: string,
+  fusedCreators: UnifiedCreatorEntity[],
+  collabs: IGGridCollab[],
+  ads: MetaAdCard[]
+): CompetitorAuditReport {
+  const gridOnly = fusedCreators.filter((c) => c.on_instagram_grid && !c.on_meta_adlibrary).length;
+  const metaOnly = fusedCreators.filter((c) => !c.on_instagram_grid && c.on_meta_adlibrary).length;
+  const dualPlatform = fusedCreators.filter((c) => c.on_instagram_grid && c.on_meta_adlibrary).length;
+
+  // Calculate avg buyer intent across simulated comment samples
+  const sampleComments = [
+    'Love this look! 😍', 'Where can I buy this?', 'Price please?',
+    'Wow amazing!', 'Link in bio?', 'Is this available in black?',
+    'So pretty!', 'How much does this cost?', 'Can I order online?',
+    'Nice!', 'DM me the details', 'Quality looks great',
+    'Beautiful!', 'Is it waterproof?', 'Looks expensive!',
+  ];
+  const intentScore = calculateBuyerIntentScore(sampleComments);
+
+  // Build loyalty index for all unique creators in collabs
+  const uniqueHandles = Array.from(new Set(collabs.map((c) => c.raw_handle.toLowerCase())));
+  const loyaltyIndex = uniqueHandles.map((h) => calculateCreatorLoyaltyIndex(h, collabs));
+
+  return {
+    brand_name: brandName,
+    generated_at: new Date().toISOString(),
+    summary: {
+      total_creators: fusedCreators.length,
+      grid_only: gridOnly,
+      meta_only: metaOnly,
+      dual_platform: dualPlatform,
+      total_collabs: collabs.length,
+      total_ads: ads.length,
+      avg_intent_score: intentScore.intent_score_pct,
+    },
+    fused_creators: fusedCreators,
+    collabs,
+    ads,
+    loyalty_index: loyaltyIndex,
+  };
+}
+
+/**
+ * Run a full competitor intelligence pipeline for any brand handle.
+ * Orchestrates all 5 modules: A → B → C → D → E.
+ */
+export function runFullCompetitorAudit(
+  brandHandle: string,
+  metaPageId?: string
+): CompetitorAuditReport {
+  // Module A: Meta Ad Library Scan
+  const metaResult = simulateMetaAdLibraryScan(brandHandle, metaPageId);
+
+  // Module B: Instagram Grid Co-Author Scan
+  const igCollabs = simulateInstagramGridScan(brandHandle, 365);
+
+  // Module C: Cross-Platform Fusion
+  const fusedCreators = fuseDatasets(igCollabs, metaResult);
+
+  // Module E: Build Final Report (Module D signals are embedded in E)
+  return buildCompetitorAuditReport(brandHandle, fusedCreators, igCollabs, metaResult.ads);
 }
 
 // ─────────────────────────────────────────────────────────

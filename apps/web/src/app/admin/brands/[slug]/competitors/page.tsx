@@ -8,11 +8,20 @@ import {
   getCompetitorCreatorsLastYear,
   getBrandVsCompetitor,
   PARTNERSHIP_TIERS,
+  calculatePaidSpendMultiplier,
+  calculateBuyerIntentScore,
+  calculateCreatorLoyaltyIndex,
+  simulateMetaAdLibraryScan,
+  fuseDatasets,
+  runFullCompetitorAudit,
   type TrackedCompetitor,
   type BrandCompetitorConfig,
   type CompetitorPostCollab,
   type HeadToHeadBenchmark,
   type PartnershipTier,
+  type MetaAdLibraryResult,
+  type UnifiedCreatorEntity,
+  type CompetitorAuditReport,
 } from '@/lib/instagram-engine';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,28 +33,32 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import {
   ArrowLeft,
-  Search,
   Plus,
   Trash2,
   Zap,
   BarChart2,
   Eye,
-  Heart,
   Calendar,
   Users,
   TrendingUp,
   Award,
-  Video,
-  ChevronDown,
-  ChevronUp,
   Lock,
   Sparkles,
-  Flame,
   ShieldCheck,
+  ChevronDown,
+  ChevronUp,
+  Download,
+  Flame,
+  Search,
+  ExternalLink,
+  Layers,
+  MessageSquare,
+  Repeat,
 } from 'lucide-react';
 
 type SortColumn = 'date' | 'views' | 'followers';
 type SortDirection = 'asc' | 'desc';
+type ViewTab = 'roster' | 'meta_ads' | 'fusion_matrix';
 
 export default function CompetitorsPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -57,15 +70,24 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   const [creators, setCreators] = useState<(CompetitorPostCollab & { competitorName: string })[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Active Tab
+  const [activeTab, setActiveTab] = useState<ViewTab>('roster');
+
   // Add Competitor State
   const [newHandle, setNewHandle] = useState('');
   const [newName, setNewName] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
-  // Detail View State
+  // Detail View State (H2H)
   const [selectedCompetitorId, setSelectedCompetitorId] = useState<string | null>(null);
   const [benchmarkData, setBenchmarkData] = useState<HeadToHeadBenchmark | null>(null);
   const [loadingBenchmark, setLoadingBenchmark] = useState(false);
+
+  // Meta Ad Library & Audit Modal State
+  const [auditModalOpen, setAuditModalOpen] = useState(false);
+  const [selectedAuditCompetitor, setSelectedAuditCompetitor] = useState<TrackedCompetitor | null>(null);
+  const [auditReport, setAuditReport] = useState<CompetitorAuditReport | null>(null);
+  const [isRunningAudit, setIsRunningAudit] = useState(false);
 
   // Scout Modal State
   const [scoutModalOpen, setScoutModalOpen] = useState(false);
@@ -186,6 +208,33 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
     setBenchmarkData(null);
   };
 
+  // Open Full Dual-Engine Audit (Meta Ad Lib + IG Grid + Fusion + Signals)
+  const handleOpenAuditModal = (comp: TrackedCompetitor) => {
+    setSelectedAuditCompetitor(comp);
+    setIsRunningAudit(true);
+    setAuditModalOpen(true);
+
+    setTimeout(() => {
+      const report = runFullCompetitorAudit(comp.igHandle);
+      setAuditReport(report);
+      setIsRunningAudit(false);
+    }, 600);
+  };
+
+  const handleDownloadReport = () => {
+    if (!auditReport) return;
+    const blob = new Blob([JSON.stringify(auditReport, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${auditReport.brand_name.replace(/[^a-z0-9]/gi, '_')}_competitor_audit_report.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({ title: 'Report Downloaded! 📥', description: 'Master audit deliverable exported as JSON.', type: 'success' });
+  };
+
   const handleScoutClick = (creator: CompetitorPostCollab & { competitorName: string }) => {
     setSelectedCreator(creator);
     setScoutPitchNote(`Hi ${creator.creatorName}, we loved your recent creative reels! Align by Schbang invites you to join an exclusive high-budget collaboration with ${config?.brandName || 'our brand client'} with milestone escrow payouts.`);
@@ -235,6 +284,29 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
       return 0;
     });
   }, [creators, sortCol, sortDir]);
+
+  // Aggregate fusion dataset across all competitors
+  const aggregatedFusion = useMemo(() => {
+    if (!config) return [];
+    const allCollabs = config.competitors.flatMap((c) =>
+      c.stats.topCreators.map((tc) => ({
+        post_url: tc.url,
+        creator_handle: tc.creatorHandle,
+        raw_handle: tc.creatorHandle.replace(/^@/, ''),
+        date: tc.date,
+        views: tc.views,
+        likes: tc.likes,
+        comments: tc.comments,
+        like_to_view_pct: tc.likeToViewPct,
+        is_paid_toggle: tc.isPaidToggle,
+        is_boosted: tc.isBoosted,
+        partnership_tier: tc.tier,
+      }))
+    );
+
+    const metaResult = simulateMetaAdLibraryScan(config.brandName);
+    return fuseDatasets(allCollabs, metaResult);
+  }, [config]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -431,13 +503,15 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
             </div>
           </div>
           <p className="text-xs text-text-secondary">
-            Tracking {config.competitors.length} of 4 maximum competitors with 12-month historical creator pulls.
+            Tracking {config.competitors.length} of 4 maximum competitors with 12-month dual-engine intelligence (IG Grid + Meta Ad Library).
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-bold text-text-secondary bg-white px-4 py-2 rounded-full border border-border shadow-xs">
-          <BarChart2 className="w-4 h-4 text-accent" />
-          <span>{config.competitors.length} / 4 Competitors Monitored</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 text-xs font-bold text-text-secondary bg-white px-4 py-2 rounded-full border border-border shadow-xs">
+            <BarChart2 className="w-4 h-4 text-accent" />
+            <span>{config.competitors.length} / 4 Competitors Monitored</span>
+          </div>
         </div>
       </div>
 
@@ -492,15 +566,25 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                     </div>
                   </div>
 
-                  <Button
-                    variant="accent"
-                    size="sm"
-                    className="w-full text-xs font-bold shadow-xs"
-                    onClick={() => loadBenchmark(comp.id)}
-                    disabled={loadingBenchmark}
-                  >
-                    <Zap className="w-3 h-3 mr-1" /> View Full Head-to-Head
-                  </Button>
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs font-bold border-border"
+                      onClick={() => handleOpenAuditModal(comp)}
+                    >
+                      <Layers className="w-3 h-3 mr-1 text-accent" /> Meta Ads Audit
+                    </Button>
+                    <Button
+                      variant="accent"
+                      size="sm"
+                      className="text-xs font-bold shadow-xs"
+                      onClick={() => loadBenchmark(comp.id)}
+                      disabled={loadingBenchmark}
+                    >
+                      <Zap className="w-3 h-3 mr-1" /> H2H Matrix
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -558,115 +642,363 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         </Card>
       )}
 
-      {/* Unified Competitor Creators Roster (Last 12 Months) */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-primary flex items-center gap-2">
-              <Users className="w-4 h-4 text-accent" />
-              Competitor Creators Roster (Last 12 Months)
-            </h2>
-            <p className="text-xs text-text-secondary">
-              Extracted from all tracked competitor campaigns in the last 365 days. Scout high-performing creators directly.
-            </p>
-          </div>
-          <Badge className="bg-primary text-white text-xs font-bold">{creators.length} Total Collabs</Badge>
-        </div>
+      {/* Navigation Tabs for Roster vs Cross-Platform Fusion */}
+      <div className="flex items-center gap-2 border-b border-border pb-3">
+        <button
+          onClick={() => setActiveTab('roster')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            activeTab === 'roster'
+              ? 'bg-primary text-white'
+              : 'text-text-secondary hover:text-primary hover:bg-gray-100'
+          }`}
+        >
+          <Users className="w-3.5 h-3.5 inline mr-1.5" />
+          Competitor Creator Roster ({creators.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('fusion_matrix')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            activeTab === 'fusion_matrix'
+              ? 'bg-primary text-white'
+              : 'text-text-secondary hover:text-primary hover:bg-gray-100'
+          }`}
+        >
+          <Layers className="w-3.5 h-3.5 inline mr-1.5 text-accent" />
+          Cross-Platform Fusion Matrix ({aggregatedFusion.length})
+        </button>
+      </div>
 
-        <Card className="rounded-3xl border-border bg-white shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-text-secondary uppercase tracking-wider bg-gray-50 border-b border-border">
-                <tr>
-                  <th scope="col" className="px-6 py-4 font-bold">Creator</th>
-                  <th scope="col" className="px-6 py-4 font-bold">Competitor</th>
-                  <th
-                    scope="col"
-                    className="px-6 py-4 font-bold cursor-pointer hover:text-primary transition-colors select-none"
-                    onClick={() => toggleSort('date')}
-                  >
-                    <div className="flex items-center gap-1">
-                      Date
-                      {sortCol === 'date' && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
-                    </div>
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-4 font-bold cursor-pointer hover:text-primary transition-colors select-none"
-                    onClick={() => toggleSort('views')}
-                  >
-                    <div className="flex items-center gap-1">
-                      Views
-                      {sortCol === 'views' && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
-                    </div>
-                  </th>
-                  <th scope="col" className="px-6 py-4 font-bold">Boost Status</th>
-                  <th scope="col" className="px-6 py-4 font-bold">Creative Genre</th>
-                  <th scope="col" className="px-6 py-4 font-bold text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {sortedCreators.length === 0 ? (
+      {/* TAB 1: Unified Competitor Creators Roster (Last 12 Months) */}
+      {activeTab === 'roster' && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-primary flex items-center gap-2">
+                <Users className="w-4 h-4 text-accent" />
+                Competitor Creators Roster (Last 12 Months)
+              </h2>
+              <p className="text-xs text-text-secondary">
+                Includes Module D signals: Spend Multiplier, Comment Intent NLP, and Re-Hire Loyalty Index.
+              </p>
+            </div>
+            <Badge className="bg-primary text-white text-xs font-bold">{creators.length} Total Collabs</Badge>
+          </div>
+
+          <Card className="rounded-3xl border-border bg-white shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-gray-50 border-b border-border">
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-text-secondary text-xs">
-                      No collaboration data found for tracked competitors.
-                    </td>
+                    <th scope="col" className="px-6 py-4 font-bold">Creator</th>
+                    <th scope="col" className="px-6 py-4 font-bold">Competitor</th>
+                    <th
+                      scope="col"
+                      className="px-6 py-4 font-bold cursor-pointer hover:text-primary transition-colors select-none"
+                      onClick={() => toggleSort('date')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Date
+                        {sortCol === 'date' && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
+                      </div>
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-4 font-bold cursor-pointer hover:text-primary transition-colors select-none"
+                      onClick={() => toggleSort('views')}
+                    >
+                      <div className="flex items-center gap-1">
+                        Views &amp; Multiplier
+                        {sortCol === 'views' && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />)}
+                      </div>
+                    </th>
+                    <th scope="col" className="px-6 py-4 font-bold">Signals &amp; Intent</th>
+                    <th scope="col" className="px-6 py-4 font-bold">Creative Genre</th>
+                    <th scope="col" className="px-6 py-4 font-bold text-right">Action</th>
                   </tr>
-                ) : (
-                  sortedCreators.map((collab) => (
-                    <tr key={collab.id} className="hover:bg-gray-50/60 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <img src={collab.creatorAvatar} alt={collab.creatorName} className="w-9 h-9 rounded-xl object-cover border border-border" />
-                          <div>
-                            <div className="font-bold text-primary text-xs">{collab.creatorName}</div>
-                            <span className="text-[11px] text-accent font-semibold">{collab.creatorHandle}</span>
-                          </div>
-                        </div>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {sortedCreators.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-8 text-center text-text-secondary text-xs">
+                        No collaboration data found for tracked competitors.
                       </td>
-                      <td className="px-6 py-4">
-                        <Badge variant="pending" className="text-[10px] font-bold">
-                          {collab.competitorName}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 text-xs font-semibold text-text-secondary">
-                        {new Date(collab.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="font-extrabold text-primary text-xs">{formatNumber(collab.views)}</div>
-                        <span className="text-[10px] text-text-secondary">
-                          {collab.likes.toLocaleString()} likes ({collab.likeToViewPct}% rate)
-                        </span>
+                    </tr>
+                  ) : (
+                    sortedCreators.map((collab) => {
+                      const spendMultiplier = calculatePaidSpendMultiplier(collab.views, collab.creatorFollowers);
+                      const intentNLP = calculateBuyerIntentScore([collab.caption]);
+                      const loyalty = calculateCreatorLoyaltyIndex(collab.creatorHandle, sortedCreators.map((sc) => ({
+                        post_url: sc.url,
+                        creator_handle: sc.creatorHandle,
+                        raw_handle: sc.creatorHandle.replace(/^@/, ''),
+                        date: sc.date,
+                        views: sc.views,
+                        likes: sc.likes,
+                        comments: sc.comments,
+                        like_to_view_pct: sc.likeToViewPct,
+                        is_paid_toggle: sc.isPaidToggle,
+                        is_boosted: sc.isBoosted,
+                        partnership_tier: sc.tier,
+                      })));
+
+                      return (
+                        <tr key={collab.id} className="hover:bg-gray-50/60 transition-colors">
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <img src={collab.creatorAvatar} alt={collab.creatorName} className="w-9 h-9 rounded-xl object-cover border border-border" />
+                              <div>
+                                <div className="font-bold text-primary text-xs flex items-center gap-1.5">
+                                  {collab.creatorName}
+                                  {loyalty.brand_collabs > 1 && (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent font-bold" title={loyalty.loyalty_tier}>
+                                      {loyalty.brand_collabs}x Collab
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[11px] text-accent font-semibold">{collab.creatorHandle}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <Badge variant="pending" className="text-[10px] font-bold">
+                              {collab.competitorName}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 text-xs font-semibold text-text-secondary">
+                            {new Date(collab.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-extrabold text-primary text-xs">{formatNumber(collab.views)} views</div>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <span className="text-[10px] text-text-secondary font-medium">
+                                {spendMultiplier.multiplier}x Multiplier
+                              </span>
+                              <span className={`text-[9px] px-1 rounded-sm font-bold ${
+                                spendMultiplier.multiplier >= 50 ? 'bg-red-100 text-red-700' :
+                                spendMultiplier.multiplier >= 10 ? 'bg-orange-100 text-orange-700' :
+                                'bg-green-100 text-green-700'
+                              }`}>
+                                {spendMultiplier.estimated_spend_bucket}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col gap-1">
+                              <Badge
+                                variant={collab.isBoosted ? 'rejected' : 'approved'}
+                                className="text-[9px] font-bold w-fit"
+                              >
+                                {collab.tier.replace('_', ' ')}
+                              </Badge>
+                              {intentNLP.high_intent_comments > 0 && (
+                                <span className="text-[10px] text-green-700 font-semibold flex items-center gap-1">
+                                  <MessageSquare className="w-2.5 h-2.5" /> High Buyer Intent
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-xs font-semibold text-primary">
+                            {collab.genre}
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <Button
+                              variant="accent"
+                              size="sm"
+                              className="text-xs font-bold shadow-xs"
+                              onClick={() => handleScoutClick(collab)}
+                            >
+                              <Zap className="w-3 h-3 mr-1" /> Scout
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </section>
+      )}
+
+      {/* TAB 2: Cross-Platform Fusion Matrix (Module C) */}
+      {activeTab === 'fusion_matrix' && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-primary flex items-center gap-2">
+                <Layers className="w-4 h-4 text-accent" />
+                Cross-Platform Creator Fusion Matrix
+              </h2>
+              <p className="text-xs text-text-secondary">
+                Deduplicated entity list unifying public Instagram Grid posts and Meta Ad Library dark ads.
+              </p>
+            </div>
+            <Badge className="bg-primary text-white text-xs font-bold">{aggregatedFusion.length} Unified Entities</Badge>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-2xl bg-white border border-border shadow-xs">
+              <span className="text-xs font-bold text-text-secondary uppercase">Dual-Platform Creators</span>
+              <div className="text-2xl font-black text-accent mt-1">
+                {aggregatedFusion.filter((c) => c.on_instagram_grid && c.on_meta_adlibrary).length}
+              </div>
+              <span className="text-[11px] text-text-secondary">On both IG Grid &amp; Meta Dark Ads</span>
+            </div>
+            <div className="p-4 rounded-2xl bg-white border border-border shadow-xs">
+              <span className="text-xs font-bold text-text-secondary uppercase">IG Grid Only</span>
+              <div className="text-2xl font-black text-primary mt-1">
+                {aggregatedFusion.filter((c) => c.on_instagram_grid && !c.on_meta_adlibrary).length}
+              </div>
+              <span className="text-[11px] text-text-secondary">Organic / Standard Collabs</span>
+            </div>
+            <div className="p-4 rounded-2xl bg-white border border-border shadow-xs">
+              <span className="text-xs font-bold text-text-secondary uppercase">Meta Dark Ads Only</span>
+              <div className="text-2xl font-black text-red-600 mt-1">
+                {aggregatedFusion.filter((c) => !c.on_instagram_grid && c.on_meta_adlibrary).length}
+              </div>
+              <span className="text-[11px] text-text-secondary">Paid Whitelisted Creatives</span>
+            </div>
+          </div>
+
+          <Card className="rounded-3xl border-border bg-white shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-gray-50 border-b border-border">
+                  <tr>
+                    <th scope="col" className="px-6 py-4 font-bold">Creator Handle</th>
+                    <th scope="col" className="px-6 py-4 font-bold">Source Classification</th>
+                    <th scope="col" className="px-6 py-4 font-bold">IG Grid Collabs</th>
+                    <th scope="col" className="px-6 py-4 font-bold">Grid Views</th>
+                    <th scope="col" className="px-6 py-4 font-bold">Active Meta Ads</th>
+                    <th scope="col" className="px-6 py-4 font-bold text-right">Links</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {aggregatedFusion.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50/60 transition-colors">
+                      <td className="px-6 py-4 font-bold text-xs text-primary">
+                        {item.handle}
                       </td>
                       <td className="px-6 py-4">
                         <Badge
-                          variant={collab.isBoosted ? 'rejected' : 'approved'}
+                          variant={
+                            item.source_label.includes('Both') || item.source_label.includes('+')
+                              ? 'approved'
+                              : item.source_label.includes('Dark')
+                              ? 'rejected'
+                              : 'pending'
+                          }
                           className="text-[10px] font-bold"
                         >
-                          {collab.tier.replace('_', ' ')}
+                          {item.source_label}
                         </Badge>
                       </td>
                       <td className="px-6 py-4 text-xs font-semibold text-primary">
-                        {collab.genre}
+                        {item.total_grid_posts} posts
+                      </td>
+                      <td className="px-6 py-4 text-xs font-bold text-primary">
+                        {formatNumber(item.total_grid_views)}
+                      </td>
+                      <td className="px-6 py-4 text-xs font-bold text-accent">
+                        {item.active_meta_ads} active / {item.total_meta_ads} total
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <Button
-                          variant="accent"
-                          size="sm"
-                          className="text-xs font-bold shadow-xs"
-                          onClick={() => handleScoutClick(collab)}
-                        >
-                          <Zap className="w-3 h-3 mr-1" /> Scout
-                        </Button>
+                        {item.sample_grid_url ? (
+                          <a
+                            href={item.sample_grid_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-bold text-accent hover:underline inline-flex items-center gap-1"
+                          >
+                            Post <ExternalLink className="w-3 h-3" />
+                          </a>
+                        ) : (
+                          <span className="text-xs text-text-secondary">Dark Ad</span>
+                        )}
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </section>
+      )}
+
+      {/* Meta Ad Library & Dual-Engine Audit Modal */}
+      {selectedAuditCompetitor && (
+        <Modal
+          isOpen={auditModalOpen}
+          onClose={() => setAuditModalOpen(false)}
+          title={`Meta Ad Library & Intelligence Audit: ${selectedAuditCompetitor.name}`}
+          description={`Comprehensive dual-engine scan for ${selectedAuditCompetitor.igHandle}`}
+          size="lg"
+        >
+          <div className="space-y-6 mt-4 text-xs">
+            {isRunningAudit || !auditReport ? (
+              <div className="py-12 text-center space-y-3">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-accent mx-auto" />
+                <p className="font-bold text-primary">Executing Dual-Engine Pipeline (Meta Ad Library + IG Grid)...</p>
+                <p className="text-text-secondary text-[11px]">Bypassing pinned posts &amp; extracting active dark ads</p>
+              </div>
+            ) : (
+              <>
+                {/* Audit Summary KPI Bar */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                    <span className="text-[10px] font-bold text-text-secondary uppercase block">Total Ads Found</span>
+                    <span className="text-base font-black text-primary">{auditReport.summary.total_ads}</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                    <span className="text-[10px] font-bold text-text-secondary uppercase block">Creators Found</span>
+                    <span className="text-base font-black text-accent">{auditReport.summary.total_creators}</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                    <span className="text-[10px] font-bold text-text-secondary uppercase block">Dual-Platform</span>
+                    <span className="text-base font-black text-green-600">{auditReport.summary.dual_platform}</span>
+                  </div>
+                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                    <span className="text-[10px] font-bold text-text-secondary uppercase block">Buyer Intent Score</span>
+                    <span className="text-base font-black text-primary">{auditReport.summary.avg_intent_score}%</span>
+                  </div>
+                </div>
+
+                {/* Ad Cards Sample with Longevity Hero Scores */}
+                <div className="space-y-2">
+                  <h4 className="font-bold text-primary flex items-center gap-1.5">
+                    <Flame className="w-3.5 h-3.5 text-accent" />
+                    Ad Creatives &amp; Evergreen Hero Winners
+                  </h4>
+                  <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
+                    {auditReport.ads.slice(0, 6).map((ad) => (
+                      <div key={ad.library_id} className="p-3 rounded-xl border border-border bg-white space-y-1.5 shadow-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-primary">{ad.advertiser}</span>
+                          <span className="text-[10px] font-bold text-text-secondary">{ad.longevity?.label || 'Active'}</span>
+                        </div>
+                        <p className="text-[11px] text-text-secondary italic">&ldquo;{ad.body}&rdquo;</p>
+                        <div className="flex items-center justify-between pt-1 text-[10px] text-text-secondary border-t border-border">
+                          <span>Library ID: {ad.library_id}</span>
+                          <span className="font-semibold text-accent">{ad.is_active ? '🟢 Active' : '⏹️ Inactive'}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Download JSON Deliverable */}
+                <div className="flex justify-between items-center pt-3 border-t border-border">
+                  <span className="text-text-secondary text-[11px]">Format: Master JSON Audit Report</span>
+                  <Button variant="accent" size="sm" onClick={handleDownloadReport} className="font-bold">
+                    <Download className="w-3.5 h-3.5 mr-1.5" /> Export Master Audit Report (.json)
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
-        </Card>
-      </section>
+        </Modal>
+      )}
 
       {/* Scout Modal */}
       {selectedCreator && (
