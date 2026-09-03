@@ -126,7 +126,7 @@ export default function BrandsPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-primary text-white py-12 border-b border-white/10">
+      <div className="bg-primary text-white pt-24 pb-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">

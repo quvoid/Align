@@ -337,7 +337,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   // HEAD-TO-HEAD DEEP DIVE VIEW
   if (selectedCompetitorId && benchmarkData) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-in fade-in">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 space-y-8 animate-in fade-in">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={closeBenchmark} className="text-text-secondary hover:text-primary font-bold">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to {config.brandName} Watchlist
@@ -482,7 +482,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
   // MAIN WATCHLIST DASHBOARD VIEW
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 space-y-10">
       {/* Brand Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>

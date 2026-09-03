@@ -47,7 +47,7 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28 bg-black overflow-hidden flex items-center justify-center min-h-[75vh]">
+      <section className="relative pt-28 pb-20 md:pt-36 md:pb-28 bg-black overflow-hidden flex items-center justify-center min-h-[75vh]">
         <video
           autoPlay
           loop
