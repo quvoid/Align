@@ -113,12 +113,18 @@ export const authConfig: NextAuthConfig = {
           token.role = user.role || "CREATOR";
         }
       }
+      if (token.name?.toLowerCase().includes("harshil") || token.email === "admin@schbang.com") {
+        token.name = "Schbang Admin Lead";
+      }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
         session.user.id = (token.id as string) || "";
         session.user.role = (token.role as "CREATOR" | "ADMIN" | "SUPER_ADMIN") || "CREATOR";
+        if (session.user.name?.toLowerCase().includes("harshil") || session.user.email === "admin@schbang.com") {
+          session.user.name = "Schbang Admin Lead";
+        }
       }
       return session;
     },

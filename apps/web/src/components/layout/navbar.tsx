@@ -70,7 +70,9 @@ export const Navbar = () => {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs text-text-primary font-bold hidden sm:block bg-gray-100 px-3 py-1.5 rounded-full border border-border">
-                  {session.user?.name}
+                  {session.user?.name?.toLowerCase().includes("harshil") || session.user?.email === "admin@schbang.com"
+                    ? "Schbang Admin Lead"
+                    : session.user?.name}
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-accent/10 text-accent border border-accent/20">
                   {session.user?.role || "CREATOR"}
@@ -173,7 +175,7 @@ export const Navbar = () => {
             {session ? (
               <div className="space-y-2">
                 <div className="text-xs font-bold text-text-secondary px-2">
-                  Signed in as <span className="text-primary">{session.user?.name}</span> ({session.user?.role || "CREATOR"})
+                  Signed in as <span className="text-primary">{session.user?.name?.toLowerCase().includes("harshil") || session.user?.email === "admin@schbang.com" ? "Schbang Admin Lead" : session.user?.name}</span> ({session.user?.role || "CREATOR"})
                 </div>
                 <Button
                   variant="outline"
