@@ -13,22 +13,24 @@ export const Button = ({
   isLoading?: boolean;
 }) => {
   const variants = {
-    primary: 'bg-primary text-white hover:bg-black/90',
-    accent: 'bg-accent text-white hover:bg-accent-hover',
-    outline: 'border border-border bg-transparent hover:bg-gray-50 text-text-primary',
+    primary: 'bg-primary text-white hover:bg-black/85 hover:shadow-md active:bg-black shadow-xs',
+    accent: 'bg-accent text-white hover:bg-accent-hover hover:shadow-md hover:shadow-accent/25 active:bg-[#d43f00] shadow-xs',
+    outline: 'border border-border bg-white hover:bg-gray-50/80 text-text-primary hover:border-gray-300 hover:shadow-xs',
     ghost: 'bg-transparent hover:bg-gray-100 text-text-primary',
   };
   
   const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg font-medium',
+    sm: 'px-3 py-1.5 text-xs font-semibold rounded-lg',
+    md: 'px-4 py-2 text-sm font-semibold rounded-xl',
+    lg: 'px-6 py-3 text-base font-bold rounded-2xl',
   };
 
   return (
     <button
       className={cn(
-        "rounded-lg font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed",
+        "relative font-medium flex items-center justify-center select-none cursor-pointer transition-all duration-200 ease-out",
+        "active:scale-[0.97] active:translate-y-px hover:-translate-y-0.5",
+        "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none",
         variants[variant],
         sizes[size],
         className

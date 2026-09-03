@@ -39,7 +39,7 @@ export const authConfig: NextAuthConfig = {
         if (email === "admin@schbang.com") {
           return {
             id: "admin_1",
-            name: "Harshil Karia (Admin)",
+            name: "Schbang Admin Lead",
             email: "admin@schbang.com",
             role: "ADMIN",
             image:

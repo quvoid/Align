@@ -170,25 +170,26 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {MOCK_BRANDS.slice(0,3).map(brand => (
-              <Card key={brand.id} className="hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col border-border/80 group">
+            {MOCK_BRANDS.slice(0,3).map((brand, idx) => (
+              <Card key={brand.id} className="interactive-card overflow-hidden flex flex-col border-border/80 group">
                 <div className="h-44 overflow-hidden relative bg-gray-100">
                   <img src={brand.coverImage} alt={brand.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/70 backdrop-blur-md text-white text-xs font-semibold rounded-full uppercase tracking-wider">
+                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/70 backdrop-blur-md text-white text-xs font-semibold rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
                     {brand.budgetTier} Tier
                   </div>
                 </div>
                 <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="flex items-center gap-3.5 mb-4">
-                    <img src={brand.logo} alt={brand.name} className="w-12 h-12 rounded-xl border border-border object-cover bg-white shadow-sm" />
+                    <img src={brand.logo} alt={brand.name} className="w-12 h-12 rounded-2xl border border-border object-cover bg-white shadow-xs" />
                     <div>
-                      <h3 className="font-bold text-lg text-primary">{brand.name}</h3>
+                      <h3 className="font-bold text-lg text-primary group-hover:text-accent transition-colors">{brand.name}</h3>
                       <span className="text-xs font-medium text-text-secondary">{brand.industry}</span>
                     </div>
                   </div>
                   <p className="text-sm text-text-secondary line-clamp-3 mb-6 flex-1 leading-relaxed">{brand.description}</p>
                   <Link href={`/brands/${brand.slug}`} className="mt-auto">
-                    <Button variant="outline" className="w-full group-hover:border-accent group-hover:text-accent transition-colors">
+                    <Button variant="outline" className="w-full group-hover:border-accent group-hover:text-accent font-semibold transition-all">
                       View Campaign Brief &rarr;
                     </Button>
                   </Link>
@@ -199,8 +200,8 @@ export default function Home() {
           
           <div className="text-center mt-12">
             <Link href="/brands">
-              <Button variant="ghost" className="font-semibold text-accent hover:text-accent-hover hover:bg-accent/10">
-                Explore all {MOCK_BRANDS.length} brand briefs &rarr;
+              <Button size="lg" variant="accent" className="font-bold px-8 shadow-md shadow-accent/25">
+                Explore All {MOCK_BRANDS.length}+ Brand Briefs &rarr;
               </Button>
             </Link>
           </div>

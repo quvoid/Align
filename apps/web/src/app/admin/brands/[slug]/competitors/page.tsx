@@ -531,20 +531,27 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {config.competitors.map((comp) => (
-              <Card key={comp.id} className="rounded-3xl border-border bg-white shadow-xs hover:shadow-md transition-all">
+            {config.competitors.map((comp, idx) => (
+              <Card
+                key={comp.id}
+                className="interactive-card-accent rounded-3xl border-border bg-white shadow-xs animate-in fade-in slide-in-from-bottom-2 duration-300"
+                style={{ animationDelay: `${idx * 80}ms` }}
+              >
                 <CardContent className="p-6 space-y-4">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <img src={comp.avatar} alt={comp.name} className="w-11 h-11 rounded-2xl object-cover border border-border" />
+                      <img src={comp.avatar} alt={comp.name} className="w-11 h-11 rounded-2xl object-cover border border-border shadow-xs" />
                       <div>
                         <h3 className="font-bold text-primary text-sm truncate max-w-[150px]" title={comp.name}>{comp.name}</h3>
-                        <span className="text-xs font-semibold text-accent">{comp.igHandle}</span>
+                        <span className="text-xs font-semibold text-accent flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                          {comp.igHandle}
+                        </span>
                       </div>
                     </div>
                     <button
                       onClick={() => handleRemoveCompetitor(comp.id)}
-                      className="text-text-secondary hover:text-red-500 transition-colors p-1 rounded-lg hover:bg-red-50"
+                      className="text-text-secondary hover:text-red-500 transition-all p-1.5 rounded-xl hover:bg-red-50 active:scale-90"
                       title="Remove competitor"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -742,7 +749,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                       })));
 
                       return (
-                        <tr key={collab.id} className="hover:bg-gray-50/60 transition-colors">
+                        <tr key={collab.id} className="hover:bg-accent/[0.04] transition-all duration-150 group">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <img src={collab.creatorAvatar} alt={collab.creatorName} className="w-9 h-9 rounded-xl object-cover border border-border" />

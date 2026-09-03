@@ -232,14 +232,14 @@ export default function BrandsPage() {
 
                   <button
                     onClick={(e) => handleToggleLike(brand.id, brand.name, e)}
-                    className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 backdrop-blur-md border transition-all duration-200 shadow-md ${
+                    className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 backdrop-blur-md border transition-all duration-200 shadow-md active:scale-90 cursor-pointer ${
                       isLiked
-                        ? "bg-red-500 text-white border-red-400 scale-105"
+                        ? "bg-red-500 text-white border-red-400 scale-105 shadow-red-500/30"
                         : "bg-black/70 text-white/90 border-white/20 hover:bg-black/90 hover:text-white"
                     }`}
                     title={isLiked ? "Remove interest" : "Express interest in this brief"}
                   >
-                    <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-white text-white" : "text-white"}`} />
+                    <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-white text-white scale-110" : "text-white"} transition-transform`} />
                     <span>{brand.likesCount} Likes</span>
                   </button>
 
