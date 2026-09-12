@@ -11,6 +11,7 @@ import { INITIAL_BRANDS, ApplicationItem } from "@/lib/mock-data";
 import { getUserData, addApplication } from "@/lib/user-store";
 import { useSession } from "next-auth/react";
 import { useSignInModal } from "@/components/auth/sign-in-modal";
+import { hasActiveMembership } from "@/lib/user-store";
 import Link from "next/link";
 import {
   CheckCircle,
@@ -56,6 +57,14 @@ export default function ApplyPage({
   const router = useRouter();
   const { data: session } = useSession();
   const { openSignIn } = useSignInModal();
+
+  // Pitching needs an active plan. Send non-members to pricing and bring
+  // them back here after checkout.
+  useEffect(() => {
+    if (session?.user?.email && !hasActiveMembership(session.user.email)) {
+      router.replace(`/pricing?brief=${encodeURIComponent(resolvedParams.slug)}`);
+    }
+  }, [session, resolvedParams.slug, router]);
   const [step, setStep] = useState(1);
 
   const brand = INITIAL_BRANDS.find((b) => b.slug === resolvedParams.slug);

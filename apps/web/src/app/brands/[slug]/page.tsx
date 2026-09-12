@@ -3,31 +3,43 @@
 import { use } from "react";
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import { hasActiveMembership } from '@/lib/user-store';
+import { PLANS, formatINR } from '@/lib/plans';
 import { INITIAL_BRANDS } from '@/lib/mock-data';
 import { getCompetitorsForBrand } from '@/lib/instagram-engine';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 
 export default function BrandDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
   const brand = INITIAL_BRANDS.find(b => b.slug === resolvedParams.slug);
 
+  const { data: session } = useSession();
+  const isAdminOrBrand = session?.user?.role === 'ADMIN' || (session?.user as any)?.role === 'BRAND';
+
+  // Members go straight to the pitch form; everyone else sees the price up front.
+  const [isMember, setIsMember] = useState(false);
+  useEffect(() => {
+    setIsMember(!!session?.user?.email && hasActiveMembership(session.user.email));
+  }, [session]);
+
   if (!brand) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center px-8 pt-28 pb-12 text-center">
-        <h1 className="text-2xl font-bold text-primary mb-2">Campaign Brief Not Found</h1>
-        <p className="text-text-secondary text-sm mb-6">The brand brief you requested is either expired or invalid.</p>
+        <h1 className="text-2xl font-bold text-primary mb-2">Brief not found</h1>
+        <p className="text-text-secondary text-sm mb-6">This brief has closed or the link is wrong.</p>
         <Link href="/brands">
-          <Button variant="accent">Explore All Brand Briefs</Button>
+          <Button variant="accent">Browse open briefs</Button>
         </Link>
       </div>
     );
   }
 
-  const { data: session } = useSession();
-  const isAdminOrBrand = session?.user?.role === 'ADMIN' || (session?.user as any)?.role === 'BRAND';
+  const applyHref = isMember ? `/apply/${brand.slug}` : `/pricing?brief=${brand.slug}`;
+  const applyLabel = isMember ? 'Pitch to this brief' : `Pitch to this brief — from ${formatINR(PLANS.monthly.price)}/month`;
   const competitorConfig = getCompetitorsForBrand(brand.slug);
 
   // Related briefs for internal SEO linking
@@ -141,13 +153,18 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
             </div>
           </div>
 
-          <Link href={`/apply/${brand.slug}`} className="w-full md:w-auto">
-            <Button variant="accent" size="lg" className="w-full md:w-auto shadow-xl shadow-accent/25 py-6 px-8 text-sm font-bold">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Apply for this Campaign
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
+          <div className="w-full md:w-auto md:text-right">
+            <Link href={applyHref} className="block w-full md:w-auto">
+              <Button variant="accent" size="lg" className="w-full md:w-auto py-6 px-8 text-sm font-bold">
+                {applyLabel}
+              </Button>
+            </Link>
+            {!isMember && (
+              <p className="text-xs text-text-secondary mt-2">
+                Or {formatINR(PLANS.all_access.price)} once for every brief. No commission on your fee.
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Content Details */}
@@ -191,9 +208,9 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
                 </div>
               </div>
 
-              <Link href={`/apply/${brand.slug}`}>
+              <Link href={applyHref}>
                 <Button variant="accent" className="w-full mt-2">
-                  Submit Proposal
+                  {isMember ? 'Pitch to this brief' : 'Unlock and pitch'}
                 </Button>
               </Link>
             </div>

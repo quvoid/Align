@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/toast";
 import { ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
 // Routes that need a signed-in user. Anything else is browsable anonymously.
-const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/apply", "/creators"];
+const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/apply", "/creators", "/join"];
 
 export const isProtectedPath = (pathname: string) =>
   PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -50,6 +50,7 @@ const GoogleIcon = () => (
 export function SignInModalProvider({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -89,9 +90,12 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
           ? "The creator directory is for Schbang brand managers."
           : pathname.startsWith("/apply")
           ? "Sign in so we can attach this pitch to your creator profile."
+          : pathname.startsWith("/join")
+          ? "Sign in to activate your plan. Takes ten seconds with Google."
           : "Sign in to see your campaigns, pitches and payouts."
       );
-      setCallbackUrl(pathname);
+      const qs = searchParams.toString();
+      setCallbackUrl(qs ? `${pathname}?${qs}` : pathname);
       setGated(true);
       setIsOpen(true);
     } else if (gated) {

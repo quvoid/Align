@@ -16,43 +16,38 @@ export const Footer = () => {
               </span>
             </div>
             <p className="text-text-secondary text-sm max-w-sm mb-6 leading-relaxed">
-              Where creative frequency meets brand purpose. India&apos;s definitive creator collaboration platform powered by Schbang.
+              Paid brand campaigns for Indian creators, managed by Schbang. Browse open briefs free; pitch from ₹50 a month.
             </p>
           </div>
           
           <div>
-            <h4 className="font-semibold text-primary mb-4 text-sm uppercase tracking-wider">Platform</h4>
+            <h4 className="font-semibold text-primary mb-4 text-sm">For creators</h4>
             <ul className="space-y-2.5 text-sm text-text-secondary">
               <li>
                 <Link href="/brands" className="hover:text-accent transition-colors">
-                  Explore Brand Briefs
+                  Open brand briefs
                 </Link>
               </li>
               <li>
-                <Link href="/creators" className="hover:text-accent transition-colors font-semibold text-primary">
-                  Verified Creator Roster
-                </Link>
-              </li>
-              <li>
-                <Link href="/auth/register" className="hover:text-accent transition-colors">
-                  Join Creator Network
+                <Link href="/pricing" className="hover:text-accent transition-colors">
+                  Creator pricing
                 </Link>
               </li>
               <li>
                 <Link href="/dashboard" className="hover:text-accent transition-colors">
-                  Creator Dashboard
+                  My pitches
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-accent transition-colors">
-                  Admin Review Portal
+                <Link href="/dashboard/profile" className="hover:text-accent transition-colors">
+                  My media kit
                 </Link>
               </li>
             </ul>
           </div>
           
           <div>
-            <h4 className="font-semibold text-primary mb-4 text-sm uppercase tracking-wider">Company</h4>
+            <h4 className="font-semibold text-primary mb-4 text-sm">Company</h4>
             <ul className="space-y-2.5 text-sm text-text-secondary">
               <li>
                 <Link href="/about" className="hover:text-accent transition-colors">

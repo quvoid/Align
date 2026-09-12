@@ -1,6 +1,7 @@
 "use client";
 
 import { INITIAL_APPLICATIONS, type ApplicationItem } from "./mock-data";
+import { PLANS, isMembershipActive, type Membership, type PlanId } from "./plans";
 
 // ─────────────────────────────────────────────────────────
 // Per-user data store using localStorage
@@ -32,6 +33,8 @@ export interface UserData {
   applications: ApplicationItem[];
   likedBrandIds: string[];
   initialized: boolean;
+  /** Creator membership. Absent until the creator picks a plan. */
+  membership?: Membership;
 }
 
 const STORE_PREFIX = "align_user_";
@@ -226,6 +229,9 @@ export function getUserData(
     applications: isDemo ? getDemoApplications(email) : [],
     likedBrandIds: isDemo ? getDemoLikes(email) : [],
     initialized: true,
+    membership: isDemo
+      ? { plan: "all_access", status: "active", activatedAt: "2026-06-01T00:00:00.000Z", orderId: "demo_seed" }
+      : undefined,
   };
 
   localStorage.setItem(key, JSON.stringify(userData));
@@ -302,4 +308,48 @@ export function toggleLike(email: string, brandId: string): boolean {
 export function getLikedBrandIds(email: string): string[] {
   const data = getUserData(email);
   return data.likedBrandIds;
+}
+
+// ─────────────────────────────────────────────────────────
+// Membership
+// ─────────────────────────────────────────────────────────
+
+export function getMembership(email: string): Membership | undefined {
+  return getUserData(email).membership;
+}
+
+export function hasActiveMembership(email: string): boolean {
+  return isMembershipActive(getMembership(email));
+}
+
+/**
+ * Activate a plan for the creator. This is the single seam where a real
+ * payment gateway plugs in: call it from the gateway's success callback with
+ * the gateway order id instead of the simulated one.
+ */
+export function activateMembership(email: string, plan: PlanId, orderId?: string): Membership {
+  const data = getUserData(email);
+  const now = new Date();
+  const membership: Membership = {
+    plan,
+    status: "active",
+    activatedAt: now.toISOString(),
+    orderId: orderId || `sim_${now.getTime().toString(36)}`,
+  };
+  if (PLANS[plan].period === "month") {
+    const renews = new Date(now);
+    renews.setMonth(renews.getMonth() + 1);
+    membership.renewsAt = renews.toISOString();
+  }
+  data.membership = membership;
+  saveUserData(email, data);
+  return membership;
+}
+
+export function cancelMembership(email: string): void {
+  const data = getUserData(email);
+  if (data.membership) {
+    data.membership = { ...data.membership, status: "cancelled" };
+    saveUserData(email, data);
+  }
 }

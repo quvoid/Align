@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { PLANS, formatPrice, isMembershipActive, type Membership } from "@/lib/plans";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,8 @@ import { Sparkles, FileText, Clock, CheckCircle2, XCircle, Eye, ArrowRight, Awar
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [applications, setApplications] = useState<ApplicationItem[]>([]);
+  const [membership, setMembership] = useState<Membership | undefined>();
+  const [profileDone, setProfileDone] = useState(false);
   const [selectedApp, setSelectedApp] = useState<ApplicationItem | null>(null);
   const { toast } = useToast();
 
@@ -22,6 +25,8 @@ export default function DashboardPage() {
     if (session?.user?.email) {
       const userData = getUserData(session.user.email);
       setApplications(userData.applications);
+      setMembership(userData.membership);
+      setProfileDone(Boolean(userData.profile.igHandle && userData.profile.niche));
     }
   }, [session]);
 
@@ -98,13 +103,13 @@ export default function DashboardPage() {
             <Link href="/dashboard/profile">
               <Button variant="outline" className="text-xs font-bold bg-transparent border-white/20 text-white hover:bg-white/10 hover:border-white/40">
                 <FileText className="mr-1.5 h-4 w-4" />
-                Edit Media Kit
+                Edit media kit
               </Button>
             </Link>
             <Link href="/brands">
-              <Button variant="accent" className="text-xs font-bold shadow-lg shadow-accent/25">
+              <Button variant="accent" className="text-xs font-bold">
                 <Building2 className="mr-1.5 h-4 w-4" />
-                Browse Brand Briefs &rarr;
+                Find a brief to pitch
               </Button>
             </Link>
           </div>
@@ -112,6 +117,76 @@ export default function DashboardPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+        {/* First-run checklist: the three things a new creator has to do */}
+        {(() => {
+          const active = isMembershipActive(membership);
+          const steps = [
+            {
+              done: active,
+              label: active ? `${PLANS[membership!.plan].name} plan active` : "Choose a plan",
+              hint: active
+                ? membership!.renewsAt
+                  ? `Renews ${new Date(membership!.renewsAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} · ${formatPrice(PLANS[membership!.plan])}`
+                  : "Every brief, no renewals"
+                : `${formatPrice(PLANS.all_access)} or ${formatPrice(PLANS.monthly)}`,
+              href: active ? undefined : "/pricing",
+              cta: "See plans",
+            },
+            {
+              done: profileDone,
+              label: profileDone ? "Media kit complete" : "Complete your media kit",
+              hint: profileDone ? "Brands see your handles and reach" : "Handles, reach and niche — 2 minutes",
+              href: profileDone ? undefined : "/dashboard/profile",
+              cta: "Fill it in",
+            },
+            {
+              done: applications.length > 0,
+              label: applications.length > 0 ? `${applications.length} pitch${applications.length === 1 ? "" : "es"} sent` : "Send your first pitch",
+              hint: applications.length > 0 ? "Track status below" : "Pick a brief that fits your niche",
+              href: applications.length > 0 ? undefined : "/brands",
+              cta: "Browse briefs",
+            },
+          ];
+          const remaining = steps.filter((s) => !s.done).length;
+          if (remaining === 0) return null;
+          return (
+            <section aria-labelledby="getting-started" className="rounded-3xl border border-border bg-white p-6">
+              <div className="flex items-baseline justify-between mb-4">
+                <h2 id="getting-started" className="text-base font-bold text-primary">
+                  {remaining === 3 ? "Three steps to your first brand deal" : `${remaining} step${remaining === 1 ? "" : "s"} left`}
+                </h2>
+                <span className="text-xs text-text-secondary tabular-nums">{3 - remaining}/3 done</span>
+              </div>
+              <ol className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {steps.map((s, i) => (
+                  <li
+                    key={s.label}
+                    className={`rounded-2xl border p-4 flex flex-col gap-1 ${s.done ? "border-border bg-gray-50" : "border-primary/20 bg-white"}`}
+                  >
+                    <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+                      <span
+                        className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center tabular-nums ${
+                          s.done ? "bg-primary text-white" : "border border-primary/40 text-primary"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {s.done ? <CheckCircle2 className="w-3.5 h-3.5" /> : i + 1}
+                      </span>
+                      {s.label}
+                    </div>
+                    <p className="text-xs text-text-secondary pl-7">{s.hint}</p>
+                    {s.href && (
+                      <Link href={s.href} className="pl-7 mt-1 text-xs font-semibold text-accent hover:underline">
+                        {s.cta} →
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          );
+        })()}
+
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="rounded-3xl border-border shadow-xs bg-white">
@@ -163,9 +238,9 @@ export default function DashboardPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-black tracking-tight text-primary">My Brand Applications &amp; Deals</h2>
+              <h2 className="text-xl font-black tracking-tight text-primary">Your pitches</h2>
               <p className="text-xs text-text-secondary mt-0.5">
-                Real-time review status of your campaign pitches managed by Schbang.
+                Where each pitch stands with the brand team.
               </p>
             </div>
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-primary/5 text-primary border border-border">
@@ -179,13 +254,13 @@ export default function DashboardPage() {
                 <div className="h-16 w-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4 border border-border">
                   <Layers className="h-8 w-8 text-text-secondary opacity-40" />
                 </div>
-                <h3 className="text-lg font-bold text-primary mb-1">No Active Applications</h3>
+                <h3 className="text-lg font-bold text-primary mb-1">No pitches yet</h3>
                 <p className="text-xs text-text-secondary max-w-sm mb-6">
-                  You haven&apos;t pitched to any brand briefs yet. Browse open briefs from Britannia, NIVEA, Swiggy, and more to get started.
+                  Pick a brief that fits your niche. Britannia, NIVEA, Swiggy and more are open now.
                 </p>
                 <Link href="/brands">
-                  <Button variant="accent" className="shadow-lg shadow-accent/25">
-                    Explore Brand Briefs
+                  <Button variant="accent" >
+                    Find a brief to pitch
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>

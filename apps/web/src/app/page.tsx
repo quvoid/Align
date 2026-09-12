@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PLANS, formatINR, JOIN_CTA } from '@/lib/plans';
 import { Button } from '@/components/ui/button';
 import { MOCK_BRANDS } from '@/lib/mock-data';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,6 +18,10 @@ export default function Home() {
     {
       q: "How do payments and brand agreements work?",
       a: "Once an application is approved by Schbang campaign leads, creators receive a digital milestone agreement detailing deliverables and payout schedules in INR (₹). Payouts are protected via structured escrow milestones with automated TDS & GST invoicing.",
+    },
+    {
+      q: "What does Align cost?",
+      a: "Browsing briefs is free. To send a pitch you need a plan: ₹200 once for every current and future brand brief, or ₹50 a month, cancelled anytime. Align takes no commission on the fee a brand pays you.",
     },
     {
       q: "How are creator analytics and engagement rates verified?",
@@ -63,12 +68,12 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
           <h1 className="animate-fade-in-1 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-5 leading-[1.12] drop-shadow-2xl">
-            Where Creative Reach Meets <br className="hidden sm:inline" />
-            <span className="text-accent">Brand Purpose</span>
+            Get paid by India&apos;s biggest brands, <br className="hidden sm:inline" />
+            <span className="text-accent">no agency in between</span>
           </h1>
 
           <p className="animate-fade-in-2 text-sm sm:text-base md:text-lg text-white/80 max-w-xl mx-auto mb-8 leading-relaxed font-normal drop-shadow">
-            Pitch your verified social analytics directly to India&apos;s marquee brand briefs managed by Schbang.
+            Britannia, NIVEA, Swiggy, Myntra and more post paid campaign briefs here. Pitch your real numbers, keep 100% of your fee.
           </p>
 
           <div className="animate-fade-in-3 flex flex-col sm:flex-row items-center justify-center gap-3.5">
@@ -78,17 +83,17 @@ export default function Home() {
                 size="lg"
                 className="w-full sm:w-auto py-5 px-7 text-sm font-bold"
               >
-                Explore Active Briefs
+                Browse open briefs
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </Button>
             </Link>
-            <Link href="/auth/register" className="w-full sm:w-auto">
+            <Link href="/pricing" className="w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="lg"
                 className="w-full sm:w-auto bg-transparent hover:bg-white/10 text-white border-white/30 hover:border-white/60 py-5 px-7 text-sm font-semibold"
               >
-                Join Creator Roster
+                {JOIN_CTA} — all brands, forever
               </Button>
             </Link>
           </div>
@@ -108,8 +113,8 @@ export default function Home() {
               <dt className="text-sm text-white/70">briefs executed</dt>
             </div>
             <div className="sm:px-8 flex items-baseline gap-3">
-              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">50K+</dd>
-              <dt className="text-sm text-white/70">creators in network</dt>
+              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">₹0</dd>
+              <dt className="text-sm text-white/70">commission on your fee: 0%</dt>
             </div>
           </dl>
         </div>
@@ -135,9 +140,9 @@ export default function Home() {
             </li>
             <li className="space-y-2">
               <span className="text-sm font-semibold text-accent tabular-nums">2</span>
-              <h3 className="font-bold text-lg text-primary">Pitch with verified metrics</h3>
+              <h3 className="font-bold text-lg text-primary">Pitch with your real numbers</h3>
               <p className="text-sm text-text-secondary leading-relaxed">
-                Submit your Instagram, YouTube and Facebook analytics with your proposal and expected rate.
+                Unlock pitching for {formatINR(PLANS.all_access.price)} once or {formatINR(PLANS.monthly.price)} a month, then send your Instagram, YouTube and Facebook analytics with your rate.
               </p>
             </li>
             <li className="space-y-2">
@@ -190,7 +195,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link href="/brands">
               <Button size="lg" variant="accent" className="font-bold px-8 shadow-md shadow-accent/25">
-                See all {MOCK_BRANDS.length} briefs
+                See all {MOCK_BRANDS.length} open briefs
               </Button>
             </Link>
           </div>
@@ -224,16 +229,19 @@ export default function Home() {
       <section className="py-24 bg-background text-center border-t border-border">
         <div className="container mx-auto px-4 max-w-3xl flex flex-col items-center justify-center text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-primary">
-            Ready to align with India&apos;s premier brands?
+            {MOCK_BRANDS.length} briefs are open right now.
           </h2>
           <p className="text-text-secondary mb-8 text-lg leading-relaxed max-w-xl mx-auto">
-            Create a creator profile and pitch directly to campaigns managed by Schbang.
+            {JOIN_CTA} and pitch to every one of them — plus every brand we add later.
           </p>
-          <div className="flex justify-center w-full">
-            <Link href="/auth/register" className="inline-flex justify-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
+            <Link href="/join?plan=all_access" className="inline-flex justify-center">
               <Button variant="accent" size="lg" className="px-10 py-6 text-base font-bold">
-                Create your creator profile
+                {PLANS.all_access.cta}
               </Button>
+            </Link>
+            <Link href="/pricing" className="text-sm font-semibold text-text-secondary hover:text-primary underline-offset-4 hover:underline">
+              Or {formatINR(PLANS.monthly.price)}/month, cancel anytime
             </Link>
           </div>
         </div>

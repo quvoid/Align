@@ -6,6 +6,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useSignInModal } from '@/components/auth/sign-in-modal';
+import { JOIN_CTA } from '@/lib/plans';
 
 export const Navbar = () => {
   const { data: session } = useSession();
@@ -30,8 +31,14 @@ export const Navbar = () => {
         {/* Desktop Navigation - Clean Text Links (No Icons, No Badges) */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-text-secondary">
           <Link href="/brands" className="hover:text-primary transition-colors">
-            Brands
+            Open briefs
           </Link>
+
+          {!isAdminOrBrand && (
+            <Link href="/pricing" className="hover:text-primary transition-colors">
+              Pricing
+            </Link>
+          )}
 
           {isAdminOrBrand && (
             <Link href="/creators" className="hover:text-primary transition-colors">
@@ -41,7 +48,7 @@ export const Navbar = () => {
 
           {session?.user && (
             <Link href="/dashboard" className="hover:text-primary transition-colors">
-              Dashboard
+              {isAdminOrBrand ? 'Dashboard' : 'My pitches'}
             </Link>
           )}
 
@@ -87,9 +94,9 @@ export const Navbar = () => {
               >
                 Log In
               </button>
-              <Link href="/auth/register">
+              <Link href="/pricing">
                 <Button size="sm" variant="primary" className="rounded-full px-5 py-1.5 text-xs font-bold shadow-xs">
-                  Join Align
+                  {JOIN_CTA}
                 </Button>
               </Link>
             </div>
@@ -117,8 +124,18 @@ export const Navbar = () => {
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
             >
-              Brands
+              Open briefs
             </Link>
+
+            {!isAdminOrBrand && (
+              <Link
+                href="/pricing"
+                onClick={() => setMobileMenuOpen(false)}
+                className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
+              >
+                Pricing
+              </Link>
+            )}
 
             {isAdminOrBrand && (
               <Link
@@ -136,7 +153,7 @@ export const Navbar = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
               >
-                Dashboard
+                {isAdminOrBrand ? 'Dashboard' : 'My pitches'}
               </Link>
             )}
 
@@ -190,9 +207,9 @@ export const Navbar = () => {
                 >
                   Log In
                 </Button>
-                <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="primary" size="sm" className="w-full rounded-full text-xs">
-                    Join Align
+                    {JOIN_CTA}
                   </Button>
                 </Link>
               </div>

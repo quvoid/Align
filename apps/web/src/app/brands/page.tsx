@@ -130,7 +130,7 @@ export default function BrandsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
-              Explore Brand Briefs
+              Open brand briefs
             </h1>
             <p className="text-white/70 text-base leading-relaxed">
               Browse partnership briefs from marquee brands managed by Schbang. Like/Express interest to appear on the brand manager&apos;s direct outreach list, or click to apply.
