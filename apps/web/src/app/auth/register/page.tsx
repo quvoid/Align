@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Sparkles, ArrowRight } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
+const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
+
 export default function RegisterPage() {
   const { data: session, status } = useSession();
   const [name, setName] = useState("");
@@ -72,6 +74,7 @@ export default function RegisterPage() {
             <p className="text-sm text-text-secondary">Join as a creator to connect with brands</p>
           </CardHeader>
           <CardContent className="space-y-6">
+            {GOOGLE_ENABLED ? (
             <Button
               variant="outline"
               className="w-full h-12 rounded-xl text-primary font-medium"
@@ -98,6 +101,11 @@ export default function RegisterPage() {
               </svg>
               Sign up with Google
             </Button>
+            ) : (
+              <p className="text-xs text-text-secondary text-center rounded-xl border border-dashed border-border py-3 px-4">
+                Google sign-in is off in this environment — use a demo profile or email.
+              </p>
+            )}
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

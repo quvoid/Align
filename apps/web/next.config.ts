@@ -28,6 +28,14 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  env: {
+    // Lets the sign-in UI hide the Google button when OAuth keys are absent,
+    // instead of calling a provider that isn't registered (which loops back
+    // to the sign-in page).
+    NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: String(
+      Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)
+    ),
+  },
   output: process.env.DOCKER_BUILD === "1" ? "standalone" : undefined,
   typescript: {
     ignoreBuildErrors: false,

@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
+const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
+
 // Routes that need a signed-in user. Anything else is browsable anonymously.
 const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/apply", "/creators", "/join"];
 
@@ -167,7 +169,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
           <div className="text-center space-y-2">
             <h2 className="text-xl font-bold text-primary">Sign in to Align</h2>
             <p className="text-xs text-text-secondary leading-relaxed max-w-xs mx-auto">
-              {reason || "Pick a demo profile to jump straight in, or use Google."}
+              {reason || (GOOGLE_ENABLED ? "Pick a demo profile to jump straight in, or use Google." : "Pick a demo profile to jump straight in.")}
             </p>
           </div>
 
@@ -200,15 +202,21 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
             </Button>
           </div>
 
-          <Button
-            variant="outline"
-            className="w-full h-11 rounded-xl text-primary font-medium"
-            onClick={() => signIn("google", { callbackUrl: callbackUrl || "/dashboard" })}
-            disabled={isLoading}
-          >
-            <GoogleIcon />
-            Continue with Google
-          </Button>
+          {GOOGLE_ENABLED ? (
+            <Button
+              variant="outline"
+              className="w-full h-11 rounded-xl text-primary font-medium"
+              onClick={() => signIn("google", { callbackUrl: callbackUrl || "/dashboard" })}
+              disabled={isLoading}
+            >
+              <GoogleIcon />
+              Continue with Google
+            </Button>
+          ) : (
+            <p className="text-xs text-text-secondary text-center rounded-xl border border-dashed border-border py-3 px-4">
+              Google sign-in is off in this environment — use a demo profile or email.
+            </p>
+          )}
 
           {showEmailForm ? (
             <form onSubmit={handleSubmit} className="space-y-3 animate-in fade-in duration-200">
