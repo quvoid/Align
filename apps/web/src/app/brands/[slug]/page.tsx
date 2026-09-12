@@ -16,7 +16,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
 
   if (!brand) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center p-8 text-center">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center px-8 pt-28 pb-12 text-center">
         <h1 className="text-2xl font-bold text-primary mb-2">Campaign Brief Not Found</h1>
         <p className="text-text-secondary text-sm mb-6">The brand brief you requested is either expired or invalid.</p>
         <Link href="/brands">
@@ -92,7 +92,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
       />
 
       {/* Breadcrumb Navigation for SEO */}
-      <div className="bg-white border-b border-border py-3">
+      <div className="bg-white border-b border-border pt-20 pb-3">
         <div className="container mx-auto px-4">
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-text-secondary">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>

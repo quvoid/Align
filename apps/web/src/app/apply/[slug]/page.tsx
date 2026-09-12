@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { INITIAL_BRANDS, ApplicationItem } from "@/lib/mock-data";
 import { getUserData, addApplication } from "@/lib/user-store";
 import { useSession } from "next-auth/react";
+import { useSignInModal } from "@/components/auth/sign-in-modal";
 import Link from "next/link";
 import {
   CheckCircle,
@@ -54,6 +55,7 @@ export default function ApplyPage({
   const { toast } = useToast();
   const router = useRouter();
   const { data: session } = useSession();
+  const { openSignIn } = useSignInModal();
   const [step, setStep] = useState(1);
 
   const brand = INITIAL_BRANDS.find((b) => b.slug === resolvedParams.slug);
@@ -117,7 +119,7 @@ export default function ApplyPage({
 
   if (!brand) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 pt-24 pb-12">
         <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
         <h1 className="text-2xl font-bold mb-2">Brand Brief Not Found</h1>
         <p className="text-text-secondary mb-6">The campaign you are looking for does not exist.</p>
@@ -158,11 +160,7 @@ export default function ApplyPage({
 
   const handleSubmit = async () => {
     if (!session?.user?.email) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to submit your application.",
-        type: "error",
-      });
+      openSignIn({ reason: "Sign in to submit this pitch. Your form answers stay filled in." });
       return;
     }
 
@@ -208,7 +206,7 @@ export default function ApplyPage({
 
   return (
     <div className="min-h-screen bg-background pb-32">
-      <div className="bg-primary text-white py-8">
+      <div className="bg-primary text-white pt-24 pb-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
             <img
@@ -230,7 +228,7 @@ export default function ApplyPage({
 
       <div className="border-b border-border bg-white sticky top-0 z-10">
         <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto py-4 gap-1">
+          <div className="flex overflow-x-auto pt-16 pb-3 gap-1">
             {STEPS.map((s) => {
               const Icon = s.icon;
               const isActive = s.id === step;

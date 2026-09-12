@@ -47,19 +47,8 @@ export const authConfig: NextAuthConfig = {
           };
         }
 
-        // 2. Any @schbang.com email → ADMIN
-        if (email.endsWith("@schbang.com")) {
-          const displayName = email.split("@")[0] || "Admin";
-          return {
-            id: `admin_${Date.now()}`,
-            name: displayName.charAt(0).toUpperCase() + displayName.slice(1),
-            email,
-            role: "ADMIN",
-            image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`,
-          };
-        }
-
-        // 3. Rohan Joshi Creator Account
+        // 2. Rohan Joshi Creator Account (checked BEFORE the @schbang.com
+        //    catch-all so the demo creator never inherits ADMIN)
         if (
           email === "rohan@schbang.com" ||
           email === "rohan.creates@gmail.com"
@@ -74,7 +63,7 @@ export const authConfig: NextAuthConfig = {
           };
         }
 
-        // 4. Aanya Sen Beauty Creator Account
+        // 3. Aanya Sen Beauty Creator Account
         if (
           email === "aanya@schbang.com" ||
           email === "aanya.beauty@gmail.com"
@@ -86,6 +75,18 @@ export const authConfig: NextAuthConfig = {
             role: "CREATOR",
             image:
               "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop",
+          };
+        }
+
+        // 4. Any other @schbang.com email → ADMIN
+        if (email.endsWith("@schbang.com")) {
+          const displayName = email.split("@")[0] || "Admin";
+          return {
+            id: `admin_${Date.now()}`,
+            name: displayName.charAt(0).toUpperCase() + displayName.slice(1),
+            email,
+            role: "ADMIN",
+            image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`,
           };
         }
 

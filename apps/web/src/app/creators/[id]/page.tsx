@@ -48,7 +48,7 @@ export default function CreatorProfileDetailPage({
   // If a creator tries to access another creator's scorecard, show permission barrier
   if (session?.user?.role === "CREATOR") {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center py-16 px-4 bg-background">
+      <div className="min-h-[80vh] flex items-center justify-center pt-28 pb-16 px-4 bg-background">
         <div className="max-w-md w-full text-center space-y-5 p-8 bg-white rounded-3xl border border-border shadow-xl">
           <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
             <Lock className="w-6 h-6" />
@@ -106,7 +106,7 @@ export default function CreatorProfileDetailPage({
   return (
     <div className="bg-background min-h-screen pb-24">
       {/* Breadcrumbs */}
-      <div className="bg-white border-b border-border py-3">
+      <div className="bg-white border-b border-border pt-20 pb-3">
         <div className="container mx-auto px-4">
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-text-secondary">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>

@@ -169,7 +169,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Admin Top Header */}
-      <div className="bg-primary text-white py-8 border-b border-white/10">
+      <div className="bg-primary text-white pt-24 pb-8 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>

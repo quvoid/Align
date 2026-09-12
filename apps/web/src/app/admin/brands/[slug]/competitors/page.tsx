@@ -94,6 +94,9 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   const [selectedCreator, setSelectedCreator] = useState<(CompetitorPostCollab & { competitorName: string }) | null>(null);
   const [scoutPitchNote, setScoutPitchNote] = useState('');
 
+  // Roster filter: null = every tracked competitor, otherwise a competitor id
+  const [rosterCompetitorId, setRosterCompetitorId] = useState<string | null>(null);
+
   // Sort State
   const [sortCol, setSortCol] = useState<SortColumn>('date');
   const [sortDir, setSortDir] = useState<SortDirection>('desc');
@@ -101,7 +104,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   // RBAC check: creators cannot access
   if (session && session.user.role === 'CREATOR') {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 bg-background text-center">
+      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 pt-24 pb-12 bg-background text-center">
         <div className="w-16 h-16 rounded-3xl bg-accent/10 text-accent flex items-center justify-center mb-4">
           <Lock className="w-8 h-8" />
         </div>
@@ -181,6 +184,9 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         if (selectedCompetitorId === competitorId) {
           closeBenchmark();
         }
+        if (rosterCompetitorId === competitorId) {
+          setRosterCompetitorId(null);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -201,6 +207,15 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
     } finally {
       setLoadingBenchmark(false);
     }
+  };
+
+  const focusRosterOnCompetitor = (competitorId: string | null) => {
+    setRosterCompetitorId(competitorId);
+    setActiveTab('roster');
+    // Let React paint the roster before scrolling to it
+    requestAnimationFrame(() => {
+      document.getElementById('competitor-roster')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   };
 
   const closeBenchmark = () => {
@@ -261,8 +276,13 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
     }
   };
 
+  const rosterCompetitor = config?.competitors.find((c) => c.id === rosterCompetitorId) ?? null;
+
   const sortedCreators = useMemo(() => {
-    return [...creators].sort((a, b) => {
+    const scoped = rosterCompetitor
+      ? creators.filter((c) => c.competitorName === rosterCompetitor.name)
+      : creators;
+    return [...scoped].sort((a, b) => {
       let valA: number, valB: number;
 
       if (sortCol === 'date') {
@@ -283,7 +303,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
       if (valA > valB) return sortDir === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [creators, sortCol, sortDir]);
+  }, [creators, rosterCompetitor, sortCol, sortDir]);
 
   // Aggregate fusion dataset across all competitors
   const aggregatedFusion = useMemo(() => {
@@ -316,7 +336,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[60vh] pt-24">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
       </div>
     );
@@ -324,7 +344,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
   if (!config) {
     return (
-      <div className="max-w-4xl mx-auto p-12 text-center space-y-4">
+      <div className="max-w-4xl mx-auto px-12 pt-32 pb-12 text-center space-y-4">
         <h2 className="text-2xl font-bold text-primary">Brand Not Found</h2>
         <p className="text-text-secondary">No competitor profile exists for &quot;{slug}&quot;.</p>
         <Link href="/admin/competitor-intelligence">
@@ -539,16 +559,21 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               >
                 <CardContent className="p-6 space-y-4">
                   <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => focusRosterOnCompetitor(comp.id)}
+                      className="flex items-center gap-3 text-left group/name"
+                      title={`View creators who worked with ${comp.name}`}
+                    >
                       <img src={comp.avatar} alt={comp.name} className="w-11 h-11 rounded-2xl object-cover border border-border shadow-xs" />
                       <div>
-                        <h3 className="font-bold text-primary text-sm truncate max-w-[150px]" title={comp.name}>{comp.name}</h3>
+                        <h3 className="font-bold text-primary text-sm truncate max-w-[150px] group-hover/name:text-accent transition-colors" title={comp.name}>{comp.name}</h3>
                         <span className="text-xs font-semibold text-accent flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                           {comp.igHandle}
                         </span>
                       </div>
-                    </div>
+                    </button>
                     <button
                       onClick={() => handleRemoveCompetitor(comp.id)}
                       className="text-text-secondary hover:text-red-500 transition-all p-1.5 rounded-xl hover:bg-red-50 active:scale-90"
@@ -573,7 +598,17 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-1">
+                  <Button
+                    variant={rosterCompetitorId === comp.id ? 'primary' : 'outline'}
+                    size="sm"
+                    className="w-full text-xs font-bold border-border"
+                    onClick={() => focusRosterOnCompetitor(comp.id)}
+                  >
+                    <Users className="w-3 h-3 mr-1.5" />
+                    View {comp.stats.topCreators.length} Creators
+                  </Button>
+
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -677,18 +712,54 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
       {/* TAB 1: Unified Competitor Creators Roster (Last 12 Months) */}
       {activeTab === 'roster' && (
-        <section className="space-y-4">
+        <section id="competitor-roster" className="space-y-4 scroll-mt-24">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-primary flex items-center gap-2">
                 <Users className="w-4 h-4 text-accent" />
-                Competitor Creators Roster (Last 12 Months)
+                {rosterCompetitor ? `${rosterCompetitor.name} — Creator Roster` : 'Competitor Creators Roster'} (Last 12 Months)
               </h2>
               <p className="text-xs text-text-secondary">
-                Includes Module D signals: Spend Multiplier, Comment Intent NLP, and Re-Hire Loyalty Index.
+                {rosterCompetitor
+                  ? `Every creator ${rosterCompetitor.name} paid or partnered with in the last year. Scout any of them for ${config.brandName}.`
+                  : 'Includes Module D signals: Spend Multiplier, Comment Intent NLP, and Re-Hire Loyalty Index.'}
               </p>
             </div>
-            <Badge className="bg-primary text-white text-xs font-bold">{creators.length} Total Collabs</Badge>
+            <Badge className="bg-primary text-white text-xs font-bold">{sortedCreators.length} Collabs</Badge>
+          </div>
+
+          {/* Competitor filter chips */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setRosterCompetitorId(null)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-colors ${
+                rosterCompetitorId === null
+                  ? 'bg-primary text-white border-primary'
+                  : 'bg-white text-text-secondary border-border hover:text-primary hover:border-primary/40'
+              }`}
+            >
+              All competitors ({creators.length})
+            </button>
+            {config.competitors.map((comp) => {
+              const count = creators.filter((c) => c.competitorName === comp.name).length;
+              const active = rosterCompetitorId === comp.id;
+              return (
+                <button
+                  key={comp.id}
+                  type="button"
+                  onClick={() => setRosterCompetitorId(active ? null : comp.id)}
+                  className={`inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-[11px] font-bold border transition-colors ${
+                    active
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-white text-text-secondary border-border hover:text-primary hover:border-primary/40'
+                  }`}
+                >
+                  <img src={comp.avatar} alt="" className="w-5 h-5 rounded-full object-cover" />
+                  {comp.name} ({count})
+                </button>
+              );
+            })}
           </div>
 
           <Card className="rounded-3xl border-border bg-white shadow-xs overflow-hidden">
@@ -727,7 +798,9 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                   {sortedCreators.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-8 text-center text-text-secondary text-xs">
-                        No collaboration data found for tracked competitors.
+                        {rosterCompetitor
+                          ? `No collaborations recorded for ${rosterCompetitor.name} in the last 12 months.`
+                          : 'No collaboration data found for tracked competitors.'}
                       </td>
                     </tr>
                   ) : (

@@ -10,13 +10,12 @@ export default auth((req) => {
   const isAdminRoute = pathname.startsWith("/admin");
   const isCreatorsRoute = pathname.startsWith("/creators");
 
-  // If unauthenticated, redirect to signin for protected routes
-  if (!isLoggedIn && (isDashboardRoute || isAdminRoute)) {
-    return NextResponse.redirect(new URL("/auth/signin", req.nextUrl));
-  }
+  // Anonymous visitors are NOT redirected here: the client-side
+  // SignInModalProvider shows a sign-in popup over the page instead,
+  // which is a softer onboarding than bouncing to /auth/signin.
 
-  // Non-admin users cannot access /admin → redirect to /dashboard
-  if (isAdminRoute && role !== "ADMIN") {
+  // Signed-in non-admins cannot access /admin → redirect to /dashboard
+  if (isAdminRoute && isLoggedIn && role !== "ADMIN") {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 

@@ -97,7 +97,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero Header */}
-      <div className="bg-primary text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+      <div className="bg-primary text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-accent uppercase tracking-wider">
@@ -113,7 +113,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/dashboard/profile">
-              <Button variant="outline" className="text-xs font-bold border-white/20 text-white hover:bg-white/10">
+              <Button variant="outline" className="text-xs font-bold bg-transparent border-white/20 text-white hover:bg-white/10 hover:border-white/40">
                 <FileText className="mr-1.5 h-4 w-4" />
                 Edit Media Kit
               </Button>

@@ -58,7 +58,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 sm:px-6 lg:px-8 pt-24 pb-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center flex flex-col items-center">
           <Link href="/" className="inline-flex items-center space-x-2">
@@ -128,7 +128,7 @@ export default function SignInPage() {
               <Button
                 variant="outline"
                 className="w-full justify-start rounded-xl text-left bg-white border-border"
-                onClick={() => loginWithEmail("rohan@schbang.com", "creator123", "/dashboard")}
+                onClick={() => loginWithEmail("rohan.creates@gmail.com", "creator123", "/dashboard")}
                 disabled={isLoading}
               >
                 <Sparkles className="mr-2 h-4 w-4 text-accent" />

@@ -54,7 +54,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 sm:px-6 lg:px-8 pt-24 pb-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center flex flex-col items-center">
           <Link href="/" className="inline-flex items-center space-x-2">

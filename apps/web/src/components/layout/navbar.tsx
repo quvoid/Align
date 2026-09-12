@@ -4,11 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, LogOut } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
+import { useSignInModal } from '@/components/auth/sign-in-modal';
 
 export const Navbar = () => {
   const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { openSignIn } = useSignInModal();
 
   const isAdminOrBrand = session?.user?.role === 'ADMIN' || (session?.user as any)?.role === 'BRAND';
 
@@ -69,7 +71,7 @@ export const Navbar = () => {
                 </span>
               </div>
               <button
-                onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+                onClick={() => signOut({ callbackUrl: '/' })}
                 className="text-xs font-semibold text-text-secondary hover:text-red-600 transition-colors px-2 py-1"
                 title="Sign out"
               >
@@ -78,9 +80,13 @@ export const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <Link href="/auth/signin" className="text-sm font-semibold text-text-secondary hover:text-primary transition-colors px-2">
+              <button
+                type="button"
+                onClick={() => openSignIn()}
+                className="text-sm font-semibold text-text-secondary hover:text-primary transition-colors px-2"
+              >
                 Log In
-              </Link>
+              </button>
               <Link href="/auth/register">
                 <Button size="sm" variant="primary" className="rounded-full px-5 py-1.5 text-xs font-bold shadow-xs">
                   Join Align
@@ -164,7 +170,7 @@ export const Navbar = () => {
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    signOut({ callbackUrl: '/auth/signin' });
+                    signOut({ callbackUrl: '/' });
                   }}
                   className="text-xs font-bold text-red-600 hover:underline"
                 >
@@ -173,11 +179,17 @@ export const Navbar = () => {
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
-                <Link href="/auth/signin" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full rounded-full text-xs">
-                    Log In
-                  </Button>
-                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full rounded-full text-xs"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openSignIn();
+                  }}
+                >
+                  Log In
+                </Button>
                 <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="primary" size="sm" className="w-full rounded-full text-xs">
                     Join Align
