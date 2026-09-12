@@ -31,30 +31,7 @@ import { Modal } from '@/components/ui/modal';
 import { useToast } from '@/components/ui/toast';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import {
-  ArrowLeft,
-  Plus,
-  Trash2,
-  Zap,
-  BarChart2,
-  Eye,
-  Calendar,
-  Users,
-  TrendingUp,
-  Award,
-  Lock,
-  Sparkles,
-  ShieldCheck,
-  ChevronDown,
-  ChevronUp,
-  Download,
-  Flame,
-  Search,
-  ExternalLink,
-  Layers,
-  MessageSquare,
-  Repeat,
-} from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Zap, BarChart2, Users, Lock, ShieldCheck, ChevronDown, ChevronUp, Download, Flame, ExternalLink, Layers, MessageSquare } from "lucide-react";
 
 type SortColumn = 'date' | 'views' | 'followers';
 type SortDirection = 'asc' | 'desc';
@@ -160,7 +137,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
       const added = addCompetitorToBrand(slug, newHandle, newName || undefined);
 
       if (added) {
-        toast({ title: 'Competitor Added! ⚡', description: `${added.name} added to ${config?.brandName || slug}'s watchlist.`, type: 'success' });
+        toast({ title: 'Competitor added', description: `${added.name} is now tracked for ${config?.brandName || slug}.`, type: 'success' });
         setNewHandle('');
         setNewName('');
         loadData();
@@ -247,7 +224,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast({ title: 'Report Downloaded! 📥', description: 'Master audit deliverable exported as JSON.', type: 'success' });
+    toast({ title: 'Report downloaded', description: 'Audit exported as JSON.', type: 'success' });
   };
 
   const handleScoutClick = (creator: CompetitorPostCollab & { competitorName: string }) => {
@@ -259,7 +236,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   const handleDispatchScoutOffer = () => {
     if (!selectedCreator) return;
     toast({
-      title: 'Scouting Invitation Dispatched! ⚡',
+      title: `Invitation sent to ${selectedCreator.creatorName}`,
       description: `Invited ${selectedCreator.creatorName} (${selectedCreator.creatorHandle}) to collaborate with ${config?.brandName || 'the brand'}.`,
       type: 'success',
     });
@@ -482,10 +459,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
         {/* AI Strategy Insights */}
         <Card className="rounded-3xl border-border bg-white shadow-xs p-6 space-y-4">
-          <div className="flex items-center gap-2 text-accent text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-4 h-4" />
-            AI Strategic Counter-Plays for {config.brandName}
-          </div>
+          <h2 className="text-sm font-bold text-primary">Suggested counter-plays for {config.brandName}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {benchmarkData.recommendedCounterPlays.map((play, idx) => (
               <div
@@ -523,7 +497,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
             </div>
           </div>
           <p className="text-xs text-text-secondary">
-            Tracking {config.competitors.length} of 4 maximum competitors with 12-month dual-engine intelligence (IG Grid + Meta Ad Library).
+            Tracking {config.competitors.length} of 4 competitors across Instagram posts and the Meta Ad Library, last 12 months.
           </p>
         </div>
 
@@ -540,7 +514,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-primary flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-accent" />
-            Tracked Competitors Watchlist ({config.competitors.length}/4)
+            Tracked competitors ({config.competitors.length}/4)
           </h2>
         </div>
 
@@ -639,10 +613,9 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         <Card className="rounded-3xl border-border bg-white shadow-xs p-6">
           <form onSubmit={handleAddCompetitor} className="space-y-3">
             <div>
-              <span className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 mb-1">
-                <Plus className="w-4 h-4 text-accent" />
-                Add Competitor to {config.brandName}&apos;s Watchlist ({4 - config.competitors.length} slots remaining)
-              </span>
+              <h2 className="text-sm font-bold text-primary mb-1">
+                Add a competitor ({4 - config.competitors.length} of 4 slots left)
+              </h2>
               <p className="text-[11px] text-text-secondary">
                 Enter an Instagram handle or profile URL to pull collaboration intelligence, boost detection, and creator history.
               </p>
@@ -721,8 +694,8 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               </h2>
               <p className="text-xs text-text-secondary">
                 {rosterCompetitor
-                  ? `Every creator ${rosterCompetitor.name} paid or partnered with in the last year. Scout any of them for ${config.brandName}.`
-                  : 'Includes Module D signals: Spend Multiplier, Comment Intent NLP, and Re-Hire Loyalty Index.'}
+                  ? `Creators ${rosterCompetitor.name} paid or partnered with in the last year.`
+                  : 'Spend multiplier, comment intent and re-hire loyalty for every collab.'}
               </p>
             </div>
             <Badge className="bg-primary text-white text-xs font-bold">{sortedCreators.length} Collabs</Badge>
@@ -1060,7 +1033,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                         <p className="text-[11px] text-text-secondary italic">&ldquo;{ad.body}&rdquo;</p>
                         <div className="flex items-center justify-between pt-1 text-[10px] text-text-secondary border-t border-border">
                           <span>Library ID: {ad.library_id}</span>
-                          <span className="font-semibold text-accent">{ad.is_active ? '🟢 Active' : '⏹️ Inactive'}</span>
+                          <span className="font-semibold text-accent">{ad.is_active ? 'Active' : 'Inactive'}</span>
                         </div>
                       </div>
                     ))}
@@ -1116,7 +1089,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                 Cancel
               </Button>
               <Button variant="accent" size="sm" onClick={handleDispatchScoutOffer} className="font-bold">
-                ⚡ Dispatch Deal Invitation
+                Send invitation
               </Button>
             </div>
           </div>

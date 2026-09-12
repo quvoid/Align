@@ -78,8 +78,8 @@ export default function BrandsPage() {
 
     if (isLiked) {
       toast({
-        title: `❤️ Expressed Interest in ${brandName}`,
-        description: "Your creator profile is now highlighted on the Schbang brand team's radar for direct outreach!",
+        title: `Interest sent to ${brandName}`,
+        description: "The Schbang brand team can now see your profile for direct outreach.",
         type: "success",
       });
     } else {
@@ -418,7 +418,7 @@ export default function BrandsPage() {
                   <div className="bg-emerald-50/50 border border-emerald-200/60 p-4 rounded-xl text-xs text-emerald-950 leading-relaxed font-medium space-y-1.5">
                     <p>{selectedBrand.requirements}</p>
                     <p className="text-[11px] text-emerald-700">
-                      ✓ Open to Instagram, YouTube, and Facebook verified profiles.
+                      Open to verified Instagram, YouTube and Facebook profiles.
                     </p>
                   </div>
                 </div>

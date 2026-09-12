@@ -41,23 +41,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Micro-animations & UX Interactions */
-@keyframes textShimmer {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animate-shimmer {
-  background-size: 200% auto;
-  animation: textShimmer 4s ease infinite;
-}
-
 @keyframes fadeInUp {
   from {
     opacity: 0;

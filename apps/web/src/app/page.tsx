@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MOCK_BRANDS } from '@/lib/mock-data';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, ShieldCheck, Zap, Users, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   const faqList = [
@@ -64,13 +64,11 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
           <h1 className="animate-fade-in-1 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-5 leading-[1.12] drop-shadow-2xl">
             Where Creative Reach Meets <br className="hidden sm:inline" />
-            <span className="animate-shimmer text-transparent bg-clip-text bg-gradient-to-r from-accent via-amber-300 via-orange-400 to-accent">
-              Brand Purpose
-            </span>
+            <span className="text-accent">Brand Purpose</span>
           </h1>
 
           <p className="animate-fade-in-2 text-sm sm:text-base md:text-lg text-white/80 max-w-xl mx-auto mb-8 leading-relaxed font-normal drop-shadow">
-            Welcome to <strong className="text-white font-bold">Align</strong>. Pitch your verified social analytics directly to India&apos;s marquee brand briefs managed by Schbang.
+            Pitch your verified social analytics directly to India&apos;s marquee brand briefs managed by Schbang.
           </p>
 
           <div className="animate-fade-in-3 flex flex-col sm:flex-row items-center justify-center gap-3.5">
@@ -78,7 +76,7 @@ export default function Home() {
               <Button
                 variant="accent"
                 size="lg"
-                className="w-full sm:w-auto shadow-2xl shadow-accent/40 py-5 px-7 text-sm font-bold hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
+                className="w-full sm:w-auto py-5 px-7 text-sm font-bold"
               >
                 Explore Active Briefs
                 <ArrowRight className="w-4 h-4 ml-1.5" />
@@ -88,7 +86,7 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border-white/25 backdrop-blur-md py-5 px-7 text-sm font-semibold hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
+                className="w-full sm:w-auto bg-transparent hover:bg-white/10 text-white border-white/30 hover:border-white/60 py-5 px-7 text-sm font-semibold"
               >
                 Join Creator Roster
               </Button>
@@ -98,22 +96,22 @@ export default function Home() {
       </section>
 
       {/* Stats Bar */}
-      <section className="bg-primary text-white py-12 border-y border-white/10">
+      <section className="bg-primary text-white py-10 border-y border-white/10">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-white/15">
-            <div className="py-2">
-              <div className="text-4xl font-black text-accent mb-1">300+</div>
-              <div className="text-xs uppercase tracking-widest text-white/70 font-semibold">Marquee Brand Accounts</div>
+          <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x divide-white/15 max-w-4xl mx-auto">
+            <div className="sm:px-8 flex items-baseline gap-3">
+              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">300+</dd>
+              <dt className="text-sm text-white/70">brand accounts</dt>
             </div>
-            <div className="py-2">
-              <div className="text-4xl font-black text-accent mb-1">1,000+</div>
-              <div className="text-xs uppercase tracking-widest text-white/70 font-semibold">Campaign Briefs Executed</div>
+            <div className="sm:px-8 flex items-baseline gap-3">
+              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">1,000+</dd>
+              <dt className="text-sm text-white/70">briefs executed</dt>
             </div>
-            <div className="py-2">
-              <div className="text-4xl font-black text-accent mb-1">50K+</div>
-              <div className="text-xs uppercase tracking-widest text-white/70 font-semibold">Creators in Network</div>
+            <div className="sm:px-8 flex items-baseline gap-3">
+              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">50K+</dd>
+              <dt className="text-sm text-white/70">creators in network</dt>
             </div>
-          </div>
+          </dl>
         </div>
       </section>
 
@@ -123,41 +121,33 @@ export default function Home() {
           <div className="text-center mb-16 max-w-2xl mx-auto">
             <h2 className="text-3xl font-extrabold tracking-tight mb-4 text-primary">How Align Works</h2>
             <p className="text-text-secondary text-base leading-relaxed">
-              A streamlined, three-step bridge between creator performance and brand budgets.
+              Three steps from your analytics to a signed brand deal.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="p-8 rounded-3xl border border-border bg-background/60 flex flex-col items-center text-center hover:shadow-xl hover:border-accent/40 transform hover:-translate-y-1 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mb-5 shadow-sm">
-                <Zap className="w-7 h-7" />
-              </div>
-              <h3 className="font-bold text-lg mb-2 text-primary">Discover Open Briefs</h3>
+          <ol className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 max-w-5xl mx-auto border-t border-border pt-10">
+            <li className="space-y-2">
+              <span className="text-sm font-semibold text-accent tabular-nums">1</span>
+              <h3 className="font-bold text-lg text-primary">Find an open brief</h3>
               <p className="text-sm text-text-secondary leading-relaxed">
-                Filter through active campaigns across industries like Tech, Fashion, FMCG, and Lifestyle based on your niche and follower tier.
+                Filter active campaigns across Tech, Fashion, FMCG and Lifestyle by your niche and follower tier.
               </p>
-            </div>
-
-            <div className="p-8 rounded-3xl border border-border bg-background/60 flex flex-col items-center text-center hover:shadow-xl hover:border-accent/40 transform hover:-translate-y-1 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-5 shadow-sm">
-                <ShieldCheck className="w-7 h-7" />
-              </div>
-              <h3 className="font-bold text-lg mb-2 text-primary">Submit Verified Metrics</h3>
+            </li>
+            <li className="space-y-2">
+              <span className="text-sm font-semibold text-accent tabular-nums">2</span>
+              <h3 className="font-bold text-lg text-primary">Pitch with verified metrics</h3>
               <p className="text-sm text-text-secondary leading-relaxed">
-                Fill our 6-step application with your Instagram, YouTube, and Facebook analytics along with your proposal pitch and expected rate.
+                Submit your Instagram, YouTube and Facebook analytics with your proposal and expected rate.
               </p>
-            </div>
-
-            <div className="p-8 rounded-3xl border border-border bg-background/60 flex flex-col items-center text-center hover:shadow-xl hover:border-accent/40 transform hover:-translate-y-1 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-green-500/10 text-green-600 flex items-center justify-center mb-5 shadow-sm">
-                <Users className="w-7 h-7" />
-              </div>
-              <h3 className="font-bold text-lg mb-2 text-primary">Align &amp; Execute</h3>
+            </li>
+            <li className="space-y-2">
+              <span className="text-sm font-semibold text-accent tabular-nums">3</span>
+              <h3 className="font-bold text-lg text-primary">Get shortlisted and paid</h3>
               <p className="text-sm text-text-secondary leading-relaxed">
-                Schbang brand managers review, shortlist, and approve submissions. Get digital agreements and track campaign deliverables.
+                Schbang brand managers review and approve. You get a digital agreement and track deliverables to payout.
               </p>
-            </div>
-          </div>
+            </li>
+          </ol>
         </div>
       </section>
 
@@ -166,7 +156,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold tracking-tight mb-3">Featured Brand Opportunities</h2>
-            <p className="text-text-secondary">Discover active collaboration briefs looking for creators like you.</p>
+            <p className="text-text-secondary">Active briefs looking for creators right now.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -174,9 +164,8 @@ export default function Home() {
               <Card key={brand.id} className="interactive-card overflow-hidden flex flex-col border-border/80 group">
                 <div className="h-44 overflow-hidden relative bg-gray-100">
                   <img src={brand.coverImage} alt={brand.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/70 backdrop-blur-md text-white text-xs font-semibold rounded-full uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                    {brand.budgetTier} Tier
+                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/75 text-white text-xs font-semibold rounded-full">
+                    {brand.budgetTier} tier
                   </div>
                 </div>
                 <CardContent className="p-6 flex-1 flex flex-col">
@@ -190,7 +179,7 @@ export default function Home() {
                   <p className="text-sm text-text-secondary line-clamp-3 mb-6 flex-1 leading-relaxed">{brand.description}</p>
                   <Link href={`/brands/${brand.slug}`} className="mt-auto">
                     <Button variant="outline" className="w-full group-hover:border-accent group-hover:text-accent font-semibold transition-all">
-                      View Campaign Brief &rarr;
+                      View brief
                     </Button>
                   </Link>
                 </CardContent>
@@ -201,7 +190,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link href="/brands">
               <Button size="lg" variant="accent" className="font-bold px-8 shadow-md shadow-accent/25">
-                Explore All {MOCK_BRANDS.length}+ Brand Briefs &rarr;
+                See all {MOCK_BRANDS.length} briefs
               </Button>
             </Link>
           </div>
@@ -211,35 +200,23 @@ export default function Home() {
       {/* SEO FAQ & Generative Engine Optimization Section */}
       <section className="py-24 bg-white border-t border-border">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-2">
-              <HelpCircle className="w-3.5 h-3.5" />
-              <span>Creator FAQ &amp; Knowledge Base</span>
-            </div>
+          <div className="mb-10">
             <h2 className="text-3xl font-extrabold tracking-tight text-primary">
-              Frequently Asked Questions
+              Frequently asked questions
             </h2>
-            <p className="text-text-secondary text-sm mt-2">
-              Everything you need to know about pitching, campaign verification, and payouts on Align.
+            <p className="text-text-secondary text-base mt-3">
+              Pitching, verification and payouts on Align.
             </p>
           </div>
 
-          <div className="space-y-4">
+          <dl className="divide-y divide-border border-y border-border">
             {faqList.map((faq, index) => (
-              <div
-                key={index}
-                className="p-6 rounded-2xl border border-border bg-gray-50/70 hover:border-accent/30 transition-colors"
-              >
-                <h3 className="font-bold text-base text-primary mb-2 flex items-start gap-2.5">
-                  <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-                  <span>{faq.q}</span>
-                </h3>
-                <p className="text-sm text-text-secondary leading-relaxed pl-7">
-                  {faq.a}
-                </p>
+              <div key={index} className="py-6 grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-2 md:gap-10">
+                <dt className="font-semibold text-base text-primary leading-snug">{faq.q}</dt>
+                <dd className="text-sm text-text-secondary leading-relaxed">{faq.a}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </div>
       </section>
 
@@ -250,12 +227,12 @@ export default function Home() {
             Ready to align with India&apos;s premier brands?
           </h2>
           <p className="text-text-secondary mb-8 text-lg leading-relaxed max-w-xl mx-auto">
-            Create your verified creator profile on Align today and get direct access to campaigns managed by Schbang.
+            Create a creator profile and pitch directly to campaigns managed by Schbang.
           </p>
           <div className="flex justify-center w-full">
             <Link href="/auth/register" className="inline-flex justify-center">
-              <Button variant="accent" size="lg" className="shadow-lg shadow-accent/25 px-10 py-6 text-base font-bold">
-                Create Your Creator Profile
+              <Button variant="accent" size="lg" className="px-10 py-6 text-base font-bold">
+                Create your creator profile
               </Button>
             </Link>
           </div>

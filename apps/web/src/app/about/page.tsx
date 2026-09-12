@@ -14,9 +14,6 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-accent/10 text-accent text-xs font-bold uppercase tracking-wider mb-4">
-            The Schbang Ecosystem
-          </div>
           <h1 className="text-4xl md:text-5xl font-black text-primary tracking-tight mb-4">
             Where Creator Reach Meets Brand Purpose
           </h1>

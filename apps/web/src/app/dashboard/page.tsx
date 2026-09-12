@@ -10,20 +10,7 @@ import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { getUserData, removeApplication } from "@/lib/user-store";
 import { ApplicationItem } from "@/lib/mock-data";
-import {
-  Sparkles,
-  FileText,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Eye,
-  ArrowRight,
-  TrendingUp,
-  Award,
-  Layers,
-  Building2,
-  ShieldCheck,
-} from "lucide-react";
+import { Sparkles, FileText, Clock, CheckCircle2, XCircle, Eye, ArrowRight, Award, Layers, Building2 } from "lucide-react";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -100,15 +87,11 @@ export default function DashboardPage() {
       <div className="bg-primary text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-accent uppercase tracking-wider">
-              <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-              Creator Command Center
-            </div>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight">
               Welcome back, {session?.user?.name || "Creator"}
             </h1>
             <p className="text-white/70 max-w-2xl text-sm leading-relaxed">
-              Track active campaign pitches, brand agreements, and live proposal statuses managed by Schbang.
+              Your pitches, agreements and their review status.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -345,7 +328,7 @@ export default function DashboardPage() {
             {selectedApp.adminNotes && (
               <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/70 text-xs">
                 <span className="font-bold text-blue-950 block mb-1">
-                  💬 Schbang Campaign Lead Notes:
+                  Note from the Schbang campaign lead
                 </span>
                 <p className="text-blue-900">{selectedApp.adminNotes}</p>
               </div>

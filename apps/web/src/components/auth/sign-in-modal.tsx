@@ -8,7 +8,7 @@ import { Modal } from "@/components/ui/modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { ShieldCheck, Sparkles, ArrowRight, Lock } from "lucide-react";
+import { ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
 // Routes that need a signed-in user. Anything else is browsable anonymously.
 const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/apply", "/creators"];
@@ -84,9 +84,9 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
     if (isProtectedPath(pathname)) {
       setReason(
         pathname.startsWith("/admin")
-          ? "The Admin Command Center is for Schbang brand managers."
+          ? "The admin area is for Schbang brand managers."
           : pathname.startsWith("/creators")
-          ? "The Creator Talent Directory is for Schbang brand managers."
+          ? "The creator directory is for Schbang brand managers."
           : pathname.startsWith("/apply")
           ? "Sign in so we can attach this pitch to your creator profile."
           : "Sign in to see your campaigns, pitches and payouts."
@@ -161,9 +161,6 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
       <Modal isOpen={isOpen} onClose={handleClose} size="md" className="rounded-3xl">
         <div className="space-y-5">
           <div className="text-center space-y-2">
-            <div className="mx-auto w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center">
-              <Lock className="w-5 h-5" />
-            </div>
             <h2 className="text-xl font-bold text-primary">Sign in to Align</h2>
             <p className="text-xs text-text-secondary leading-relaxed max-w-xs mx-auto">
               {reason || "Pick a demo profile to jump straight in, or use Google."}

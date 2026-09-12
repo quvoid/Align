@@ -8,7 +8,7 @@ import { getCompetitorsForBrand } from '@/lib/instagram-engine';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ShieldCheck, Sparkles, Building2, Zap } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight, ShieldCheck, Sparkles, Zap } from "lucide-react";
 
 export default function BrandDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -205,10 +205,6 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
           <div className="mt-12 p-6 rounded-3xl bg-primary text-white space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <div className="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-accent uppercase tracking-wider mb-1">
-                  <Zap className="mr-1.5 h-3.5 w-3.5" />
-                  Competitor Intelligence Watchlist
-                </div>
                 <h3 className="text-xl font-bold">
                   Tracking {competitorConfig.competitors.length} Competitors for {brand.name}
                 </h3>

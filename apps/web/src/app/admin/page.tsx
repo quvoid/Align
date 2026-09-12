@@ -11,28 +11,7 @@ import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import { INITIAL_BRANDS, INITIAL_APPLICATIONS, INITIAL_CREATORS, BrandItem, ApplicationItem, CreatorItem } from "@/lib/mock-data";
 import { addCompetitorToBrand } from "@/lib/instagram-engine";
-import {
-  Building2,
-  FileText,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Plus,
-  Search,
-  Filter,
-  Instagram,
-  Youtube,
-  Facebook,
-  ExternalLink,
-  Check,
-  X,
-  TrendingUp,
-  Heart,
-  Users,
-  Send,
-  Star,
-  Briefcase,
-} from "lucide-react";
+import { CheckCircle2, Plus, Search, Filter, Instagram, Youtube, Facebook, ExternalLink, Check, X, Heart, Users, Send } from "lucide-react";
 
 export default function AdminDashboard() {
   const { toast } = useToast();
@@ -173,20 +152,19 @@ export default function AdminDashboard() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">Align Admin Portal</h1>
+              <h1 className="text-3xl font-extrabold tracking-tight">Admin</h1>
               <p className="text-white/70 text-sm mt-1">
-                Manage brand portfolios, review creator metrics & coordinate partnership ads
+                Brand briefs, creator applications and competitor intelligence.
               </p>
             </div>
 
             <div className="flex items-center gap-3">
               <Button
                 variant="accent"
-                className="shadow-lg shadow-accent/25"
                 onClick={() => setIsAddBrandOpen(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add New Brand Brief
+                New brand brief
               </Button>
             </div>
           </div>
@@ -201,7 +179,7 @@ export default function AdminDashboard() {
                   : "border-transparent text-white/70 hover:text-white"
               }`}
             >
-              📊 Overview & KPIs
+              Overview
             </button>
             <button
               onClick={() => setActiveTab("brands")}
@@ -211,7 +189,7 @@ export default function AdminDashboard() {
                   : "border-transparent text-white/70 hover:text-white"
               }`}
             >
-              🏢 Brands Directory ({brands.length})
+              Brands ({brands.length})
             </button>
             <button
               onClick={() => setActiveTab("applications")}
@@ -221,7 +199,7 @@ export default function AdminDashboard() {
                   : "border-transparent text-white/70 hover:text-white"
               }`}
             >
-              📋 Review Applications
+              Applications
               {pendingCount > 0 && (
                 <span className="px-2 py-0.5 rounded-full text-xs bg-accent text-white font-bold">
                   {pendingCount}
@@ -236,7 +214,7 @@ export default function AdminDashboard() {
                   : "border-transparent text-white/70 hover:text-white"
               }`}
             >
-              ❤️ Creator Likes Queue
+              Creator interest
               <span className="px-2 py-0.5 rounded-full text-xs bg-red-500 text-white font-bold">
                 {INITIAL_CREATORS.reduce((acc, c) => acc + c.likedBrandIds.length, 0)}
               </span>
@@ -245,7 +223,7 @@ export default function AdminDashboard() {
               href="/admin/competitor-intelligence"
               className="px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-white/70 hover:text-white flex items-center gap-1.5 transition-all"
             >
-              ⚡ Competitor Intelligence
+              Competitor intel
             </Link>
           </div>
         </div>
@@ -256,77 +234,38 @@ export default function AdminDashboard() {
         {activeTab === "overview" && (
           <div className="space-y-8">
             {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
-                      Active Brands
-                    </span>
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                      <Building2 className="w-4 h-4" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-extrabold text-primary">
-                    {brands.filter((b) => b.isActive).length}
-                  </div>
-                  <p className="text-xs text-text-secondary mt-1">Across 6 industries</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
-                      Pending Reviews
-                    </span>
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
-                      <Clock className="w-4 h-4" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-extrabold text-amber-600">{pendingCount}</div>
-                  <p className="text-xs text-text-secondary mt-1">Requires manager review</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
-                      Shortlisted Deals
-                    </span>
-                    <div className="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-extrabold text-accent">{shortlistedCount}</div>
-                  <p className="text-xs text-text-secondary mt-1">Ready for contract release</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
-                      Approved Deals
-                    </span>
-                    <div className="w-8 h-8 rounded-lg bg-green-500/10 text-green-600 flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-extrabold text-green-600">{approvedCount}</div>
-                  <p className="text-xs text-text-secondary mt-1">In active production</p>
-                </CardContent>
-              </Card>
-            </div>
+            <dl className="grid grid-cols-2 lg:grid-cols-4 gap-y-6 lg:divide-x divide-border bg-white border border-border rounded-2xl px-2 py-5">
+              <div className="px-5">
+                <dt className="text-sm text-text-secondary">Active brands</dt>
+                <dd className="text-3xl font-extrabold text-primary tabular-nums mt-1">
+                  {brands.filter((b) => b.isActive).length}
+                </dd>
+                <p className="text-xs text-text-secondary mt-1">across 6 industries</p>
+              </div>
+              <div className="px-5">
+                <dt className="text-sm text-text-secondary">Awaiting review</dt>
+                <dd className="text-3xl font-extrabold text-primary tabular-nums mt-1">{pendingCount}</dd>
+                <p className="text-xs text-text-secondary mt-1">need a manager decision</p>
+              </div>
+              <div className="px-5">
+                <dt className="text-sm text-text-secondary">Shortlisted</dt>
+                <dd className="text-3xl font-extrabold text-primary tabular-nums mt-1">{shortlistedCount}</dd>
+                <p className="text-xs text-text-secondary mt-1">ready for contract</p>
+              </div>
+              <div className="px-5">
+                <dt className="text-sm text-text-secondary">Approved</dt>
+                <dd className="text-3xl font-extrabold text-accent tabular-nums mt-1">{approvedCount}</dd>
+                <p className="text-xs text-text-secondary mt-1">in production</p>
+              </div>
+            </dl>
 
             {/* Recent Incoming Submissions Preview */}
             <Card className="border-border shadow-sm">
               <div className="p-6 border-b border-border flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-primary">Recent Creator Proposals</h2>
+                  <h2 className="text-lg font-bold text-primary">Recent proposals</h2>
                   <p className="text-xs text-text-secondary mt-0.5">
-                    Latest submissions received across Schbang brand briefs
+                    Latest creator submissions across all briefs
                   </p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => setActiveTab("applications")}>
@@ -568,7 +507,7 @@ export default function AdminDashboard() {
                         {/* Metrics Badges */}
                         <div className="flex flex-wrap gap-3 pt-3 border-t border-border text-xs text-text-secondary">
                           {app.metrics.instagramHandle && (
-                            <span className="flex items-center gap-1.5 bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 px-2 py-1 rounded-md font-medium">
+                            <span className="flex items-center gap-1.5 bg-gray-100 text-text-primary px-2 py-1 rounded-md font-medium">
                               <Instagram className="w-3.5 h-3.5" />
                               {app.metrics.instagramFollowers?.toLocaleString()} (ER: {app.metrics.instagramER})
                             </span>
@@ -847,7 +786,7 @@ export default function AdminDashboard() {
                           className="flex-1 text-xs font-bold shadow-md shadow-accent/20"
                           onClick={() => {
                             toast({
-                              title: `⚡ Deal Invite Dispatched!`,
+                              title: `Invite sent to ${creator.name}`,
                               description: `Fast-track pitch invite for ${targetBrand.name} sent to ${creator.name} (${creator.email}).`,
                               type: "success",
                             });

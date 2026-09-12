@@ -8,24 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
 import { INITIAL_CREATORS, CreatorItem } from "@/lib/mock-data";
 import { useSession } from "next-auth/react";
-import {
-  Search,
-  Users,
-  Instagram,
-  Youtube,
-  Star,
-  CheckCircle2,
-  TrendingUp,
-  Briefcase,
-  ArrowRight,
-  Filter,
-  Sparkles,
-  Send,
-  Building2,
-  MapPin,
-  ShieldCheck,
-  Lock,
-} from "lucide-react";
+import { Search, Users, Instagram, Youtube, Star, CheckCircle2, Briefcase, ArrowRight, Filter, Send, MapPin, Lock } from "lucide-react";
 
 export default function CreatorDiscoveryPage() {
   const { toast } = useToast();
@@ -97,7 +80,7 @@ export default function CreatorDiscoveryPage() {
   const handleQuickInvite = (creator: CreatorItem) => {
     setInvitedCreatorId(creator.id);
     toast({
-      title: `⚡ Fast-Track Invite Sent to ${creator.name}!`,
+      title: `Invite sent to ${creator.name}`,
       description: `We notified ${creator.handle} regarding an upcoming Schbang brand campaign brief.`,
       type: "success",
     });
@@ -109,10 +92,6 @@ export default function CreatorDiscoveryPage() {
       <div className="bg-primary text-white pt-24 pb-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/20 text-accent text-xs font-bold uppercase tracking-wider mb-3">
-              <Building2 className="w-3.5 h-3.5" />
-              <span>Brand &amp; Agency Talent Portal</span>
-            </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
               Discover Verified Creators
             </h1>
@@ -361,7 +340,7 @@ export default function CreatorDiscoveryPage() {
                   className="flex-1 text-xs font-bold shadow-md shadow-accent/20"
                 >
                   {invitedCreatorId === creator.id ? (
-                    "✓ Invited"
+                    "Invited"
                   ) : (
                     <>
                       <Send className="w-3 h-3 mr-1.5" />

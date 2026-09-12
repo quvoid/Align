@@ -323,7 +323,7 @@ export default function ApplyPage({
             {step === 2 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
                     <Instagram className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -589,8 +589,8 @@ export default function ApplyPage({
                   </div>
 
                   {form.igHandle && (
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4">
-                      <h3 className="font-semibold text-sm text-purple-700 uppercase tracking-wider mb-3">
+                    <div className="bg-gray-50 border border-border rounded-xl p-4">
+                      <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-wider mb-3">
                         Instagram
                       </h3>
                       <div className="grid grid-cols-2 gap-2 text-sm">

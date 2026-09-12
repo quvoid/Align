@@ -14,17 +14,7 @@ import {
   type HeadToHeadBenchmark,
   type BrandCompetitorConfig,
 } from "@/lib/instagram-engine";
-import {
-  Zap,
-  ArrowRight,
-  Search,
-  Lock,
-  Building2,
-  Users,
-  Eye,
-  TrendingUp,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, Lock, Users, TrendingUp, ShieldCheck } from "lucide-react";
 
 export default function CompetitorIntelligenceHubPage() {
   const { data: session } = useSession();
@@ -77,20 +67,16 @@ export default function CompetitorIntelligenceHubPage() {
         <div className="max-w-7xl mx-auto space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <div className="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-bold text-accent uppercase tracking-wider mb-2">
-                <Zap className="mr-1.5 h-3.5 w-3.5" />
-                Instagram Scraping &amp; Paid Collabs Intelligence
-              </div>
               <h1 className="text-3xl md:text-4xl font-black tracking-tight">
-                Competitor Intelligence Hub
+                Competitor intelligence
               </h1>
               <p className="text-white/70 max-w-2xl text-sm leading-relaxed mt-1">
-                Track up to 4 competitors per brand. View last 12 months of creator collaborations, boost detection, and 4-tier partnership analysis.
+                Track up to four competitors per brand: who they paid, what got boosted, and how the partnerships tier.
               </p>
             </div>
             <Link href="/admin">
               <Button variant="outline" className="text-xs font-bold bg-transparent border-white/20 text-white hover:bg-white/10 hover:border-white/40">
-                &larr; Admin Command Center
+                &larr; Back to admin
               </Button>
             </Link>
           </div>
@@ -103,10 +89,7 @@ export default function CompetitorIntelligenceHubPage() {
           <CardContent className="p-6">
             <form onSubmit={handleRunCustomAudit} className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                  <Search className="w-4 h-4 text-accent" />
-                  Quick Ad-Hoc Competitor Audit
-                </span>
+                <h2 className="text-sm font-bold text-primary">Quick audit</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
                 <div className="md:col-span-5">
@@ -119,7 +102,7 @@ export default function CompetitorIntelligenceHubPage() {
               </div>
               <div className="flex justify-end">
                 <Button type="submit" variant="accent" size="sm" isLoading={isScraping} className="font-bold text-xs shadow-md shadow-accent/25">
-                  <Zap className="w-3.5 h-3.5 mr-1.5" /> Run Quick Audit
+                  Run audit
                 </Button>
               </div>
             </form>
@@ -155,8 +138,8 @@ export default function CompetitorIntelligenceHubPage() {
 
         {/* Brand-First Grid */}
         <div>
-          <h2 className="text-xl font-bold text-primary mb-1">Your Brand Portfolio</h2>
-          <p className="text-xs text-text-secondary mb-6">Click any brand to view and manage its tracked competitors, creator rosters, and head-to-head analysis.</p>
+          <h2 className="text-xl font-bold text-primary mb-1">Brand portfolio</h2>
+          <p className="text-xs text-text-secondary mb-6">Open a brand to see its tracked competitors and their creator rosters.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allBrands.map((config) => {

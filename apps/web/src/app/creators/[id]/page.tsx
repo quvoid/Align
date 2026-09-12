@@ -96,7 +96,7 @@ export default function CreatorProfileDetailPage({
       setIsSending(false);
       setIsInviteModalOpen(false);
       toast({
-        title: `🚀 Campaign Offer Sent to ${creator.name}!`,
+        title: `Offer sent to ${creator.name}`,
         description: `Your campaign invitation of ₹${Number(offeredFee).toLocaleString()} has been dispatched to ${creator.email}.`,
         type: "success",
       });
