@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -12,7 +12,25 @@ import { useToast } from "@/components/ui/toast";
 import { getUserData, updateProfile, isProfileComplete, type CreatorProfile } from "@/lib/user-store";
 import { Instagram, Youtube, Save, ShieldCheck, Sparkles, Loader2 } from "lucide-react";
 
+// useSearchParams() (used for ?next=) requires a Suspense boundary above it
+// for Next.js to statically prerender this route — without this wrapper the
+// production build fails outright with "useSearchParams() should be wrapped
+// in a suspense boundary" rather than just warning.
 export default function ProfilePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        </div>
+      }
+    >
+      <ProfilePageInner />
+    </Suspense>
+  );
+}
+
+function ProfilePageInner() {
   const { data: session } = useSession();
   const { toast } = useToast();
   const router = useRouter();
