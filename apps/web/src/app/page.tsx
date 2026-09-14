@@ -3,7 +3,10 @@ import { PLANS, formatINR, JOIN_CTA } from '@/lib/plans';
 import { Button } from '@/components/ui/button';
 import { MOCK_BRANDS } from '@/lib/mock-data';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+
+// Brands shown in the hero's tilted image stack, front-to-back.
+const HERO_STACK_SLUGS = ['britannia', 'fevicol', 'kotak811'];
 
 export default function Home() {
   const faqList = [
@@ -79,9 +82,13 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Tilted Image Card Stack */}
+          {/* Tilted Image Card Stack — Britannia/Fevicol/Kotak811 rather than
+              MOCK_BRANDS.slice(0,3), since that would put NIVEA's cover image
+              here (it reads poorly at this crop). */}
           <div className="animate-fade-in-4 relative hidden lg:block h-[420px]">
-            {MOCK_BRANDS.slice(0, 3).map((brand, idx) => {
+            {HERO_STACK_SLUGS.map((slug, idx) => {
+              const brand = MOCK_BRANDS.find((b) => b.slug === slug);
+              if (!brand) return null;
               const rotations = ['-rotate-6', 'rotate-3', '-rotate-12'];
               const positions = [
                 'top-0 left-8 z-20',
@@ -94,11 +101,6 @@ export default function Home() {
                   className={`absolute w-[280px] h-[280px] rounded-4xl overflow-hidden border border-border bg-linen ${rotations[idx]} ${positions[idx]}`}
                 >
                   <img src={brand.coverImage} alt={brand.name} className="w-full h-full object-cover" />
-                  {idx === 0 && (
-                    <span className="absolute top-4 right-4 w-12 h-12 rounded-full bg-lavender flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-white" />
-                    </span>
-                  )}
                 </div>
               );
             })}

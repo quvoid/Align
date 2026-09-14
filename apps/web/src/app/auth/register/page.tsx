@@ -20,8 +20,12 @@ export default function RegisterPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Matches handleSubmit's own post-signup redirect below — kept in sync so
+    // an already-authenticated visit to /auth/register (or the session
+    // hook resolving mid-submit) never races handleSubmit to a different
+    // destination.
     if (status === "authenticated") {
-      window.location.href = "/dashboard";
+      window.location.href = "/dashboard/profile";
     }
   }, [status]);
 

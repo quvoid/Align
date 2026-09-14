@@ -102,7 +102,7 @@ export default function SignInPage() {
             <Button
               variant="outline"
               className="w-full h-12 rounded-xl text-primary font-medium"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              onClick={() => signIn("google", { callbackUrl: "/dashboard/profile" })}
               disabled={isLoading}
             >
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
-import { getUserData, removeApplication } from "@/lib/user-store";
+import { getUserData, removeApplication, isProfileComplete } from "@/lib/user-store";
 import { ApplicationItem } from "@/lib/mock-data";
 import { Sparkles, FileText, Clock, CheckCircle2, XCircle, Eye, ArrowRight, Award, Layers, Building2 } from "lucide-react";
 
@@ -26,7 +26,7 @@ export default function DashboardPage() {
       const userData = getUserData(session.user.email);
       setApplications(userData.applications);
       setMembership(userData.membership);
-      setProfileDone(Boolean(userData.profile.igHandle && userData.profile.niche));
+      setProfileDone(isProfileComplete(userData.profile));
     }
   }, [session]);
 

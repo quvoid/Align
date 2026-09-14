@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import { INITIAL_BRANDS, ApplicationItem } from "@/lib/mock-data";
-import { getUserData, addApplication } from "@/lib/user-store";
+import { getUserData, addApplication, isProfileComplete } from "@/lib/user-store";
 import { useSession } from "next-auth/react";
 import { useSignInModal } from "@/components/auth/sign-in-modal";
 import { hasActiveMembership } from "@/lib/user-store";
@@ -63,6 +63,18 @@ export default function ApplyPage({
   useEffect(() => {
     if (session?.user?.email && !hasActiveMembership(session.user.email)) {
       router.replace(`/pricing?brief=${encodeURIComponent(resolvedParams.slug)}`);
+    }
+  }, [session, resolvedParams.slug, router]);
+
+  // Pitching also needs a filled-in creator profile (handle + niche, at
+  // minimum) — that's what a brand actually sees when reviewing a pitch.
+  // Send incomplete profiles to fill it in first, then bounce back here.
+  useEffect(() => {
+    if (!session?.user?.email || !hasActiveMembership(session.user.email)) return;
+    if (!isProfileComplete(getUserData(session.user.email).profile)) {
+      router.replace(
+        `/dashboard/profile?next=${encodeURIComponent(`/apply/${resolvedParams.slug}`)}`
+      );
     }
   }, [session, resolvedParams.slug, router]);
   const [step, setStep] = useState(1);
@@ -170,6 +182,20 @@ export default function ApplyPage({
   const handleSubmit = async () => {
     if (!session?.user?.email) {
       openSignIn({ reason: "Sign in to submit this pitch. Your form answers stay filled in." });
+      return;
+    }
+
+    // Safety net for the useEffect gate above (e.g. profile edited to
+    // incomplete in another tab since this page loaded).
+    if (!isProfileComplete(getUserData(session.user.email).profile)) {
+      toast({
+        title: "Complete your creator profile first",
+        description: "Brands need your handle and niche to review a pitch.",
+        type: "error",
+      });
+      router.push(
+        `/dashboard/profile?next=${encodeURIComponent(`/apply/${resolvedParams.slug}`)}`
+      );
       return;
     }
 

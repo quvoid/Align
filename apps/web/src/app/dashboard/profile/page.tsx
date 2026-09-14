@@ -2,38 +2,56 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { getUserData, updateProfile, type CreatorProfile } from "@/lib/user-store";
+import { getUserData, updateProfile, isProfileComplete, type CreatorProfile } from "@/lib/user-store";
 import { Instagram, Youtube, Save, ShieldCheck, Sparkles, Loader2 } from "lucide-react";
 
 export default function ProfilePage() {
   const { data: session } = useSession();
   const { toast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Set when this page is a gate on the way somewhere else — sign-in sends
+  // new/incomplete creators here before /dashboard, and applying to a brief
+  // sends them here before /apply/[slug]. A complete profile skips straight
+  // through instead of showing the form again.
+  const next = searchParams.get("next");
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (session?.user?.email) {
-      const data = getUserData(
-        session.user.email,
-        session.user.name || undefined,
-        session.user.image || undefined
-      );
-      setProfile(data.profile);
+    if (!session?.user?.email) return;
+
+    // Admins don't have a creator profile — never gate them here.
+    if (session.user.role === "ADMIN") {
+      router.replace("/admin");
+      return;
     }
-  }, [session]);
+
+    const data = getUserData(
+      session.user.email,
+      session.user.name || undefined,
+      session.user.image || undefined
+    );
+    setProfile(data.profile);
+
+    if (next && isProfileComplete(data.profile)) {
+      router.replace(next);
+    }
+  }, [session, next, router]);
 
   const handleSave = () => {
     if (!session?.user?.email || !profile) return;
-    
+
     setLoading(true);
     updateProfile(session.user.email, profile);
-    
+
     setTimeout(() => {
       setLoading(false);
       toast({
@@ -41,6 +59,9 @@ export default function ProfilePage() {
         description: "Your creator profile has been updated successfully.",
         type: "success",
       });
+      if (next) {
+        router.push(next);
+      }
     }, 500);
   };
 

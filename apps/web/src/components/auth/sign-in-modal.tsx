@@ -228,7 +228,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
             <Button
               variant="outline"
               className="w-full h-11 rounded-xl text-primary font-medium"
-              onClick={() => signIn("google", { callbackUrl: callbackUrl || "/dashboard" })}
+              onClick={() => signIn("google", { callbackUrl: callbackUrl || "/dashboard/profile" })}
               disabled={isLoading}
             >
               <GoogleIcon />

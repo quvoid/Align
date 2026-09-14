@@ -1,5 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // "native" covers local dev; "rhel-openssl-3.0.x" is what Vercel's Node.js
+  // serverless functions actually run on. Without it, every Prisma call in
+  // production throws "could not locate the Query Engine" — which is what
+  // was turning into NextAuth's generic error=Configuration on sign-in.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

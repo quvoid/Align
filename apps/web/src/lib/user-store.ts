@@ -80,6 +80,15 @@ export function createBlankProfile(
 }
 
 /**
+ * Whether a creator has filled in enough of their profile to be useful to a
+ * brand. Gates: applying to a brief, and whether a freshly-signed-in user
+ * gets sent to /dashboard/profile before /dashboard.
+ */
+export function isProfileComplete(profile: CreatorProfile): boolean {
+  return Boolean(profile.igHandle && profile.niche);
+}
+
+/**
  * Check if this email is a known demo account and return seeded data.
  * Demo accounts get pre-populated applications so the admin panel has data to show.
  */
