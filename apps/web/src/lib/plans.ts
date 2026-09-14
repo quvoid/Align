@@ -66,7 +66,7 @@ export const formatPrice = (plan: Plan) =>
   plan.period === "month" ? `${formatINR(plan.price)}/month` : `${formatINR(plan.price)} once`;
 
 /** The CTA we put in front of anonymous visitors everywhere. */
-export const JOIN_CTA = `Join for ${formatINR(PLANS.all_access.price)}`;
+export const JOIN_CTA = "Join Now";
 
 export interface Membership {
   plan: PlanId;

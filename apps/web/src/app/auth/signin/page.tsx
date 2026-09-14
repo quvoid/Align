@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,9 @@ import { useToast } from "@/components/ui/toast";
 import { ShieldCheck, Sparkles, ArrowRight, Lock } from "lucide-react";
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
+// One-click demo personas are a local-walkthrough convenience and a hole in
+// production, where anyone finding the button becomes a seeded account.
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 export default function SignInPage() {
   const { data: session, status } = useSession();
@@ -24,21 +27,39 @@ export default function SignInPage() {
     }
   }, [session, status]);
 
-  const loginWithEmail = async (demoEmail: string, demoPassword: string, redirectUrl: string) => {
+  const loginWithEmail = async (
+    loginEmail: string,
+    loginPassword: string,
+    redirectUrl?: string
+  ) => {
     setIsLoading(true);
     try {
       const res = await signIn("credentials", {
-        email: demoEmail,
-        password: demoPassword,
+        email: loginEmail,
+        password: loginPassword,
         redirect: false,
       });
       if (res?.error) {
-        toast({ title: "Login Failed", description: res.error, type: "error" });
-      } else {
-        toast({ title: "Success", description: "Logged in successfully" });
-        window.location.href = redirectUrl;
+        toast({
+          title: "Login failed",
+          description: "That email and password do not match an account.",
+          type: "error",
+        });
+        return;
       }
-    } catch (error) {
+
+      // Route on the role the server actually assigned, not on a guess from the
+      // email string. The old `email.includes("admin")` heuristic sent
+      // admin@gmail.com to /admin, where middleware immediately bounced it back.
+      let target = redirectUrl;
+      if (!target) {
+        const fresh = await getSession();
+        target = fresh?.user?.role === "ADMIN" ? "/admin" : "/dashboard";
+      }
+
+      toast({ title: "Welcome back", description: "Signed in successfully" });
+      window.location.href = target;
+    } catch {
       toast({ title: "Error", description: "Something went wrong", type: "error" });
     } finally {
       setIsLoading(false);
@@ -51,8 +72,7 @@ export default function SignInPage() {
       toast({ title: "Error", description: "Please enter email and password", type: "error" });
       return;
     }
-    const targetUrl = email.includes("admin") ? "/admin" : "/dashboard";
-    await loginWithEmail(email, password, targetUrl);
+    await loginWithEmail(email, password);
   };
 
   if (status === "loading" || status === "authenticated") {
@@ -60,7 +80,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 sm:px-6 lg:px-8 pt-8 pb-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center flex flex-col items-center">
           <Link href="/" className="inline-flex items-center space-x-2">
@@ -111,41 +131,45 @@ export default function SignInPage() {
               </p>
             )}
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-text-secondary">Or Client Demo Passkeys</span>
-              </div>
-            </div>
+            {DEMO_MODE && (
+              <>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-text-secondary">Or Client Demo Passkeys</span>
+                  </div>
+                </div>
 
-            <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
-              <Button
-                variant="outline"
-                className="w-full justify-start rounded-xl text-left bg-white border-border"
-                onClick={() => loginWithEmail("admin@schbang.com", "admin123", "/admin")}
-                disabled={isLoading}
-              >
-                <ShieldCheck className="mr-2 h-4 w-4 text-accent" />
-                <div>
-                  <div className="font-semibold text-primary">Schbang Admin Lead</div>
-                  <div className="text-xs text-text-secondary font-normal">Full management access</div>
+                <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
+                  <Button
+                    variant="outline"
+                    className="group w-full justify-start rounded-xl text-left bg-white border-border"
+                    onClick={() => loginWithEmail("admin@schbang.com", "admin123", "/admin")}
+                    disabled={isLoading}
+                  >
+                    <ShieldCheck className="mr-2 h-4 w-4 text-accent group-hover:text-white" />
+                    <div>
+                      <div className="font-semibold text-primary group-hover:text-white">Schbang Admin Lead</div>
+                      <div className="text-xs text-text-secondary font-normal group-hover:text-white/70">Full management access</div>
+                    </div>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="group w-full justify-start rounded-xl text-left bg-white border-border"
+                    onClick={() => loginWithEmail("rohan.creates@gmail.com", "creator123", "/dashboard")}
+                    disabled={isLoading}
+                  >
+                    <Sparkles className="mr-2 h-4 w-4 text-accent group-hover:text-white" />
+                    <div>
+                      <div className="font-semibold text-primary group-hover:text-white">Creator: Rohan Joshi</div>
+                      <div className="text-xs text-text-secondary font-normal group-hover:text-white/70">Campaigns &amp; pitches</div>
+                    </div>
+                  </Button>
                 </div>
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start rounded-xl text-left bg-white border-border"
-                onClick={() => loginWithEmail("rohan.creates@gmail.com", "creator123", "/dashboard")}
-                disabled={isLoading}
-              >
-                <Sparkles className="mr-2 h-4 w-4 text-accent" />
-                <div>
-                  <div className="font-semibold text-primary">Creator: Rohan Joshi</div>
-                  <div className="text-xs text-text-secondary font-normal">Campaigns & pitches</div>
-                </div>
-              </Button>
-            </div>
+              </>
+            )}
 
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

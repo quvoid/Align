@@ -31,20 +31,47 @@ export default function RegisterPage() {
       toast({ title: "Error", description: "All fields are required", type: "error" });
       return;
     }
+    if (password.length < 8) {
+      toast({ title: "Password too short", description: "Use at least 8 characters", type: "error" });
+      return;
+    }
     setIsLoading(true);
     try {
+      // Actually create the account first. Signing in without this wrote no row
+      // anywhere and silently discarded the creator's name.
+      const registerRes = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!registerRes.ok) {
+        const { error } = await registerRes.json().catch(() => ({ error: null }));
+        toast({
+          title: "Could not create account",
+          description: error || "Please try again.",
+          type: "error",
+        });
+        return;
+      }
+
       const res = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
       if (res?.error) {
-        toast({ title: "Registration Failed", description: res.error, type: "error" });
+        toast({
+          title: "Account created — please sign in",
+          description: "Your account exists but we could not sign you in automatically.",
+          type: "error",
+        });
+        window.location.href = "/auth/signin";
       } else {
-        toast({ title: "Success", description: "Account created successfully" });
+        toast({ title: "Welcome to Align", description: "Account created successfully" });
         window.location.href = "/dashboard/profile";
       }
-    } catch (error) {
+    } catch {
       toast({ title: "Error", description: "Something went wrong", type: "error" });
     } finally {
       setIsLoading(false);
@@ -56,7 +83,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 sm:px-6 lg:px-8 pt-8 pb-12">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center flex flex-col items-center">
           <Link href="/" className="inline-flex items-center space-x-2">

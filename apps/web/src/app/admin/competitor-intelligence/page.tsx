@@ -28,7 +28,7 @@ export default function CompetitorIntelligenceHubPage() {
   // Creator lockout
   if (session && session.user.role === "CREATOR") {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 pt-24 pb-12 bg-background text-center">
+      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 pt-8 pb-12 bg-background text-center">
         <div className="w-16 h-16 rounded-3xl bg-accent/10 text-accent flex items-center justify-center mb-4">
           <Lock className="w-8 h-8" />
         </div>
@@ -63,7 +63,7 @@ export default function CompetitorIntelligenceHubPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero Header */}
-      <div className="bg-primary text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+      <div className="bg-primary text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>

@@ -9,7 +9,7 @@ export default function AdminBrandsPage() {
   }, [router]);
 
   return (
-    <div className="min-h-[50vh] flex items-center justify-center pt-24">
+    <div className="min-h-[50vh] flex items-center justify-center pt-8">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div>
     </div>
   );

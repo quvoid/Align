@@ -89,7 +89,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero Header */}
-      <div className="bg-primary text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+      <div className="bg-primary text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-3xl md:text-4xl font-black tracking-tight">

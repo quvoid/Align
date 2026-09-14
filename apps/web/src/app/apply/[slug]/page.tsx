@@ -128,7 +128,7 @@ export default function ApplyPage({
 
   if (!brand) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 pt-24 pb-12">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 pt-8 pb-12">
         <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
         <h1 className="text-2xl font-bold mb-2">Brand Brief Not Found</h1>
         <p className="text-text-secondary mb-6">The campaign you are looking for does not exist.</p>
@@ -215,7 +215,7 @@ export default function ApplyPage({
 
   return (
     <div className="min-h-screen bg-background pb-32">
-      <div className="bg-primary text-white pt-24 pb-8">
+      <div className="bg-primary text-white pt-8 pb-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
             <img

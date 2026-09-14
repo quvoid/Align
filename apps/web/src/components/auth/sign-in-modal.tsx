@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, useSession, getSession } from "next-auth/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Modal } from "@/components/ui/modal";
@@ -11,6 +11,8 @@ import { useToast } from "@/components/ui/toast";
 import { ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
+// Demo personas must not be reachable in production — see auth-shared.ts.
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 // Routes that need a signed-in user. Anything else is browsable anonymously.
 const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/apply", "/creators", "/join"];
@@ -127,21 +129,39 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
     closeSignIn();
   };
 
-  const loginWithEmail = async (demoEmail: string, demoPassword: string, fallbackUrl: string) => {
+  const loginWithEmail = async (
+    loginEmail: string,
+    loginPassword: string,
+    fallbackUrl?: string
+  ) => {
     setIsLoading(true);
     try {
       const res = await signIn("credentials", {
-        email: demoEmail,
-        password: demoPassword,
+        email: loginEmail,
+        password: loginPassword,
         redirect: false,
       });
       if (res?.error) {
-        toast({ title: "Login failed", description: res.error, type: "error" });
+        toast({
+          title: "Login failed",
+          description: "That email and password do not match an account.",
+          type: "error",
+        });
         return;
       }
+
+      // Route on the role the server assigned rather than guessing from the
+      // email string, which used to send admin@gmail.com to /admin only for
+      // middleware to bounce it straight back.
+      let destination = callbackUrl || fallbackUrl;
+      if (!destination) {
+        const fresh = await getSession();
+        destination = fresh?.user?.role === "ADMIN" ? "/admin" : "/dashboard";
+      }
+
       toast({ title: "Welcome back", description: "Signed in successfully." });
       // Full reload so middleware + server session are in sync with the new role.
-      window.location.href = callbackUrl || fallbackUrl;
+      window.location.href = destination;
     } catch {
       toast({ title: "Error", description: "Something went wrong", type: "error" });
     } finally {
@@ -155,7 +175,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
       toast({ title: "Missing details", description: "Enter your email and password.", type: "error" });
       return;
     }
-    await loginWithEmail(email, password, email.includes("admin") ? "/admin" : "/dashboard");
+    await loginWithEmail(email, password);
   };
 
   const ctx = useMemo(() => ({ openSignIn, closeSignIn }), [openSignIn, closeSignIn]);
@@ -173,34 +193,36 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
             </p>
           </div>
 
-          {/* One-click demo profiles — the primary path for the demo */}
+          {/* One-click demo profiles — local/staging only */}
+          {DEMO_MODE && (
           <div className="bg-gray-50 rounded-2xl p-3 space-y-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary px-1">Demo profiles</p>
             <Button
               variant="outline"
-              className="w-full justify-start rounded-xl text-left bg-white border-border h-auto py-2.5"
+              className="group w-full justify-start rounded-xl text-left bg-white border-border h-auto py-2.5"
               onClick={() => loginWithEmail("admin@schbang.com", "admin123", "/admin")}
               disabled={isLoading}
             >
-              <ShieldCheck className="mr-3 h-4 w-4 text-accent shrink-0" />
+              <ShieldCheck className="mr-3 h-4 w-4 text-accent shrink-0 group-hover:text-white" />
               <div>
-                <div className="font-semibold text-primary text-sm">Schbang Admin Lead</div>
-                <div className="text-[11px] text-text-secondary font-normal">Brand portfolio, reviews &amp; competitor intel</div>
+                <div className="font-semibold text-primary text-sm group-hover:text-white">Schbang Admin Lead</div>
+                <div className="text-[11px] text-text-secondary font-normal group-hover:text-white/70">Brand portfolio, reviews &amp; competitor intel</div>
               </div>
             </Button>
             <Button
               variant="outline"
-              className="w-full justify-start rounded-xl text-left bg-white border-border h-auto py-2.5"
+              className="group w-full justify-start rounded-xl text-left bg-white border-border h-auto py-2.5"
               onClick={() => loginWithEmail("rohan.creates@gmail.com", "creator123", "/dashboard")}
               disabled={isLoading}
             >
-              <Sparkles className="mr-3 h-4 w-4 text-accent shrink-0" />
+              <Sparkles className="mr-3 h-4 w-4 text-accent shrink-0 group-hover:text-white" />
               <div>
-                <div className="font-semibold text-primary text-sm">Creator: Rohan Joshi</div>
-                <div className="text-[11px] text-text-secondary font-normal">Browse briefs, pitch &amp; track campaigns</div>
+                <div className="font-semibold text-primary text-sm group-hover:text-white">Creator: Rohan Joshi</div>
+                <div className="text-[11px] text-text-secondary font-normal group-hover:text-white/70">Browse briefs, pitch &amp; track campaigns</div>
               </div>
             </Button>
           </div>
+          )}
 
           {GOOGLE_ENABLED ? (
             <Button

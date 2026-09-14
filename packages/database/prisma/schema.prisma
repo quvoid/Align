@@ -4,7 +4,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // Runtime: Supabase transaction pooler (6543) with ?pgbouncer=true&connection_limit=1
+  url       = env("DATABASE_URL")
+  // Migrations only: session pooler (5432). Migrations take advisory locks,
+  // which do not survive transaction pooling.
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -16,6 +20,42 @@ enum Role {
 enum AuthProvider {
   GOOGLE
   CREDENTIALS
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum MetricsSource {
+  SELF_REPORTED
+  PLATFORM_API
+}
+
+enum PlanId {
+  MONTHLY
+  ALL_ACCESS
+}
+
+enum MembershipStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+}
+
+enum MembershipSource {
+  PAYMENT
+  GRANT
+  SEED
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
+  FAILED
+  REFUNDED
 }
 
 enum ApplicationStatus {
@@ -75,12 +115,18 @@ model User {
   passwordHash String?
   provider     AuthProvider    @default(CREDENTIALS)
   providerId   String?
+  // Proof the address is theirs. Google sets this at sign-in (email_verified);
+  // credentials signups set it when the verification link is clicked.
+  emailVerifiedAt DateTime?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 
   creatorProfile CreatorProfile?
   applications   Application[]
   sessions       Session[]
+  membership     Membership?
+  payments       Payment[]
+  brandLikes     BrandLike[]
 
   @@index([email])
   @@index([role])
@@ -133,11 +179,35 @@ model CreatorProfile {
   website            String?
   phone              String?
 
+  // --- Identity verification (anti-impersonation) ---
+  // A creator must prove they control the accounts they claim before their
+  // profile becomes visible to brands. See docs/adr/0004.
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  // One-time challenge code the creator places in their bio / DMs from the
+  // claimed account. Consumed once an admin confirms it.
+  verificationCode   String?
+  verificationMethod String?
+  verifiedAt         DateTime?
+  verifiedBy         String?
+  rejectionReason    String?
+  submittedForReviewAt DateTime?
+
+  // Where the follower/engagement numbers came from. SELF_REPORTED numbers are
+  // a claim, not a fact — brands price against these, so the distinction has
+  // to survive into the UI.
+  metricsSource      MetricsSource @default(SELF_REPORTED)
+
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
+  // A social handle may be claimed by exactly one account. This is the cheap
+  // half of impersonation defence: first claim wins, the second is refused.
+  // Stored lowercased without a leading '@' by the application layer.
+  @@unique([igHandle])
+  @@unique([ytChannel])
   @@index([igFollowers])
   @@index([ytSubscribers])
+  @@index([verificationStatus])
 }
 
 model Brand {
@@ -159,6 +229,7 @@ model Brand {
   updatedAt      DateTime       @updatedAt
 
   applications   Application[]
+  likes          BrandLike[]
 
   @@index([slug])
   @@index([industry])
@@ -190,4 +261,88 @@ model Application {
   @@index([createdAt])
   @@index([brandId, status])
   @@index([creatorId, brandId])
+}
+
+// ---------------------------------------------------------------------------
+// Membership & payments
+//
+// Until now "membership" existed only as a TypeScript interface in
+// apps/web/src/lib/plans.ts and a field in browser localStorage — the thing
+// being sold had no server-side representation at all. These models are the
+// record of what was paid and what it bought.
+// ---------------------------------------------------------------------------
+
+model Membership {
+  id          String           @id @default(cuid())
+  userId      String           @unique
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan        PlanId
+  status      MembershipStatus @default(ACTIVE)
+  // PAYMENT = they paid. GRANT = comped (e.g. launch cohort). SEED = fixture.
+  source      MembershipSource @default(PAYMENT)
+
+  activatedAt DateTime         @default(now())
+  // Null means perpetual (ALL_ACCESS). Set for time-boxed access.
+  expiresAt   DateTime?
+  cancelledAt DateTime?
+
+  latestPaymentId String?
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  userId                String
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan                  PlanId
+  // Minor units (paise). Never trust a client-supplied amount — this is always
+  // derived server-side from the plan.
+  amountMinor           Int
+  currency              String        @default("INR")
+  status                PaymentStatus @default(CREATED)
+
+  stripeSessionId       String?       @unique
+  stripePaymentIntentId String?       @unique
+
+  createdAt             DateTime      @default(now())
+  paidAt                DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Append-only log of every webhook the gateway delivered. Doubles as the
+// idempotency guard (unique eventId) and the audit trail for "I paid and
+// nothing happened" support tickets.
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  eventId     String   @unique
+  type        String
+  payload     Json
+  receivedAt  DateTime @default(now())
+  processedAt DateTime?
+  error       String?
+
+  @@index([type])
+  @@index([receivedAt])
+}
+
+model BrandLike {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brandId   String
+  brand     Brand    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, brandId])
+  @@index([brandId])
 }

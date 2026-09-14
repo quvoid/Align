@@ -23,7 +23,7 @@ export default function CreatorDiscoveryPage() {
   // If user is logged in as a normal CREATOR, block talent directory access
   if (session?.user?.role === "CREATOR") {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center pt-28 pb-16 px-4 bg-background">
+      <div className="min-h-[80vh] flex items-center justify-center pt-10 pb-16 px-4 bg-background">
         <div className="max-w-md w-full text-center space-y-5 p-8 bg-white rounded-3xl border border-border shadow-xl">
           <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
             <Lock className="w-6 h-6" />
@@ -89,7 +89,7 @@ export default function CreatorDiscoveryPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Brand Header Banner */}
-      <div className="bg-primary text-white pt-24 pb-12 border-b border-white/10">
+      <div className="bg-primary text-white pt-8 pb-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">

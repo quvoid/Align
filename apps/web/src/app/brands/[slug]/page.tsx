@@ -28,7 +28,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
 
   if (!brand) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center px-8 pt-28 pb-12 text-center">
+      <div className="min-h-[70vh] flex flex-col items-center justify-center px-8 pt-10 pb-12 text-center">
         <h1 className="text-2xl font-bold text-primary mb-2">Brief not found</h1>
         <p className="text-text-secondary text-sm mb-6">This brief has closed or the link is wrong.</p>
         <Link href="/brands">

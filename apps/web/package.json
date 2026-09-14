@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@auth/core": "^0.41.3",
+    "@branddeals/database": "workspace:*",
     "@branddeals/shared": "workspace:*",
     "@hookform/resolvers": "^4.0.0",
+    "bcryptjs": "^2.4.3",
     "clsx": "^2.1.0",
     "framer-motion": "^12.0.0",
     "lucide-react": "^0.468.0",
@@ -27,6 +29,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

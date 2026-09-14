@@ -51,6 +51,8 @@ jobs:
       - name: Build Web App
         run: pnpm --filter @branddeals/web build
         env:
-          AUTH_SECRET: "98f3c7e091b34e8ca61e7bc83f08d6a782b14e9f3a6c5071d24e8f9a0b1c2d3e"
-          NEXTAUTH_SECRET: "98f3c7e091b34e8ca61e7bc83f08d6a782b14e9f3a6c5071d24e8f9a0b1c2d3e"
+          # Build-time placeholder only. CI compiles the app; it never serves a
+          # session, so this value is deliberately not the production secret.
+          # The real AUTH_SECRET lives in the Vercel environment.
+          AUTH_SECRET: "ci-build-only-placeholder-not-a-real-secret-000"
           NEXTAUTH_URL: "https://align-web-five.vercel.app"

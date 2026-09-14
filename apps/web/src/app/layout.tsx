@@ -2,15 +2,16 @@ import { Providers } from './providers';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { DM_Sans } from 'next/font/google';
 import './globals.css';
 import type { Metadata } from 'next';
 
-const jakarta = Plus_Jakarta_Sans({
+// Pin Sans (DESIGN.md) substitute — DM Sans is the closest free geometric humanist sans
+const dmSans = DM_Sans({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-jakarta',
-  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-dm-sans',
+  weight: ['400', '500', '600', '700', '800', '900'],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://align.schbang.com';
@@ -113,7 +114,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={jakarta.variable}>
+    <html lang="en" className={dmSans.variable}>
       <head>
         <script
           type="application/ld+json"

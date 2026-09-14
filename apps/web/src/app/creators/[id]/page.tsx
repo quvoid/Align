@@ -48,7 +48,7 @@ export default function CreatorProfileDetailPage({
   // If a creator tries to access another creator's scorecard, show permission barrier
   if (session?.user?.role === "CREATOR") {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center pt-28 pb-16 px-4 bg-background">
+      <div className="min-h-[80vh] flex items-center justify-center pt-10 pb-16 px-4 bg-background">
         <div className="max-w-md w-full text-center space-y-5 p-8 bg-white rounded-3xl border border-border shadow-xl">
           <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
             <Lock className="w-6 h-6" />

@@ -1,29 +1,35 @@
-import NextAuth, { type NextAuthConfig } from "next-auth";
+import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
+import bcrypt from "bcryptjs";
+import { prisma } from "@/server/db";
+import { authConfig } from "./auth.config";
+import { normalizeEmail, isSeededAdminEmail } from "./auth-shared";
 
 const hasGoogleKeys = Boolean(
   process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
 );
 
-export const authConfig: NextAuthConfig = {
-  trustHost: true,
-  secret:
-    process.env.AUTH_SECRET ||
-    process.env.NEXTAUTH_SECRET ||
-    "align-schbang-secret-32-characters-long-key-2026",
+/**
+ * A real bcrypt hash of a random string, compared against on the
+ * "no such user" path so that a miss costs the same time as a wrong password.
+ * Without it, response latency reveals which emails are registered.
+ */
+const DUMMY_HASH = "$2a$12$C6UzMDM.H6dfI/f/IKcEeO1wF0KHvmQvLQYQZ.3AD0Zv1lSRpF9dq";
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   providers: [
-    // Include real Google OAuth only if client ID is configured
     ...(hasGoogleKeys
       ? [
           Google({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            allowDangerousEmailAccountLinking: true,
           }),
         ]
       : []),
 
-    // Credentials & Demo Profiles Provider
     Credentials({
       name: "Credentials",
       credentials: {
@@ -31,109 +37,78 @@ export const authConfig: NextAuthConfig = {
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        const email = (credentials?.email as string)?.toLowerCase().trim();
+        const email = normalizeEmail(credentials?.email as string);
+        const password = credentials?.password as string;
 
-        if (!email) return null;
+        if (!email || !password) return null;
 
-        // 1. Schbang Admin Account
-        if (email === "admin@schbang.com") {
-          return {
-            id: "admin_1",
-            name: "Schbang Admin Lead",
-            email: "admin@schbang.com",
-            role: "ADMIN",
-            image:
-              "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop",
-          };
+        const user = await prisma.user.findUnique({ where: { email } });
+
+        // Either no account, or an account that signs in with Google and has no
+        // password set. Burn the same time as a real comparison, then refuse.
+        if (!user?.passwordHash) {
+          await bcrypt.compare(password, DUMMY_HASH);
+          return null;
         }
 
-        // 2. Rohan Joshi Creator Account (checked BEFORE the @schbang.com
-        //    catch-all so the demo creator never inherits ADMIN)
-        if (
-          email === "rohan@schbang.com" ||
-          email === "rohan.creates@gmail.com"
-        ) {
-          return {
-            id: "c1",
-            name: "Rohan Joshi",
-            email: "rohan.creates@gmail.com",
-            role: "CREATOR",
-            image:
-              "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&h=120&fit=crop",
-          };
-        }
+        const valid = await bcrypt.compare(password, user.passwordHash);
+        if (!valid) return null;
 
-        // 3. Aanya Sen Beauty Creator Account
-        if (
-          email === "aanya@schbang.com" ||
-          email === "aanya.beauty@gmail.com"
-        ) {
-          return {
-            id: "c2",
-            name: "Aanya Sen",
-            email: "aanya.beauty@gmail.com",
-            role: "CREATOR",
-            image:
-              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop",
-          };
-        }
-
-        // 4. Any other @schbang.com email → ADMIN
-        if (email.endsWith("@schbang.com")) {
-          const displayName = email.split("@")[0] || "Admin";
-          return {
-            id: `admin_${Date.now()}`,
-            name: displayName.charAt(0).toUpperCase() + displayName.slice(1),
-            email,
-            role: "ADMIN",
-            image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`,
-          };
-        }
-
-        // 5. Any other email → CREATOR
-        const displayName = email.split("@")[0] || "creator";
         return {
-          id: `user_${Date.now()}`,
-          name: displayName.charAt(0).toUpperCase() + displayName.slice(1),
-          email,
-          role: "CREATOR",
-          image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${displayName}`,
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          image: user.avatar ?? undefined,
         };
       },
     }),
   ],
   callbacks: {
-    jwt({ token, user, account }) {
-      if (user) {
-        token.id = user.id;
-        // For Google OAuth: assign role based on email domain
-        if (account?.provider === "google") {
-          const email = user.email?.toLowerCase() || "";
-          token.role = email.endsWith("@schbang.com") ? "ADMIN" : "CREATOR";
-        } else {
-          token.role = user.role || "CREATOR";
-        }
-      }
-      if (token.name?.toLowerCase().includes("harshil") || token.email === "admin@schbang.com") {
-        token.name = "Schbang Admin Lead";
-      }
-      return token;
-    },
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = (token.id as string) || "";
-        session.user.role = (token.role as "CREATOR" | "ADMIN" | "SUPER_ADMIN") || "CREATOR";
-        if (session.user.name?.toLowerCase().includes("harshil") || session.user.email === "admin@schbang.com") {
-          session.user.name = "Schbang Admin Lead";
-        }
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/auth/signin",
-    error: "/auth/signin",
-  },
-};
+    ...authConfig.callbacks,
 
-export const { handlers, signIn, signOut, auth } = NextAuth(authConfig);
+    async signIn({ user, account, profile }) {
+      // Credentials sign-ins already resolved against the database in
+      // `authorize`, so there is nothing to reconcile here.
+      if (account?.provider !== "google") return true;
+
+      const email = normalizeEmail(user.email);
+      if (!email) return false;
+
+      // Only trust a Google identity whose address Google itself has verified.
+      // This check is what makes linking a Google login to an existing
+      // credentials account safe rather than an account-takeover vector.
+      if (profile && profile.email_verified === false) return false;
+
+      const dbUser = await prisma.user.upsert({
+        where: { email },
+        create: {
+          email,
+          name: user.name || email.split("@")[0] || "Creator",
+          avatar: user.image ?? null,
+          provider: "GOOGLE",
+          providerId: profile?.sub ?? null,
+          emailVerifiedAt: new Date(),
+          // Role is never taken from the email domain. A brand-new Google user
+          // is a CREATOR unless they are on the seeded admin allowlist.
+          role: isSeededAdminEmail(email) ? "ADMIN" : "CREATOR",
+          creatorProfile: { create: {} },
+        },
+        update: {
+          avatar: user.image ?? undefined,
+          providerId: profile?.sub ?? undefined,
+          emailVerifiedAt: new Date(),
+          // Deliberately NOT updating `role` or `name`: re-logging in must never
+          // demote an admin or overwrite a name the creator has edited.
+        },
+      });
+
+      // Hand the real database id and role to the `jwt` callback, which cannot
+      // query the database itself because it also runs at the edge.
+      user.id = dbUser.id;
+      user.role = dbUser.role;
+
+      return true;
+    },
+  },
+});

@@ -3,7 +3,7 @@ import { PLANS, formatINR, JOIN_CTA } from '@/lib/plans';
 import { Button } from '@/components/ui/button';
 import { MOCK_BRANDS } from '@/lib/mock-data';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function Home() {
   const faqList = [
@@ -51,51 +51,57 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      {/* Hero Section */}
-      <section className="relative pt-28 pb-20 md:pt-36 md:pb-28 bg-black overflow-hidden flex items-center justify-center min-h-[75vh]">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none"
-        >
-          <source src="/hero-bg.mp4" type="video/mp4" />
-        </video>
+      {/* Hero Section — DESIGN.md: white canvas, two-column asymmetric composition, no video/gradients */}
+      <section className="relative bg-white overflow-hidden pt-14 pb-16 md:pt-20 md:pb-24">
+        <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="animate-fade-in-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
+            <h1 className="text-[2.75rem] sm:text-5xl md:text-6xl font-black tracking-tight text-primary mb-6 leading-[1.05]">
+              Get paid by India&apos;s biggest brands,{' '}
+              <span className="italic text-lavender">no agency in between</span>
+            </h1>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/75 pointer-events-none" />
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-black/20 to-black/85 pointer-events-none" />
+            <p className="animate-fade-in-2 text-base md:text-lg text-text-secondary max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+              Britannia, NIVEA, Swiggy, Myntra and more post paid campaign briefs here. Pitch your real numbers, keep 100% of your fee.
+            </p>
 
-        <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
-          <h1 className="animate-fade-in-1 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-5 leading-[1.12] drop-shadow-2xl">
-            Get paid by India&apos;s biggest brands, <br className="hidden sm:inline" />
-            <span className="text-accent">no agency in between</span>
-          </h1>
+            <div className="animate-fade-in-3 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3.5">
+              <Link href="/brands" className="w-full sm:w-auto">
+                <Button variant="accent" size="lg" className="w-full sm:w-auto">
+                  Browse open briefs
+                  <ArrowRight className="w-4 h-4 ml-1.5" />
+                </Button>
+              </Link>
+              <Link href="/pricing" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                  {JOIN_CTA} — all brands, forever
+                </Button>
+              </Link>
+            </div>
+          </div>
 
-          <p className="animate-fade-in-2 text-sm sm:text-base md:text-lg text-white/80 max-w-xl mx-auto mb-8 leading-relaxed font-normal drop-shadow">
-            Britannia, NIVEA, Swiggy, Myntra and more post paid campaign briefs here. Pitch your real numbers, keep 100% of your fee.
-          </p>
-
-          <div className="animate-fade-in-3 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-            <Link href="/brands" className="w-full sm:w-auto">
-              <Button
-                variant="accent"
-                size="lg"
-                className="w-full sm:w-auto py-5 px-7 text-sm font-bold"
-              >
-                Browse open briefs
-                <ArrowRight className="w-4 h-4 ml-1.5" />
-              </Button>
-            </Link>
-            <Link href="/pricing" className="w-full sm:w-auto">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full sm:w-auto bg-transparent hover:bg-white/10 text-white border-white/30 hover:border-white/60 py-5 px-7 text-sm font-semibold"
-              >
-                {JOIN_CTA} — all brands, forever
-              </Button>
-            </Link>
+          {/* Tilted Image Card Stack */}
+          <div className="animate-fade-in-4 relative hidden lg:block h-[420px]">
+            {MOCK_BRANDS.slice(0, 3).map((brand, idx) => {
+              const rotations = ['-rotate-6', 'rotate-3', '-rotate-12'];
+              const positions = [
+                'top-0 left-8 z-20',
+                'top-20 left-40 z-10',
+                'top-44 left-0 z-0',
+              ];
+              return (
+                <div
+                  key={brand.id}
+                  className={`absolute w-[280px] h-[280px] rounded-4xl overflow-hidden border border-border bg-linen ${rotations[idx]} ${positions[idx]}`}
+                >
+                  <img src={brand.coverImage} alt={brand.name} className="w-full h-full object-cover" />
+                  {idx === 0 && (
+                    <span className="absolute top-4 right-4 w-12 h-12 rounded-full bg-lavender flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -175,7 +181,7 @@ export default function Home() {
                 </div>
                 <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="flex items-center gap-3.5 mb-4">
-                    <img src={brand.logo} alt={brand.name} className="w-12 h-12 rounded-2xl border border-border object-cover bg-white shadow-xs" />
+                    <img src={brand.logo} alt={brand.name} className="w-12 h-12 rounded-2xl border border-border object-cover bg-white" />
                     <div>
                       <h3 className="font-bold text-lg text-primary group-hover:text-accent transition-colors">{brand.name}</h3>
                       <span className="text-xs font-medium text-text-secondary">{brand.industry}</span>
@@ -192,9 +198,9 @@ export default function Home() {
             ))}
           </div>
           
-          <div className="text-center mt-12">
+          <div className="flex justify-center mt-12">
             <Link href="/brands">
-              <Button size="lg" variant="accent" className="font-bold px-8 shadow-md shadow-accent/25">
+              <Button size="lg" variant="accent" className="font-bold px-8">
                 See all {MOCK_BRANDS.length} open briefs
               </Button>
             </Link>

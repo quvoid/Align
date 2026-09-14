@@ -13,6 +13,9 @@ build/
 .env.local
 .env.*.local
 
+# Google Cloud OAuth client secrets downloaded from the console
+client_secret_*.json
+
 # IDE
 .vscode/
 .idea/

@@ -1,18 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #000000;
-  --color-accent: #FF4D00;
-  --color-accent-hover: #E64400;
-  --color-background: #F8F9FA;
+  /* Core palette — DESIGN.md (Pinterest-style reference), remapped onto Align's own accent */
+  --color-primary: #211922;       /* Ink Plum — dark filled buttons, wordmark */
+  --color-accent: #e60023;        /* Pin Red — sole high-emphasis CTA color */
+  --color-accent-hover: #b8001d;
+  --color-background: #FFFFFF;    /* Gallery White canvas */
   --color-surface: #FFFFFF;
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #64748B;
-  --color-border: #E2E8F0;
+  --color-text-primary: #211922;  /* Ink Plum */
+  --color-text-secondary: #666666; /* Fog Gray */
+  --color-border: #e5e5e0;        /* Linen */
   --color-success: #16A34A;
   --color-warning: #D97706;
   --color-error: #DC2626;
-  --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Decorative accents — reserved for illustrated/highlight moments, never chrome or controls */
+  --color-linen: #e5e5e0;
+  --color-stone: #8c8c8c;
+  --color-halo: #fffd92;
+  --color-coral: #fa5f2e;
+  --color-lavender: #9270d7;
+  --color-link: #2b48d4;
+
+  --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Radius — 16px (2xl) for buttons/inputs/nav is already Tailwind's default; add the two larger card sizes DESIGN.md calls for */
+  --radius-4xl: 2rem;    /* 32px — image cards, tilted stack */
+  --radius-5xl: 2.5rem;  /* 40px — large feature panels */
 }
 
 /* Hide scrollbar for Chrome, Safari, Edge and Opera */
@@ -33,11 +47,7 @@ html, body {
   scrollbar-width: none;  /* Firefox */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.015em;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  letter-spacing: -0.03em;
+  letter-spacing: -0.037em;
 }
 
 /* Micro-animations & UX Interactions */
@@ -119,12 +129,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Interactive Card & Button Hover Classes */
+/* Flat, no-shadow depth per DESIGN.md — elevation comes from radius, rotation and border, not shadow */
 .interactive-card {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .interactive-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+  border-color: var(--color-primary);
 }
 
 .interactive-card-accent {
@@ -132,8 +143,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .interactive-card-accent:hover {
   transform: translateY(-3px);
-  border-color: rgba(255, 77, 0, 0.35);
-  box-shadow: 0 14px 30px -6px rgba(255, 77, 0, 0.14);
+  border-color: var(--color-accent);
 }
 
 .click-scale {

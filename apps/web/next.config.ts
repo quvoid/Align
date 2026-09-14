@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
     ),
   },
   output: process.env.DOCKER_BUILD === "1" ? "standalone" : undefined,
+  // @branddeals/database ships raw TypeScript (main: ./src/index.ts), so Next
+  // has to compile it rather than treat it as a prebuilt dependency.
+  transpilePackages: ["@branddeals/database"],
+  // Keep Prisma out of the bundler's tracing — it loads a native query engine
+  // binary that webpack cannot follow.
+  serverExternalPackages: ["@prisma/client", ".prisma/client"],
   typescript: {
     ignoreBuildErrors: false,
   },

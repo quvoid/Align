@@ -4,7 +4,7 @@ import { ArrowLeft, Compass, Search, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-[75vh] flex items-center justify-center bg-background px-4 pt-28 pb-16">
+    <div className="min-h-[75vh] flex items-center justify-center bg-background px-4 pt-10 pb-16">
       <div className="max-w-lg w-full text-center">
         {/* Visual 404 Accent */}
         <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-accent/10 text-accent mb-6 shadow-lg shadow-accent/10">

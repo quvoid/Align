@@ -1045,11 +1045,11 @@ export const BRAND_COMPETITOR_REGISTRY: Record<string, BrandCompetitorConfig> = 
       },
       {
         id: 'tc_itc', igHandle: '@sunfeast_india', name: 'ITC Sunfeast',
-        avatar: 'https://images.unsplash.com/photo-1486427944544-d2c246c4df4c?w=150&h=150&fit=crop',
+        avatar: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=150&h=150&fit=crop',
         addedAt: '2025-09-15',
         stats: makeCompetitorStats(
           '@sunfeast_india', 'ITC Sunfeast',
-          'https://images.unsplash.com/photo-1486427944544-d2c246c4df4c?w=150&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=150&h=150&fit=crop',
           280000, 18, 7200000, 5.2, 55.5,
           { TIER_1: 8, TIER_2: 4, TIER_3: 2, TIER_4: 4 },
           { ...DEFAULT_GENRES, 'Celebrity Ambassador': 6, 'Craft Lore & Material Storytelling': 5, 'Comedy & Relatable Skits': 4, 'Unboxing & Review': 3 },
@@ -1384,11 +1384,11 @@ export const BRAND_COMPETITOR_REGISTRY: Record<string, BrandCompetitorConfig> = 
       },
       {
         id: 'tc_mseal', igHandle: '@mseal_official', name: 'M-Seal',
-        avatar: 'https://images.unsplash.com/photo-1530124566582-a45a7e3d0c09?w=150&h=150&fit=crop',
+        avatar: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=150&h=150&fit=crop',
         addedAt: '2025-11-15',
         stats: makeCompetitorStats(
           '@mseal_official', 'M-Seal',
-          'https://images.unsplash.com/photo-1530124566582-a45a7e3d0c09?w=150&h=150&fit=crop',
+          'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=150&h=150&fit=crop',
           28000, 4, 600000, 3.0, 25.0,
           { TIER_1: 1, TIER_2: 1, TIER_3: 0, TIER_4: 2 },
           { ...DEFAULT_GENRES, 'Craft Lore & Material Storytelling': 2, 'Comedy & Relatable Skits': 1, 'Unboxing & Review': 1 },

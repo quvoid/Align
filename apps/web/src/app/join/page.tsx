@@ -59,7 +59,7 @@ function JoinCheckout() {
   const signedOut = status === "unauthenticated";
 
   return (
-    <div className="bg-background min-h-screen pt-32 pb-24">
+    <div className="bg-background min-h-screen pt-12 pb-24">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-10">
           <div>
@@ -158,7 +158,7 @@ function JoinCheckout() {
 
 export default function JoinPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen pt-32" />}>
+    <Suspense fallback={<div className="min-h-screen pt-12" />}>
       <JoinCheckout />
     </Suspense>
   );

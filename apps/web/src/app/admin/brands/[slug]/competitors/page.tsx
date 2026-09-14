@@ -66,12 +66,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   const [auditReport, setAuditReport] = useState<CompetitorAuditReport | null>(null);
   const [isRunningAudit, setIsRunningAudit] = useState(false);
 
-  // Scout Modal State
-  const [scoutModalOpen, setScoutModalOpen] = useState(false);
-  const [selectedCreator, setSelectedCreator] = useState<(CompetitorPostCollab & { competitorName: string }) | null>(null);
-  const [scoutPitchNote, setScoutPitchNote] = useState('');
-
-  // Roster filter: null = every tracked competitor, otherwise a competitor id
+  // Roster filter: null = no competitor picked yet (brand-first — pick a competitor to reveal its creators)
   const [rosterCompetitorId, setRosterCompetitorId] = useState<string | null>(null);
 
   // Sort State
@@ -81,7 +76,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   // RBAC check: creators cannot access
   if (session && session.user.role === 'CREATOR') {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 pt-24 pb-12 bg-background text-center">
+      <div className="min-h-[80vh] flex flex-col items-center justify-center px-6 pt-8 pb-12 bg-background text-center">
         <div className="w-16 h-16 rounded-3xl bg-accent/10 text-accent flex items-center justify-center mb-4">
           <Lock className="w-8 h-8" />
         </div>
@@ -227,23 +222,6 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
     toast({ title: 'Report downloaded', description: 'Audit exported as JSON.', type: 'success' });
   };
 
-  const handleScoutClick = (creator: CompetitorPostCollab & { competitorName: string }) => {
-    setSelectedCreator(creator);
-    setScoutPitchNote(`Hi ${creator.creatorName}, we loved your recent creative reels! Align by Schbang invites you to join an exclusive high-budget collaboration with ${config?.brandName || 'our brand client'} with milestone escrow payouts.`);
-    setScoutModalOpen(true);
-  };
-
-  const handleDispatchScoutOffer = () => {
-    if (!selectedCreator) return;
-    toast({
-      title: `Invitation sent to ${selectedCreator.creatorName}`,
-      description: `Invited ${selectedCreator.creatorName} (${selectedCreator.creatorHandle}) to collaborate with ${config?.brandName || 'the brand'}.`,
-      type: 'success',
-    });
-    setScoutModalOpen(false);
-    setSelectedCreator(null);
-  };
-
   const toggleSort = (col: SortColumn) => {
     if (sortCol === col) {
       setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
@@ -313,7 +291,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] pt-24">
+      <div className="flex items-center justify-center min-h-[60vh] pt-8">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
       </div>
     );
@@ -321,7 +299,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
   if (!config) {
     return (
-      <div className="max-w-4xl mx-auto px-12 pt-32 pb-12 text-center space-y-4">
+      <div className="max-w-4xl mx-auto px-12 pt-12 pb-12 text-center space-y-4">
         <h2 className="text-2xl font-bold text-primary">Brand Not Found</h2>
         <p className="text-text-secondary">No competitor profile exists for &quot;{slug}&quot;.</p>
         <Link href="/admin/competitor-intelligence">
@@ -334,7 +312,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   // HEAD-TO-HEAD DEEP DIVE VIEW
   if (selectedCompetitorId && benchmarkData) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 space-y-8 animate-in fade-in">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 space-y-8 animate-in fade-in">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={closeBenchmark} className="text-text-secondary hover:text-primary font-bold">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to {config.brandName} Watchlist
@@ -476,7 +454,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
   // MAIN WATCHLIST DASHBOARD VIEW
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 space-y-10">
       {/* Brand Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
@@ -622,7 +600,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
-              <div className="md:col-span-6 space-y-1">
+              <div className="md:col-span-5 space-y-1">
                 <label className="text-[10px] font-bold text-text-secondary uppercase">Instagram Handle or URL *</label>
                 <Input
                   placeholder="e.g. @parleg_official or instagram.com/parleg_official"
@@ -641,15 +619,15 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                   className="text-xs"
                 />
               </div>
-              <div className="md:col-span-2">
+              <div className="md:col-span-3">
                 <Button
                   type="submit"
                   variant="accent"
-                  size="sm"
+                  size="md"
                   isLoading={isAdding}
-                  className="w-full text-xs font-bold"
+                  className="w-full h-11 text-sm font-bold whitespace-nowrap"
                 >
-                  <Plus className="w-3.5 h-3.5 mr-1" /> Add
+                  <Plus className="w-4 h-4 mr-1.5" /> Add
                 </Button>
               </div>
             </div>
@@ -695,25 +673,16 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               <p className="text-xs text-text-secondary">
                 {rosterCompetitor
                   ? `Creators ${rosterCompetitor.name} paid or partnered with in the last year.`
-                  : 'Spend multiplier, comment intent and re-hire loyalty for every collab.'}
+                  : 'Pick a tracked competitor to reveal the creators they paid or partnered with.'}
               </p>
             </div>
-            <Badge className="bg-primary text-white text-xs font-bold">{sortedCreators.length} Collabs</Badge>
+            {rosterCompetitor && (
+              <Badge className="bg-primary text-white text-xs font-bold">{sortedCreators.length} Collabs</Badge>
+            )}
           </div>
 
-          {/* Competitor filter chips */}
+          {/* Competitor picker — brand-first: nothing is revealed until a competitor is chosen */}
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setRosterCompetitorId(null)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-colors ${
-                rosterCompetitorId === null
-                  ? 'bg-primary text-white border-primary'
-                  : 'bg-white text-text-secondary border-border hover:text-primary hover:border-primary/40'
-              }`}
-            >
-              All competitors ({creators.length})
-            </button>
             {config.competitors.map((comp) => {
               const count = creators.filter((c) => c.competitorName === comp.name).length;
               const active = rosterCompetitorId === comp.id;
@@ -735,6 +704,11 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
             })}
           </div>
 
+          {!rosterCompetitor ? (
+            <Card className="rounded-3xl border-dashed border-2 border-border bg-transparent text-center p-10">
+              <p className="text-sm text-text-secondary">Select a competitor above to reveal their creator roster.</p>
+            </Card>
+          ) : (
           <Card className="rounded-3xl border-border bg-white shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
@@ -764,16 +738,13 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                     </th>
                     <th scope="col" className="px-6 py-4 font-bold">Signals &amp; Intent</th>
                     <th scope="col" className="px-6 py-4 font-bold">Creative Genre</th>
-                    <th scope="col" className="px-6 py-4 font-bold text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {sortedCreators.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-text-secondary text-xs">
-                        {rosterCompetitor
-                          ? `No collaborations recorded for ${rosterCompetitor.name} in the last 12 months.`
-                          : 'No collaboration data found for tracked competitors.'}
+                      <td colSpan={6} className="px-6 py-8 text-center text-text-secondary text-xs">
+                        No collaborations recorded for {rosterCompetitor.name} in the last 12 months.
                       </td>
                     </tr>
                   ) : (
@@ -853,16 +824,6 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                           <td className="px-6 py-4 text-xs font-semibold text-primary">
                             {collab.genre}
                           </td>
-                          <td className="px-6 py-4 text-right">
-                            <Button
-                              variant="accent"
-                              size="sm"
-                              className="text-xs font-bold shadow-xs"
-                              onClick={() => handleScoutClick(collab)}
-                            >
-                              <Zap className="w-3 h-3 mr-1" /> Scout
-                            </Button>
-                          </td>
                         </tr>
                       );
                     })
@@ -871,6 +832,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               </table>
             </div>
           </Card>
+          )}
         </section>
       )}
 
@@ -1053,48 +1015,6 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         </Modal>
       )}
 
-      {/* Scout Modal */}
-      {selectedCreator && (
-        <Modal
-          isOpen={scoutModalOpen}
-          onClose={() => setScoutModalOpen(false)}
-          title={`Scout ${selectedCreator.creatorName}`}
-          description={`Currently collaborating with ${selectedCreator.competitorName} (${selectedCreator.genre})`}
-          size="md"
-        >
-          <div className="space-y-4 mt-4 text-xs">
-            <div className="p-4 rounded-2xl bg-gray-50 border border-border flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-bold uppercase text-text-secondary block">Audience Reach</span>
-                <span className="font-extrabold text-sm text-primary">{formatNumber(selectedCreator.creatorFollowers)} Followers</span>
-              </div>
-              <div className="text-right">
-                <span className="text-[10px] font-bold uppercase text-text-secondary block">Last Collab Views</span>
-                <span className="font-extrabold text-sm text-accent">{formatNumber(selectedCreator.views)}</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="font-bold text-primary block mb-1.5">Personalized Pitch for {config.brandName}:</label>
-              <textarea
-                rows={3}
-                value={scoutPitchNote}
-                onChange={(e) => setScoutPitchNote(e.target.value)}
-                className="w-full p-3 rounded-xl border border-border bg-white text-xs focus:outline-hidden focus:border-accent"
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 pt-2 border-t border-border">
-              <Button variant="ghost" size="sm" onClick={() => setScoutModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="accent" size="sm" onClick={handleDispatchScoutOffer} className="font-bold">
-                Send invitation
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }

@@ -12,25 +12,29 @@ export const Button = ({
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }) => {
+  // DESIGN.md: buttons are flat (no shadow), radius 16px at every size, Pin Red reserved
+  // as the sole filled high-emphasis color. `primary` is the Ink Plum filled variant,
+  // `accent` is the Pin Red filled CTA, `outline` is the ghost-outline secondary action,
+  // `ghost` is the borderless tertiary text link.
   const variants = {
-    primary: 'bg-primary text-white hover:bg-black/85 hover:shadow-md active:bg-black shadow-xs',
-    accent: 'bg-accent text-white hover:bg-accent-hover hover:shadow-md hover:shadow-accent/25 active:bg-[#d43f00] shadow-xs',
-    outline: 'border border-border bg-white hover:bg-gray-50/80 text-text-primary hover:border-gray-300 hover:shadow-xs',
-    ghost: 'bg-transparent hover:bg-gray-100 text-text-primary',
+    primary: 'bg-primary text-white hover:bg-primary/85 active:bg-primary',
+    accent: 'bg-accent text-white hover:bg-accent-hover active:bg-accent-hover',
+    outline: 'border border-primary bg-transparent text-primary hover:bg-primary hover:text-white',
+    ghost: 'bg-transparent text-primary hover:underline underline-offset-4',
   };
-  
+
   const sizes = {
-    sm: 'px-3 py-1.5 text-xs font-semibold rounded-lg',
-    md: 'px-4 py-2 text-sm font-semibold rounded-xl',
-    lg: 'px-6 py-3 text-base font-bold rounded-2xl',
+    sm: 'px-3 py-1.5 text-xs font-semibold rounded-2xl',
+    md: 'px-5 py-3 text-sm font-semibold rounded-2xl',
+    lg: 'px-6 py-3.5 text-base font-bold rounded-2xl',
   };
 
   return (
     <button
       className={cn(
         "relative font-medium flex items-center justify-center select-none cursor-pointer transition-all duration-200 ease-out",
-        "active:scale-[0.97] active:translate-y-px hover:-translate-y-0.5",
-        "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none",
+        "active:scale-[0.97] hover:-translate-y-0.5",
+        "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none",
         variants[variant],
         sizes[size],
         className

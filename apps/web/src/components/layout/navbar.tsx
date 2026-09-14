@@ -15,21 +15,23 @@ export const Navbar = () => {
 
   const isAdminOrBrand = session?.user?.role === 'ADMIN' || (session?.user as any)?.role === 'BRAND';
 
-  const sanitizedUserName = session?.user?.name?.toLowerCase().includes("harshil") || session?.user?.email === "admin@schbang.com"
-    ? "Schbang Admin Lead"
-    : session?.user?.name;
+  // Display the name the account actually holds. A previous hard-coded rule
+  // rewrote any name containing "harshil" to "Schbang Admin Lead", which with
+  // real signups would silently rename a creator who happens to be called that.
+  const displayName = session?.user?.name;
 
   return (
-    <header className="fixed top-3 sm:top-4 inset-x-0 z-50 flex justify-center pointer-events-none px-3 sm:px-6">
-      <div className="pointer-events-auto w-full max-w-5xl rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_0_rgba(0,0,0,0.08)] px-5 sm:px-7 py-2.5 flex items-center justify-between transition-all duration-300">
-        {/* Brand Logo - Ultra Clean */}
+    // DESIGN.md Top Navigation Bar: full-width white bar, 64px, no shadow, no glass/blur
+    <header className="sticky top-0 inset-x-0 z-50 h-16 flex items-center bg-white border-b border-border">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+        {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-1 group">
           <span className="font-black text-xl tracking-tight text-primary">Align</span>
           <span className="text-accent text-2xl leading-none font-black">.</span>
         </Link>
-        
-        {/* Desktop Navigation - Clean Text Links (No Icons, No Badges) */}
-        <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-text-secondary">
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-7 text-base font-medium text-text-secondary">
           <Link href="/brands" className="hover:text-primary transition-colors">
             Open briefs
           </Link>
@@ -69,17 +71,15 @@ export const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {session ? (
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center gap-2 bg-gray-100/80 px-3 py-1.5 rounded-full border border-gray-200/60 text-xs">
-                <span className="font-bold text-text-primary max-w-[130px] truncate">
-                  {sanitizedUserName}
-                </span>
-                <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-black text-white">
-                  {session.user?.role || "CREATOR"}
-                </span>
-              </div>
+              <Link
+                href={isAdminOrBrand ? "/admin" : "/dashboard/profile"}
+                className="font-bold text-base text-text-primary hover:text-accent transition-colors truncate max-w-[160px]"
+              >
+                {displayName}
+              </Link>
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
-                className="text-xs font-semibold text-text-secondary hover:text-red-600 transition-colors px-2 py-1"
+                className="text-xs font-semibold text-text-secondary hover:text-accent transition-colors px-2 py-1"
                 title="Sign out"
               >
                 Sign Out
@@ -90,12 +90,12 @@ export const Navbar = () => {
               <button
                 type="button"
                 onClick={() => openSignIn()}
-                className="text-sm font-semibold text-text-secondary hover:text-primary transition-colors px-2"
+                className="text-base font-semibold text-text-secondary hover:text-primary transition-colors px-2"
               >
                 Log In
               </button>
               <Link href="/pricing">
-                <Button size="sm" variant="primary" className="rounded-full px-5 py-1.5 text-xs font-bold shadow-xs">
+                <Button size="sm" variant="accent" className="text-base">
                   {JOIN_CTA}
                 </Button>
               </Link>
@@ -107,7 +107,7 @@ export const Navbar = () => {
         <div className="flex items-center md:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 rounded-full text-primary hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-full text-primary hover:bg-linen transition-colors"
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -115,14 +115,14 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Dropdown Pill */}
+      {/* Mobile Drawer Dropdown */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto absolute top-14 inset-x-4 max-w-md mx-auto rounded-3xl bg-white/95 backdrop-blur-2xl border border-white/80 shadow-2xl p-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="md:hidden absolute top-16 inset-x-0 bg-white border-b border-border p-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-2 text-sm font-medium">
             <Link
               href="/brands"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
+              className="px-3 py-2 rounded-2xl text-primary hover:bg-linen transition-colors"
             >
               Open briefs
             </Link>
@@ -131,7 +131,7 @@ export const Navbar = () => {
               <Link
                 href="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
+                className="px-3 py-2 rounded-2xl text-primary hover:bg-linen transition-colors"
               >
                 Pricing
               </Link>
@@ -141,7 +141,7 @@ export const Navbar = () => {
               <Link
                 href="/creators"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
+                className="px-3 py-2 rounded-2xl text-primary hover:bg-linen transition-colors"
               >
                 Creators
               </Link>
@@ -151,7 +151,7 @@ export const Navbar = () => {
               <Link
                 href="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
+                className="px-3 py-2 rounded-2xl text-primary hover:bg-linen transition-colors"
               >
                 {isAdminOrBrand ? 'Dashboard' : 'My pitches'}
               </Link>
@@ -161,7 +161,7 @@ export const Navbar = () => {
               <Link
                 href="/admin/competitor-intelligence"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
+                className="px-3 py-2 rounded-2xl text-primary hover:bg-linen transition-colors"
               >
                 Competitor Intel
               </Link>
@@ -171,25 +171,29 @@ export const Navbar = () => {
               <Link
                 href="/admin"
                 onClick={() => setMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl text-primary hover:bg-gray-50 transition-colors"
+                className="px-3 py-2 rounded-2xl text-primary hover:bg-linen transition-colors"
               >
                 Admin
               </Link>
             )}
           </nav>
 
-          <div className="border-t border-gray-100 pt-3">
+          <div className="border-t border-border pt-3">
             {session ? (
               <div className="flex items-center justify-between px-2">
-                <div className="text-xs font-bold text-text-primary">
-                  {sanitizedUserName} <span className="text-text-secondary font-normal">({session.user?.role || "CREATOR"})</span>
-                </div>
+                <Link
+                  href={isAdminOrBrand ? "/admin" : "/dashboard/profile"}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-sm font-bold text-text-primary hover:text-accent transition-colors"
+                >
+                  {displayName}
+                </Link>
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
                     signOut({ callbackUrl: '/' });
                   }}
-                  className="text-xs font-bold text-red-600 hover:underline"
+                  className="text-xs font-bold text-accent hover:underline"
                 >
                   Sign Out
                 </button>
@@ -199,7 +203,7 @@ export const Navbar = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full rounded-full text-xs"
+                  className="w-full"
                   onClick={() => {
                     setMobileMenuOpen(false);
                     openSignIn();
@@ -208,7 +212,7 @@ export const Navbar = () => {
                   Log In
                 </Button>
                 <Link href="/pricing" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="primary" size="sm" className="w-full rounded-full text-xs">
+                  <Button variant="accent" size="sm" className="w-full">
                     {JOIN_CTA}
                   </Button>
                 </Link>
