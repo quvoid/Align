@@ -15,6 +15,7 @@
     "@branddeals/database": "workspace:*",
     "@branddeals/shared": "workspace:*",
     "@hookform/resolvers": "^4.0.0",
+    "@prisma/client": "^6.19.3",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.0",
     "framer-motion": "^12.0.0",
@@ -37,6 +38,7 @@
     "eslint-config-next": "^15.3.0",
     "happy-dom": "^20.11.6",
     "postcss": "^8.5.0",
+    "prisma": "^6.19.3",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.6.0",
     "vitest": "^4.1.11"
