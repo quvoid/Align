@@ -26,6 +26,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
             allowDangerousEmailAccountLinking: true,
+            // Always show Google's account chooser. Without this, a browser
+            // already signed in to one Google account gets silently signed
+            // into Align with it — no way to pick a different one (e.g. a
+            // schbang.com admin account vs a personal Gmail).
+            authorization: { params: { prompt: "select_account" } },
           }),
         ]
       : []),
