@@ -1,8 +1,8 @@
-# Align — The Schbang Creator & Brand Collaboration Platform
+# Align — The Creator & Brand Collaboration Platform
 
 > Where Creative Reach Meets Brand Purpose.
 
-Align is an enterprise-grade brand collaboration marketplace engineered for **Schbang**. It connects digital creators, influencers, and talent managers with marquee brand briefs across FMCG, Fashion, FinTech, Tech, Beauty, and Lifestyle.
+Align is an enterprise-grade brand collaboration marketplace engineered for ****. It connects digital creators, influencers, and talent managers with marquee brand briefs across FMCG, Fashion, FinTech, Tech, Beauty, and Lifestyle.
 
 ---
 
@@ -12,7 +12,7 @@ Align is an enterprise-grade brand collaboration marketplace engineered for **Sc
 - **Slide-Over Brief Drawer**: Seamless flyout drawer displaying full campaign deliverables, creator eligibility criteria, and agency contact details.
 - **6-Step Application Workflow**: Guided creator proposal submission capturing verified analytics across Instagram, YouTube, and Facebook.
 - **Creator Dashboard**: Real-time status tracking (*Pending, Under Review, Shortlisted, Approved*) and creator profile metrics management.
-- **Admin Command Center**: Agency portal for Schbang brand managers to publish new briefs, review incoming creator pitches, inspect social metrics, and approve deals.
+- **Admin Command Center**: Agency portal for  brand managers to publish new briefs, review incoming creator pitches, inspect social metrics, and approve deals.
 - **Cinematic Motion Hero**: Motion design background video integrated with fluid typography and micro-animations.
 
 ---
@@ -57,4 +57,4 @@ pnpm dev
 ---
 
 ## 📄 License
-Private repository — © 2026 Schbang Digital Solutions. All rights reserved.
+Private repository — © 2026  Digital Solutions. All rights reserved.
