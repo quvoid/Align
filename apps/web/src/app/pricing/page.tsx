@@ -94,7 +94,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen pt-12 pb-24">
+    <div className="min-h-screen pt-12 pb-24">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <div className="container mx-auto px-4 max-w-5xl">

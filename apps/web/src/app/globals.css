@@ -6,6 +6,8 @@
   --color-accent: #e60023;        /* Pin Red — sole high-emphasis CTA color */
   --color-accent-hover: #b8001d;
   --color-background: #FFFFFF;    /* Gallery White canvas */
+  --color-gradient-start: #D6A4A4; /* Dusty rose — page wash, left edge */
+  --color-gradient-end: #DAE2F8;   /* Periwinkle — page wash, right edge */
   --color-surface: #FFFFFF;
   --color-text-primary: #211922;  /* Ink Plum */
   --color-text-secondary: #666666; /* Fog Gray */
@@ -25,8 +27,27 @@
   --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
   /* Radius — 16px (2xl) for buttons/inputs/nav is already Tailwind's default; add the two larger card sizes DESIGN.md calls for */
+  /* Logo ribbon. The track holds two copies of the strip, so -50% is exactly
+     one strip's width and the loop is seamless. Duration is per-strip pace. */
+  --animate-marquee: marquee 48s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
   --radius-4xl: 2rem;    /* 32px — image cards, tilted stack */
   --radius-5xl: 2.5rem;  /* 40px — large feature panels */
+}
+
+/* Large monitors: the page reads right at the browser's 125% zoom, so that is
+   the default there. Gated to wide viewports only — the same scale on a 1366px
+   laptop drops it to a cramped ~1090px layout, and on a phone it is unusable.
+   `zoom` (not root font-size) so px-sized things — the 1560px shell, image
+   boxes, the hero collage — scale with the type instead of drifting apart. */
+@media (min-width: 1536px) {
+  html {
+    zoom: 1.25;
+  }
 }
 
 /* Hide scrollbar for Chrome, Safari, Edge and Opera */
@@ -39,7 +60,7 @@
 /* Hide scrollbar for IE, Edge and Firefox while keeping scrolling active */
 html, body {
   font-family: var(--font-sans);
-  background-color: var(--color-background);
+  background-color: var(--color-gradient-end); /* fallback: flat end-stop if the gradient is unsupported */
   color: var(--color-text-primary);
   overflow-x: hidden;
   overflow-y: auto;
@@ -50,18 +71,38 @@ html, body {
   letter-spacing: -0.037em;
 }
 
-/* Micro-animations & UX Interactions */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/*
+ * Page wash. Sits on <body> only (not html, or it paints twice) and stays
+ * fixed so a long page shows one continuous sweep instead of restarting the
+ * ramp per scroll. Sections over it are transparent; cards keep their white
+ * surface so text contrast is unaffected.
+ */
+body {
+  background-image: linear-gradient(
+    to right,
+    var(--color-gradient-start),
+    var(--color-gradient-end)
+  );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
+/* PROTOTYPE: while the Neat canvas is mounted, the static wash steps aside so
+   the two never stack. Removing the canvas removes the attribute and the wash
+   comes straight back. */
+html[data-neat] body {
+  background-image: none;
+  background-color: transparent;
+}
+
+/* Logo ribbon: hold still while the pointer is over it, so a logo can be read.
+   Plain CSS rather than a group-hover utility — the arbitrary-property form
+   was not emitted by the compiler. */
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Micro-animations & UX Interactions */
 @keyframes scaleIn {
   from {
     opacity: 0;
@@ -95,25 +136,6 @@ html, body {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
   }
-}
-
-.animate-fade-in-1 {
-  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade-in-2 {
-  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
-  opacity: 0;
-}
-
-.animate-fade-in-3 {
-  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-  opacity: 0;
-}
-
-.animate-fade-in-4 {
-  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-  opacity: 0;
 }
 
 .animate-scale-in {

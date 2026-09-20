@@ -1,12 +1,54 @@
 import Link from 'next/link';
+import { Rise, Reveal } from 'cube-motion/react';
+import { HowItWorks } from '@/components/home/how-it-works';
+import { HeroParallax } from '@/components/home/hero-parallax';
+import { BrandMarquee } from '@/components/home/brand-marquee';
+import { PAGE_SHELL } from '@/lib/layout';
 import { PLANS, formatINR, JOIN_CTA } from '@/lib/plans';
 import { Button } from '@/components/ui/button';
 import { MOCK_BRANDS } from '@/lib/mock-data';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 
 // Brands shown in the hero's tilted image stack, front-to-back.
-const HERO_STACK_SLUGS = ['britannia', 'fevicol', 'kotak811'];
+
+/**
+ * The three-step story, each with its own photograph. Panel 3 spans both
+ * columns at the 2-up tablet breakpoint, so the layout lands as 2 + 1 rather
+ * than leaving a hole; its aspect goes landscape there to suit the wider box.
+ */
+const HOW_IT_WORKS = [
+  {
+    step: '01',
+    title: 'Find an open brief',
+    body: 'Filter live campaigns by your niche, audience and follower tier.',
+    image: '/steps/01-find-a-brief.webp',
+    alt: 'A creator browsing open brand campaign briefs on a laptop at her desk',
+    href: '/brands',
+    span: '',
+    aspect: 'aspect-[4/5] lg:aspect-[2/3]',
+  },
+  {
+    step: '02',
+    title: 'Pitch with your real numbers',
+    body: 'Send your actual Instagram and YouTube analytics with your own rate.',
+    image: '/steps/02-pitch-your-numbers.webp',
+    alt: 'A creator reviewing her social analytics on a phone beside a laptop',
+    href: '/pricing',
+    span: '',
+    aspect: 'aspect-[4/5] lg:aspect-[2/3]',
+  },
+  {
+    step: '03',
+    title: 'Get shortlisted and paid',
+    body: 'Schbang reviews, you sign, and you track deliverables through to payout.',
+    image: '/steps/03-shortlisted-and-paid.webp',
+    alt: 'A creator celebrating an approved collaboration next to a brand package',
+    href: '/dashboard',
+    span: 'sm:col-span-2 lg:col-span-1',
+    aspect: 'aspect-[4/5] sm:aspect-[2/1] lg:aspect-[2/3]',
+  },
+] as const;
 
 export default function Home() {
   const faqList = [
@@ -55,62 +97,59 @@ export default function Home() {
       />
 
       {/* Hero Section — DESIGN.md: white canvas, two-column asymmetric composition, no video/gradients */}
-      <section className="relative bg-white overflow-hidden pt-14 pb-16 md:pt-20 md:pb-24">
-        <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="animate-fade-in-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
+      <section className="relative overflow-hidden pt-14 pb-16 md:pt-20 md:pb-24">
+        <HeroParallax
+          copy={
+          <Rise targets="children" className="text-center lg:text-left max-w-xl mx-auto lg:mx-0">
             <h1 className="text-[2.75rem] sm:text-5xl md:text-6xl font-black tracking-tight text-primary mb-6 leading-[1.05]">
               Get paid by India&apos;s biggest brands,{' '}
               <span className="italic text-lavender">no agency in between</span>
             </h1>
 
-            <p className="animate-fade-in-2 text-base md:text-lg text-text-secondary max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+            <p className="text-base md:text-lg text-primary/75 max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
               Britannia, NIVEA, Swiggy, Myntra and more post paid campaign briefs here. Pitch your real numbers, keep 100% of your fee.
             </p>
 
-            <div className="animate-fade-in-3 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3.5">
+            <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3.5">
               <Link href="/brands" className="w-full sm:w-auto">
-                <Button variant="accent" size="lg" className="w-full sm:w-auto">
+                <Button variant="accent" size="lg" className="w-full sm:w-auto whitespace-nowrap">
                   Browse open briefs
                   <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
               <Link href="/pricing" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  {JOIN_CTA} — all brands, forever
+                <Button variant="outline" size="lg" className="w-full sm:w-auto whitespace-nowrap">
+                  {JOIN_CTA}
                 </Button>
               </Link>
             </div>
-          </div>
-
-          {/* Tilted Image Card Stack — Britannia/Fevicol/Kotak811 rather than
-              MOCK_BRANDS.slice(0,3), since that would put NIVEA's cover image
-              here (it reads poorly at this crop). */}
-          <div className="animate-fade-in-4 relative hidden lg:block h-[420px]">
-            {HERO_STACK_SLUGS.map((slug, idx) => {
-              const brand = MOCK_BRANDS.find((b) => b.slug === slug);
-              if (!brand) return null;
-              const rotations = ['-rotate-6', 'rotate-3', '-rotate-12'];
-              const positions = [
-                'top-0 left-8 z-20',
-                'top-20 left-40 z-10',
-                'top-44 left-0 z-0',
-              ];
-              return (
-                <div
-                  key={brand.id}
-                  className={`absolute w-[280px] h-[280px] rounded-4xl overflow-hidden border border-border bg-linen ${rotations[idx]} ${positions[idx]}`}
-                >
-                  <img src={brand.coverImage} alt={brand.name} className="w-full h-full object-cover" />
-                </div>
-              );
-            })}
-          </div>
-        </div>
+          </Rise>
+          }
+          art={
+          <>
+          {/* Hero collage — one pre-composed artwork (transparent PNG flattened
+              to WebP, 1.8MB -> 238KB) replacing the old three-card MOCK_BRANDS
+              stack. The alpha edges sit directly on the page gradient. */}
+          <Rise delay={210} className="relative hidden lg:block lg:-mr-6">
+            <img
+              src="/hero-creator-collage.webp"
+              alt="Creators filming, editing and unboxing brand collaboration packages"
+              width={1655}
+              height={910}
+              fetchPriority="high"
+              className="w-full h-auto object-contain"
+            />
+          </Rise>
+          </>
+          }
+        />
       </section>
 
-      {/* Stats Bar */}
-      <section className="bg-primary text-white py-10 border-y border-white/10">
-        <div className="container mx-auto px-4">
+      {/* Stats Bar — pulled up over the hero's lower edge so the receding hero
+          passes under it. Full-bleed and square: a radius here would curve away
+          from the viewport edge with nothing behind it. */}
+      <section className="relative z-10 -mt-6 md:-mt-10 bg-primary text-white py-10 md:py-12 border-b border-white/10">
+        <div className={PAGE_SHELL}>
           <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x divide-white/15 max-w-4xl mx-auto">
             <div className="sm:px-8 flex items-baseline gap-3">
               <dd className="text-3xl font-extrabold tracking-tight tabular-nums">300+</dd>
@@ -125,54 +164,40 @@ export default function Home() {
               <dt className="text-sm text-white/70">commission on your fee: 0%</dt>
             </div>
           </dl>
+
+          <div className="mt-10 pt-10 border-t border-white/10">
+            <BrandMarquee />
+          </div>
         </div>
       </section>
 
-      {/* How it Works */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-extrabold tracking-tight mb-4 text-primary">How Align Works</h2>
-            <p className="text-text-secondary text-base leading-relaxed">
+      {/* How it Works — editorial three-panel composition. Each photograph is
+          its own panel; the shared rounded frame and hairline seams keep them
+          reading as one image rather than three cards. */}
+      <section className="py-24 md:py-28">
+        <div className={PAGE_SHELL}>
+          <div className="max-w-2xl mb-10 md:mb-14">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-[1.05]">
+              How Align Works
+            </h2>
+            <p className="text-primary/75 text-base md:text-lg leading-relaxed mt-4">
               Three steps from your analytics to a signed brand deal.
             </p>
           </div>
 
-          <ol className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 max-w-5xl mx-auto border-t border-border pt-10">
-            <li className="space-y-2">
-              <span className="text-sm font-semibold text-accent tabular-nums">1</span>
-              <h3 className="font-bold text-lg text-primary">Find an open brief</h3>
-              <p className="text-sm text-text-secondary leading-relaxed">
-                Filter active campaigns across Tech, Fashion, FMCG and Lifestyle by your niche and follower tier.
-              </p>
-            </li>
-            <li className="space-y-2">
-              <span className="text-sm font-semibold text-accent tabular-nums">2</span>
-              <h3 className="font-bold text-lg text-primary">Pitch with your real numbers</h3>
-              <p className="text-sm text-text-secondary leading-relaxed">
-                Unlock pitching for {formatINR(PLANS.all_access.price)} once or {formatINR(PLANS.monthly.price)} a month, then send your Instagram, YouTube and Facebook analytics with your rate.
-              </p>
-            </li>
-            <li className="space-y-2">
-              <span className="text-sm font-semibold text-accent tabular-nums">3</span>
-              <h3 className="font-bold text-lg text-primary">Get shortlisted and paid</h3>
-              <p className="text-sm text-text-secondary leading-relaxed">
-                Schbang brand managers review and approve. You get a digital agreement and track deliverables to payout.
-              </p>
-            </li>
-          </ol>
+          <HowItWorks steps={HOW_IT_WORKS} />
         </div>
       </section>
 
       {/* Featured Brands */}
-      <section className="py-20 bg-background border-t border-border">
-        <div className="container mx-auto px-4">
+      <section className="py-20 border-t border-border">
+        <div className={PAGE_SHELL}>
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold tracking-tight mb-3">Featured Brand Opportunities</h2>
-            <p className="text-text-secondary">Active briefs looking for creators right now.</p>
+            <p className="text-primary/75">Active briefs looking for creators right now.</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Reveal targets="children" className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {MOCK_BRANDS.slice(0,3).map((brand, idx) => (
               <Card key={brand.id} className="interactive-card overflow-hidden flex flex-col border-border/80 group">
                 <div className="h-44 overflow-hidden relative bg-gray-100">
@@ -198,7 +223,7 @@ export default function Home() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </Reveal>
           
           <div className="flex justify-center mt-12">
             <Link href="/brands">
@@ -210,36 +235,50 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SEO FAQ & Generative Engine Optimization Section */}
-      <section className="py-24 bg-white border-t border-border">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="mb-10">
-            <h2 className="text-3xl font-extrabold tracking-tight text-primary">
-              Frequently asked questions
-            </h2>
-            <p className="text-text-secondary text-base mt-3">
-              Pitching, verification and payouts on Align.
-            </p>
-          </div>
+      {/* FAQ — one white surface over the wash, so the copy never competes
+          with whatever the background is doing. Native <details> keeps every
+          answer in the DOM for crawlers and the FAQPage schema above. */}
+      <section className="py-24">
+        <div className="mx-auto w-full max-w-5xl px-4 lg:px-10">
+          <Reveal className="rounded-4xl border border-border bg-surface p-7 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-10 lg:gap-16">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-primary leading-[1.05]">
+                Frequently asked questions
+              </h2>
+              <p className="text-text-secondary text-base mt-4 leading-relaxed">
+                Pitching, verification and payouts on Align.
+              </p>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-1.5 mt-8 text-sm font-semibold text-primary hover:text-accent transition-colors"
+              >
+                Ask something else
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
 
-          <dl className="divide-y divide-border border-y border-border">
-            {faqList.map((faq, index) => (
-              <div key={index} className="py-6 grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-2 md:gap-10">
-                <dt className="font-semibold text-base text-primary leading-snug">{faq.q}</dt>
-                <dd className="text-sm text-text-secondary leading-relaxed">{faq.a}</dd>
-              </div>
-            ))}
-          </dl>
+            <div className="divide-y divide-border">
+              {faqList.map((faq, index) => (
+                <details key={index} open={index === 0} className="group">
+                  <summary className="flex items-start justify-between gap-6 py-5 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                    <span className="font-semibold text-base text-primary leading-snug">{faq.q}</span>
+                    <ChevronDown className="w-5 h-5 mt-0.5 shrink-0 text-text-secondary transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] group-open:rotate-180" />
+                  </summary>
+                  <p className="pb-6 pr-11 text-sm text-text-secondary leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-background text-center border-t border-border">
-        <div className="container mx-auto px-4 max-w-3xl flex flex-col items-center justify-center text-center">
+      <section className="py-24 text-center border-t border-border">
+        <div className="mx-auto w-full max-w-3xl px-4 lg:px-10 flex flex-col items-center justify-center text-center">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-primary">
             {MOCK_BRANDS.length} briefs are open right now.
           </h2>
-          <p className="text-text-secondary mb-8 text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="text-primary/75 mb-8 text-lg leading-relaxed max-w-xl mx-auto">
             {JOIN_CTA} and pitch to every one of them — plus every brand we add later.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
@@ -248,7 +287,7 @@ export default function Home() {
                 {PLANS.all_access.cta}
               </Button>
             </Link>
-            <Link href="/pricing" className="text-sm font-semibold text-text-secondary hover:text-primary underline-offset-4 hover:underline">
+            <Link href="/pricing" className="text-sm font-semibold text-primary/75 hover:text-primary underline-offset-4 hover:underline">
               Or {formatINR(PLANS.monthly.price)}/month, cancel anytime
             </Link>
           </div>

@@ -1,6 +1,7 @@
 import { Providers } from './providers';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
+import { NeatBackground } from '@/components/layout/neat-background';
 import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
 import { DM_Sans } from 'next/font/google';
 import './globals.css';
@@ -121,7 +122,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`min-h-screen flex flex-col font-sans antialiased text-text-primary bg-background selection:bg-accent selection:text-white`}>
+      <body className={`min-h-screen flex flex-col font-sans antialiased text-text-primary selection:bg-accent selection:text-white`}>
+        <NeatBackground />
         <AnalyticsProvider />
         <Providers>
           <Navbar />

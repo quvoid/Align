@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { Reveal } from "cube-motion/react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -125,7 +126,7 @@ export default function BrandsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen pb-20">
       <div className="bg-primary text-white pt-8 pb-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
@@ -208,7 +209,11 @@ export default function BrandsPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Reveal
+          key={filteredBrands.map((b) => b.id).join(",")}
+          targets="children"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {filteredBrands.map((brand) => {
             const isLiked = !!likedBrandIds[brand.id];
 
@@ -301,7 +306,7 @@ export default function BrandsPage() {
               </div>
             );
           })}
-        </div>
+        </Reveal>
 
         {filteredBrands.length === 0 && (
           <div className="text-center py-20 bg-white rounded-3xl border border-border p-8 max-w-lg mx-auto">
