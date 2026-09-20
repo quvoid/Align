@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthResult } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
@@ -17,7 +17,7 @@ const hasGoogleKeys = Boolean(
  */
 const DUMMY_HASH = "$2a$12$C6UzMDM.H6dfI/f/IKcEeO1wF0KHvmQvLQYQZ.3AD0Zv1lSRpF9dq";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const nextAuth = NextAuth({
   ...authConfig,
   providers: [
     ...(hasGoogleKeys
@@ -117,3 +117,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
+
+// Explicit annotations: with pnpm's hoisting on Vercel the inferred types
+// resolve through a path inside next-auth's package that TypeScript refuses
+// to name (TS2742). Naming them via NextAuthResult is the documented fix.
+export const handlers: NextAuthResult["handlers"] = nextAuth.handlers;
+export const auth: NextAuthResult["auth"] = nextAuth.auth;
+export const signIn: NextAuthResult["signIn"] = nextAuth.signIn;
+export const signOut: NextAuthResult["signOut"] = nextAuth.signOut;
