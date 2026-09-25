@@ -6,8 +6,16 @@
   --color-accent: #e60023;        /* Pin Red — sole high-emphasis CTA color */
   --color-accent-hover: #b8001d;
   --color-background: #FFFFFF;    /* Gallery White canvas */
-  --color-gradient-start: #D6A4A4; /* Dusty rose — page wash, left edge */
-  --color-gradient-end: #DAE2F8;   /* Periwinkle — page wash, right edge */
+  --color-gradient-start: #ffc8dd; /* Pastel petal — page wash, left edge */
+  --color-gradient-end: #bde0fe;   /* Icy blue — page wash, right edge */
+
+  /* Pastel palette — page wash, Neat background, tinted panels. Too light for
+     text or white-on-color buttons; CTAs stay on --color-accent. */
+  --color-thistle: #cdb4db;
+  --color-pastel-petal: #ffc8dd;
+  --color-baby-pink: #ffafcc;
+  --color-icy-blue: #bde0fe;
+  --color-sky-blue: #a2d2ff;
   --color-surface: #FFFFFF;
   --color-text-primary: #211922;  /* Ink Plum */
   --color-text-secondary: #666666; /* Fog Gray */
@@ -81,8 +89,10 @@ html, body {
 body {
   background-image: linear-gradient(
     to right,
+    var(--color-thistle),
     var(--color-gradient-start),
-    var(--color-gradient-end)
+    var(--color-gradient-end),
+    var(--color-sky-blue)
   );
   background-attachment: fixed;
   background-repeat: no-repeat;
