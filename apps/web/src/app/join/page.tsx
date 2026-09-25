@@ -84,8 +84,8 @@ function JoinCheckout() {
                     key={id}
                     className={`cursor-pointer rounded-xl border px-3 py-3 text-sm font-semibold text-center transition-colors ${
                       method === id
-                        ? "border-primary bg-primary text-white"
-                        : "border-border bg-white text-primary hover:border-primary/40"
+                        ? "border-highlight bg-highlight text-background"
+                        : "border-border bg-surface text-primary hover:border-primary/40"
                     }`}
                   >
                     <input
@@ -102,7 +102,7 @@ function JoinCheckout() {
               </div>
             </fieldset>
 
-            <div className="mt-8 rounded-2xl border border-dashed border-border bg-white p-5 text-sm text-text-secondary">
+            <div className="mt-8 rounded-2xl border border-dashed border-border bg-surface p-5 text-sm text-text-secondary">
               {method === "upi" && "You'll approve a request in your UPI app (GPay, PhonePe, Paytm, BHIM)."}
               {method === "card" && "Visa, Mastercard, RuPay and Amex. 3-D Secure OTP on your bank's page."}
               {method === "netbanking" && "All major Indian banks. You'll be redirected to your bank to confirm."}
@@ -125,7 +125,7 @@ function JoinCheckout() {
             </p>
           </div>
 
-          <aside className="rounded-3xl border border-border bg-white p-6 h-fit">
+          <aside className="rounded-3xl border border-border bg-surface p-6 h-fit">
             <h2 className="text-sm font-semibold text-text-secondary">Order summary</h2>
             <div className="mt-4 flex items-baseline justify-between">
               <span className="font-bold text-primary">{plan.name} plan</span>

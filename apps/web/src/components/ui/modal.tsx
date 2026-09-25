@@ -65,7 +65,7 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
         className={cn(
-          "relative z-50 w-full mx-4 bg-white rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200",
+          "relative z-50 w-full mx-4 bg-surface rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200",
           sizeClasses[size],
           className
         )}
@@ -90,7 +90,7 @@ export function Modal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-gray-100 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-ink transition-colors"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />

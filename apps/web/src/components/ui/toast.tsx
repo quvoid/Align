@@ -44,9 +44,9 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
             key={t.id}
             className={cn(
               "p-4 rounded-xl shadow-lg border flex justify-between items-start",
-              t.type === 'success' && "bg-white border-success/20 text-text-primary",
-              t.type === 'error' && "bg-white border-error/20 text-text-primary",
-              (t.type === 'info' || !t.type) && "bg-white border-border text-text-primary"
+              t.type === 'success' && "bg-surface border-success/20 text-text-primary",
+              t.type === 'error' && "bg-surface border-error/20 text-text-primary",
+              (t.type === 'info' || !t.type) && "bg-surface border-border text-text-primary"
             )}
           >
             <div>

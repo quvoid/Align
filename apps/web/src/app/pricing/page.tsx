@@ -109,7 +109,7 @@ export default function PricingPage() {
             <section
               key={plan.id}
               aria-labelledby={`plan-${plan.id}`}
-              className={`rounded-3xl border bg-white p-8 flex flex-col ${
+              className={`rounded-3xl border bg-surface p-8 flex flex-col ${
                 plan.recommended ? "border-primary shadow-[0_12px_40px_-16px_rgba(0,0,0,0.25)]" : "border-border"
               }`}
             >
@@ -142,7 +142,7 @@ export default function PricingPage() {
               </ul>
 
               <div className="mt-8">
-                <Suspense fallback={<div className="h-12 rounded-xl bg-gray-100" />}>
+                <Suspense fallback={<div className="h-12 rounded-xl bg-ink" />}>
                   <PlanButton plan={plan} />
                 </Suspense>
                 <p className="text-xs text-text-secondary text-center mt-3">

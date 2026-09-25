@@ -194,7 +194,7 @@ export default function Home() {
       {/* Stats Bar — pulled up over the hero's lower edge so the receding hero
           passes under it. Full-bleed and square: a radius here would curve away
           from the viewport edge with nothing behind it. */}
-      <section className="relative z-10 -mt-6 md:-mt-10 bg-primary text-white py-10 md:py-12 border-b border-white/10">
+      <section className="relative z-10 -mt-6 md:-mt-10 bg-ink text-white py-10 md:py-12 border-b border-white/10">
         <div className={PAGE_SHELL}>
           <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x divide-white/15 max-w-4xl mx-auto">
             <div className="sm:px-8 flex items-baseline gap-3">
@@ -236,7 +236,7 @@ export default function Home() {
       </section>
 
       {/* Earnings — dark band so the numbers read as the page's proof point. */}
-      <section className="bg-primary text-white py-24 md:py-28">
+      <section className="bg-ink text-white py-24 md:py-28">
         <div className={PAGE_SHELL}>
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-12 lg:gap-16 items-center">
             <Reveal>
@@ -262,7 +262,7 @@ export default function Home() {
               {TOP_EARNERS.map((c, idx) => (
                 <div
                   key={c.name}
-                  className="flex items-center gap-4 rounded-3xl bg-white/[0.06] border border-white/10 p-5"
+                  className="flex items-center gap-4 rounded-3xl bg-surface/[0.06] border border-white/10 p-5"
                 >
                   <span className="text-sm font-bold text-white/40 tabular-nums w-5">{idx + 1}</span>
                   <img src={c.avatar} alt="" className="w-12 h-12 rounded-full object-cover" />

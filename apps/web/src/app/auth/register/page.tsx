@@ -95,7 +95,7 @@ export default function RegisterPage() {
             <span className="text-3xl font-bold tracking-tighter text-primary">Align</span>
             <span className="w-2 h-2 rounded-full bg-accent mt-2" />
           </Link>
-          <div className="mt-2 inline-flex items-center rounded-full border border-border bg-gray-50 px-2.5 py-0.5 text-xs font-semibold text-text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+          <div className="mt-2 inline-flex items-center rounded-full border border-border bg-ink px-2.5 py-0.5 text-xs font-semibold text-text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             by Schbang
           </div>
           <h2 className="mt-6 text-2xl font-bold tracking-tight text-primary">Create your account</h2>
@@ -156,7 +156,7 @@ export default function RegisterPage() {
                   placeholder="Full Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="rounded-xl border-border bg-white"
+                  className="rounded-xl border-border bg-surface"
                   required
                 />
               </div>
@@ -167,7 +167,7 @@ export default function RegisterPage() {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="rounded-xl border-border bg-white"
+                  className="rounded-xl border-border bg-surface"
                   required
                 />
               </div>
@@ -178,7 +178,7 @@ export default function RegisterPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="rounded-xl border-border bg-white"
+                  className="rounded-xl border-border bg-surface"
                   required
                 />
               </div>

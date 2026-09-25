@@ -164,7 +164,7 @@ export function HowItWorks({ steps }: { steps: readonly HowItWorksStep[] }) {
               onFocus={() => focus(i)}
               onMouseLeave={release}
               onBlur={release}
-              className={`group relative block overflow-hidden bg-primary ${step.aspect}`}
+              className={`group relative block overflow-hidden bg-ink ${step.aspect}`}
             >
               <img
                 src={step.image}

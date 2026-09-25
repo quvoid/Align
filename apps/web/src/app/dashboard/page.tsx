@@ -89,7 +89,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero Header */}
-      <div className="bg-primary text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+      <div className="bg-ink text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-3xl md:text-4xl font-black tracking-tight">
@@ -101,7 +101,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/dashboard/profile">
-              <Button variant="outline" className="text-xs font-bold bg-transparent border-white/20 text-white hover:bg-white/10 hover:border-white/40">
+              <Button variant="outline" className="text-xs font-bold bg-transparent border-white/20 text-white hover:bg-surface/10 hover:border-white/40">
                 <FileText className="mr-1.5 h-4 w-4" />
                 Edit media kit
               </Button>
@@ -150,7 +150,7 @@ export default function DashboardPage() {
           const remaining = steps.filter((s) => !s.done).length;
           if (remaining === 0) return null;
           return (
-            <section aria-labelledby="getting-started" className="rounded-3xl border border-border bg-white p-6">
+            <section aria-labelledby="getting-started" className="rounded-3xl border border-border bg-surface p-6">
               <div className="flex items-baseline justify-between mb-4">
                 <h2 id="getting-started" className="text-base font-bold text-primary">
                   {remaining === 3 ? "Three steps to your first brand deal" : `${remaining} step${remaining === 1 ? "" : "s"} left`}
@@ -161,12 +161,12 @@ export default function DashboardPage() {
                 {steps.map((s, i) => (
                   <li
                     key={s.label}
-                    className={`rounded-2xl border p-4 flex flex-col gap-1 ${s.done ? "border-border bg-gray-50" : "border-primary/20 bg-white"}`}
+                    className={`rounded-2xl border p-4 flex flex-col gap-1 ${s.done ? "border-border bg-ink" : "border-primary/20 bg-surface"}`}
                   >
                     <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                       <span
                         className={`w-5 h-5 rounded-full text-[11px] flex items-center justify-center tabular-nums ${
-                          s.done ? "bg-primary text-white" : "border border-primary/40 text-primary"
+                          s.done ? "bg-ink text-white" : "border border-primary/40 text-primary"
                         }`}
                         aria-hidden="true"
                       >
@@ -189,7 +189,7 @@ export default function DashboardPage() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="rounded-3xl border-border shadow-xs bg-white">
+          <Card className="rounded-3xl border-border shadow-xs bg-surface">
             <CardContent className="p-6">
               <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
                 <span className="font-bold uppercase tracking-wider text-[10px]">Total Pitches</span>
@@ -200,7 +200,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-border shadow-xs bg-white">
+          <Card className="rounded-3xl border-border shadow-xs bg-surface">
             <CardContent className="p-6">
               <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
                 <span className="font-bold uppercase tracking-wider text-[10px]">Shortlisted / Approved</span>
@@ -211,7 +211,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-border shadow-xs bg-white">
+          <Card className="rounded-3xl border-border shadow-xs bg-surface">
             <CardContent className="p-6">
               <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
                 <span className="font-bold uppercase tracking-wider text-[10px]">Under Review</span>
@@ -222,7 +222,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-border shadow-xs bg-white">
+          <Card className="rounded-3xl border-border shadow-xs bg-surface">
             <CardContent className="p-6">
               <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
                 <span className="font-bold uppercase tracking-wider text-[10px]">Creator Rating</span>
@@ -249,9 +249,9 @@ export default function DashboardPage() {
           </div>
 
           {applications.length === 0 ? (
-            <Card className="rounded-3xl border-dashed border-2 border-border bg-white shadow-xs">
+            <Card className="rounded-3xl border-dashed border-2 border-border bg-surface shadow-xs">
               <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-gray-50 flex items-center justify-center mb-4 border border-border">
+                <div className="h-16 w-16 rounded-2xl bg-ink flex items-center justify-center mb-4 border border-border">
                   <Layers className="h-8 w-8 text-text-secondary opacity-40" />
                 </div>
                 <h3 className="text-lg font-bold text-primary mb-1">No pitches yet</h3>
@@ -267,10 +267,10 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="bg-white rounded-3xl border border-border overflow-hidden shadow-sm">
+            <div className="bg-surface rounded-3xl border border-border overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-text-secondary uppercase tracking-wider bg-gray-50/80 border-b border-border">
+                  <thead className="text-xs text-text-secondary uppercase tracking-wider bg-ink/80 border-b border-border">
                     <tr>
                       <th scope="col" className="px-6 py-4 font-bold">Brand Campaign</th>
                       <th scope="col" className="px-6 py-4 font-bold">Deliverables</th>
@@ -282,7 +282,7 @@ export default function DashboardPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {applications.map((app) => (
-                      <tr key={app.id} className="hover:bg-gray-50/60 transition-colors">
+                      <tr key={app.id} className="hover:bg-ink/60 transition-colors">
                         <td className="px-6 py-4">
                           <div className="font-extrabold text-primary text-sm">{app.brandName}</div>
                           <span className="text-[11px] text-text-secondary">Schbang Campaign Brief</span>
@@ -293,7 +293,7 @@ export default function DashboardPage() {
                               app.deliverables.map((d, i) => (
                                 <span
                                   key={i}
-                                  className="px-2 py-0.5 rounded-md bg-gray-100 text-[10px] font-semibold text-text-secondary"
+                                  className="px-2 py-0.5 rounded-md bg-ink text-[10px] font-semibold text-text-secondary"
                                 >
                                   {d}
                                 </span>
@@ -347,7 +347,7 @@ export default function DashboardPage() {
         >
           <div className="space-y-6 mt-4">
             {/* Status Strip */}
-            <div className="p-4 rounded-2xl bg-gray-50 border border-border flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-ink border border-border flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary block">
                   Current Status
@@ -373,7 +373,7 @@ export default function DashboardPage() {
               <h4 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
                 Your Creative Proposal
               </h4>
-              <p className="p-4 rounded-2xl bg-gray-50 border border-border text-xs text-primary leading-relaxed whitespace-pre-wrap">
+              <p className="p-4 rounded-2xl bg-ink border border-border text-xs text-primary leading-relaxed whitespace-pre-wrap">
                 {selectedApp.proposal}
               </p>
             </div>
@@ -388,7 +388,7 @@ export default function DashboardPage() {
                   selectedApp.deliverables.map((d, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1.5 rounded-xl bg-gray-100 border border-border text-xs font-semibold text-primary"
+                      className="px-3 py-1.5 rounded-xl bg-ink border border-border text-xs font-semibold text-primary"
                     >
                       ✓ {d}
                     </span>

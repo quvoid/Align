@@ -24,7 +24,7 @@ export default function CreatorDiscoveryPage() {
   if (session?.user?.role === "CREATOR") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center pt-10 pb-16 px-4 bg-background">
-        <div className="max-w-md w-full text-center space-y-5 p-8 bg-white rounded-3xl border border-border shadow-xl">
+        <div className="max-w-md w-full text-center space-y-5 p-8 bg-surface rounded-3xl border border-border shadow-xl">
           <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
             <Lock className="w-6 h-6" />
           </div>
@@ -89,7 +89,7 @@ export default function CreatorDiscoveryPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Brand Header Banner */}
-      <div className="bg-primary text-white pt-8 pb-12 border-b border-white/10">
+      <div className="bg-ink text-white pt-8 pb-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
@@ -101,7 +101,7 @@ export default function CreatorDiscoveryPage() {
           </div>
 
           {/* Search & Filter Bar */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-3 bg-white/5 p-3 rounded-2xl border border-white/15 backdrop-blur-md">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-3 bg-surface/5 p-3 rounded-2xl border border-white/15 backdrop-blur-md">
             <div className="relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
               <input
@@ -109,7 +109,7 @@ export default function CreatorDiscoveryPage() {
                 placeholder="Search name, handle, or niche..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-white/10 text-white placeholder:text-white/40 pl-10 pr-4 py-2.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                className="w-full bg-surface/10 text-white placeholder:text-white/40 pl-10 pr-4 py-2.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all"
               />
             </div>
 
@@ -117,15 +117,15 @@ export default function CreatorDiscoveryPage() {
               <select
                 value={nicheFilter}
                 onChange={(e) => setNicheFilter(e.target.value)}
-                className="w-full bg-white/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
+                className="w-full bg-surface/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
               >
-                <option value="ALL" className="bg-slate-900 text-white">All Niches</option>
-                <option value="Food" className="bg-slate-900 text-white">Food &amp; FMCG</option>
-                <option value="Comedy" className="bg-slate-900 text-white">Comedy &amp; Sketches</option>
-                <option value="Beauty" className="bg-slate-900 text-white">Beauty &amp; Skincare</option>
-                <option value="Tech" className="bg-slate-900 text-white">Tech &amp; Gadgets</option>
-                <option value="Fashion" className="bg-slate-900 text-white">Fashion &amp; Apparel</option>
-                <option value="Finance" className="bg-slate-900 text-white">Finance &amp; FinTech</option>
+                <option value="ALL" className="bg-ink text-white">All Niches</option>
+                <option value="Food" className="bg-ink text-white">Food &amp; FMCG</option>
+                <option value="Comedy" className="bg-ink text-white">Comedy &amp; Sketches</option>
+                <option value="Beauty" className="bg-ink text-white">Beauty &amp; Skincare</option>
+                <option value="Tech" className="bg-ink text-white">Tech &amp; Gadgets</option>
+                <option value="Fashion" className="bg-ink text-white">Fashion &amp; Apparel</option>
+                <option value="Finance" className="bg-ink text-white">Finance &amp; FinTech</option>
               </select>
             </div>
 
@@ -133,13 +133,13 @@ export default function CreatorDiscoveryPage() {
               <select
                 value={tierFilter}
                 onChange={(e) => setTierFilter(e.target.value)}
-                className="w-full bg-white/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
+                className="w-full bg-surface/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
               >
-                <option value="ALL" className="bg-slate-900 text-white">All Follower Tiers</option>
-                <option value="Nano" className="bg-slate-900 text-white">Nano (&lt;10k)</option>
-                <option value="Micro" className="bg-slate-900 text-white">Micro (10k-100k)</option>
-                <option value="Mid-Tier" className="bg-slate-900 text-white">Mid-Tier (100k-500k)</option>
-                <option value="Macro" className="bg-slate-900 text-white">Macro (500k+)</option>
+                <option value="ALL" className="bg-ink text-white">All Follower Tiers</option>
+                <option value="Nano" className="bg-ink text-white">Nano (&lt;10k)</option>
+                <option value="Micro" className="bg-ink text-white">Micro (10k-100k)</option>
+                <option value="Mid-Tier" className="bg-ink text-white">Mid-Tier (100k-500k)</option>
+                <option value="Macro" className="bg-ink text-white">Macro (500k+)</option>
               </select>
             </div>
 
@@ -147,15 +147,15 @@ export default function CreatorDiscoveryPage() {
               <select
                 value={brandFilter}
                 onChange={(e) => setBrandFilter(e.target.value)}
-                className="w-full bg-white/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
+                className="w-full bg-surface/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
               >
-                <option value="ALL" className="bg-slate-900 text-white">Past Brand Collabs</option>
-                <option value="Britannia" className="bg-slate-900 text-white">Worked with Britannia</option>
-                <option value="Enamor" className="bg-slate-900 text-white">Worked with Enamor</option>
-                <option value="Swiggy" className="bg-slate-900 text-white">Worked with Swiggy</option>
-                <option value="Fevicol" className="bg-slate-900 text-white">Worked with Fevicol</option>
-                <option value="Kotak811" className="bg-slate-900 text-white">Worked with Kotak811</option>
-                <option value="Myntra" className="bg-slate-900 text-white">Worked with Myntra</option>
+                <option value="ALL" className="bg-ink text-white">Past Brand Collabs</option>
+                <option value="Britannia" className="bg-ink text-white">Worked with Britannia</option>
+                <option value="Enamor" className="bg-ink text-white">Worked with Enamor</option>
+                <option value="Swiggy" className="bg-ink text-white">Worked with Swiggy</option>
+                <option value="Fevicol" className="bg-ink text-white">Worked with Fevicol</option>
+                <option value="Kotak811" className="bg-ink text-white">Worked with Kotak811</option>
+                <option value="Myntra" className="bg-ink text-white">Worked with Myntra</option>
               </select>
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function CreatorDiscoveryPage() {
           {filteredCreators.map((creator) => (
             <div
               key={creator.id}
-              className="bg-white rounded-3xl border border-border overflow-hidden hover:shadow-xl hover:border-accent/40 transition-all duration-300 flex flex-col justify-between"
+              className="bg-surface rounded-3xl border border-border overflow-hidden hover:shadow-xl hover:border-accent/40 transition-all duration-300 flex flex-col justify-between"
             >
               {/* Creator Profile Header */}
               <div className="p-6 pb-4">
@@ -205,7 +205,7 @@ export default function CreatorDiscoveryPage() {
                         alt={creator.name}
                         className="w-14 h-14 rounded-2xl object-cover border border-border shadow-sm"
                       />
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center border-2 border-white shadow-xs">
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center border-2 border-surface shadow-xs">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                       </div>
                     </div>
@@ -238,7 +238,7 @@ export default function CreatorDiscoveryPage() {
                   {creator.niche.map((n, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-0.5 rounded-lg bg-gray-100 text-[10px] font-semibold text-text-secondary"
+                      className="px-2.5 py-0.5 rounded-lg bg-ink text-[10px] font-semibold text-text-secondary"
                     >
                       {n}
                     </span>
@@ -246,7 +246,7 @@ export default function CreatorDiscoveryPage() {
                 </div>
 
                 {/* Platform Metrics Strip */}
-                <div className="grid grid-cols-2 gap-2 bg-gray-50/80 p-3 rounded-2xl border border-border/80 text-center mb-4">
+                <div className="grid grid-cols-2 gap-2 bg-ink/80 p-3 rounded-2xl border border-border/80 text-center mb-4">
                   <div className="border-r border-border/60 pr-2">
                     <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-text-secondary mb-0.5">
                       <Instagram className="w-3 h-3 text-pink-600" />
@@ -293,7 +293,7 @@ export default function CreatorDiscoveryPage() {
                     {creator.brandCollaborations.map((collab, idx) => (
                       <div
                         key={idx}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white border border-border text-[11px] font-bold text-primary shadow-2xs"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-surface border border-border text-[11px] font-bold text-primary shadow-2xs"
                         title={`${collab.brandName} (${collab.campaignTitle}) - Delivered ${collab.viewsDelivered} views`}
                       >
                         <img
@@ -318,7 +318,7 @@ export default function CreatorDiscoveryPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="p-4 bg-gray-50 border-t border-border flex items-center gap-2">
+              <div className="p-4 bg-ink border-t border-border flex items-center gap-2">
                 <Link
                   href={`/creators/${creator.id}`}
                   className="flex-1"
@@ -354,7 +354,7 @@ export default function CreatorDiscoveryPage() {
         </div>
 
         {filteredCreators.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-3xl border border-border p-8 max-w-lg mx-auto">
+          <div className="text-center py-20 bg-surface rounded-3xl border border-border p-8 max-w-lg mx-auto">
             <Users className="w-12 h-12 text-text-secondary mx-auto mb-3 opacity-50" />
             <h3 className="text-lg font-bold text-primary mb-1">No Creators Found</h3>
             <p className="text-xs text-text-secondary mb-6">

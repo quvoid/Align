@@ -148,7 +148,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Admin Top Header */}
-      <div className="bg-primary text-white pt-8 pb-8 border-b border-white/10">
+      <div className="bg-ink text-white pt-8 pb-8 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -234,7 +234,7 @@ export default function AdminDashboard() {
         {activeTab === "overview" && (
           <div className="space-y-8">
             {/* KPI Cards */}
-            <dl className="grid grid-cols-2 lg:grid-cols-4 gap-y-6 lg:divide-x divide-border bg-white border border-border rounded-2xl px-2 py-5">
+            <dl className="grid grid-cols-2 lg:grid-cols-4 gap-y-6 lg:divide-x divide-border bg-surface border border-border rounded-2xl px-2 py-5">
               <div className="px-5">
                 <dt className="text-sm text-text-secondary">Active brands</dt>
                 <dd className="text-3xl font-extrabold text-primary tabular-nums mt-1">
@@ -274,7 +274,7 @@ export default function AdminDashboard() {
               </div>
               <div className="divide-y divide-border">
                 {applications.slice(0, 3).map((app) => (
-                  <div key={app.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                  <div key={app.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-ink transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-primary">{app.creatorName}</span>
@@ -355,7 +355,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredBrands.map((brand) => (
                 <Card key={brand.id} className="border-border hover:shadow-md transition-all flex flex-col">
-                  <div className="h-32 relative bg-gray-100 overflow-hidden">
+                  <div className="h-32 relative bg-ink overflow-hidden">
                     <img
                       src={brand.coverImage}
                       alt={brand.name}
@@ -379,7 +379,7 @@ export default function AdminDashboard() {
                       <img
                         src={brand.logo}
                         alt={brand.name}
-                        className="w-10 h-10 rounded-xl border border-border object-cover bg-white"
+                        className="w-10 h-10 rounded-xl border border-border object-cover bg-surface"
                       />
                       <div>
                         <h3 className="font-bold text-base text-primary">{brand.name}</h3>
@@ -442,8 +442,8 @@ export default function AdminDashboard() {
                     onClick={() => setAppFilter(pill.key)}
                     className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                       appFilter === pill.key
-                        ? "bg-primary text-white shadow-sm"
-                        : "bg-white text-text-secondary border border-border hover:bg-gray-50"
+                        ? "bg-ink text-white shadow-sm"
+                        : "bg-surface text-text-secondary border border-border hover:bg-ink"
                     }`}
                   >
                     {pill.label}
@@ -457,7 +457,7 @@ export default function AdminDashboard() {
               {/* Left 2 Cols: List */}
               <div className="lg:col-span-2 space-y-4">
                 {filteredApps.length === 0 ? (
-                  <div className="p-12 text-center bg-white rounded-2xl border border-border text-text-secondary">
+                  <div className="p-12 text-center bg-surface rounded-2xl border border-border text-text-secondary">
                     No applications found matching this status.
                   </div>
                 ) : (
@@ -507,7 +507,7 @@ export default function AdminDashboard() {
                         {/* Metrics Badges */}
                         <div className="flex flex-wrap gap-3 pt-3 border-t border-border text-xs text-text-secondary">
                           {app.metrics.instagramHandle && (
-                            <span className="flex items-center gap-1.5 bg-gray-100 text-text-primary px-2 py-1 rounded-md font-medium">
+                            <span className="flex items-center gap-1.5 bg-ink text-text-primary px-2 py-1 rounded-md font-medium">
                               <Instagram className="w-3.5 h-3.5" />
                               {app.metrics.instagramFollowers?.toLocaleString()} (ER: {app.metrics.instagramER})
                             </span>
@@ -545,7 +545,7 @@ export default function AdminDashboard() {
                       </div>
 
                       {/* Brand Applied */}
-                      <div className="p-3 bg-gray-50 rounded-xl border border-border">
+                      <div className="p-3 bg-ink rounded-xl border border-border">
                         <div className="text-xs text-text-secondary font-medium">Target Brand Brief</div>
                         <div className="text-sm font-bold text-primary">{selectedApp.brandName}</div>
                       </div>
@@ -582,7 +582,7 @@ export default function AdminDashboard() {
                         <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                           Collaboration Pitch
                         </h3>
-                        <p className="text-xs text-text-primary leading-relaxed bg-gray-50 p-3 rounded-xl border border-border">
+                        <p className="text-xs text-text-primary leading-relaxed bg-ink p-3 rounded-xl border border-border">
                           {selectedApp.proposal}
                         </p>
                       </div>
@@ -597,7 +597,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {selectedApp.deliverables.map((d, i) => (
-                            <span key={i} className="px-2 py-0.5 rounded bg-gray-100 text-[11px] text-text-secondary font-medium">
+                            <span key={i} className="px-2 py-0.5 rounded bg-ink text-[11px] text-text-secondary font-medium">
                               {d}
                             </span>
                           ))}
@@ -649,7 +649,7 @@ export default function AdminDashboard() {
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="p-8 text-center bg-gray-50 border border-dashed border-border rounded-2xl text-xs text-text-secondary">
+                  <div className="p-8 text-center bg-ink border border-dashed border-border rounded-2xl text-xs text-text-secondary">
                     Select an application to inspect creator analytics and make a review decision.
                   </div>
                 )}
@@ -661,7 +661,7 @@ export default function AdminDashboard() {
         {/* TAB 4: CREATOR LIKES QUEUE (HOT LEADS) */}
         {activeTab === "interests" && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-border">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-6 rounded-3xl border border-border">
               <div>
                 <h2 className="text-xl font-bold text-primary flex items-center gap-2">
                   <Heart className="w-5 h-5 text-red-500 fill-red-500" />
@@ -698,7 +698,7 @@ export default function AdminDashboard() {
                             <img
                               src={targetBrand.logo}
                               alt={targetBrand.name}
-                              className="w-7 h-7 rounded-lg object-cover bg-white border border-border"
+                              className="w-7 h-7 rounded-lg object-cover bg-surface border border-border"
                             />
                             <div>
                               <div className="text-xs font-bold text-primary">
@@ -735,7 +735,7 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* Social Metrics */}
-                        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-gray-50 border border-border text-center text-xs mb-4">
+                        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-ink border border-border text-center text-xs mb-4">
                           <div>
                             <span className="text-text-secondary text-[10px] font-medium block">Followers</span>
                             <span className="font-black text-primary">
@@ -759,13 +759,13 @@ export default function AdminDashboard() {
                             {creator.brandCollaborations.slice(0, 2).map((collab, i) => (
                               <span
                                 key={i}
-                                className="px-2 py-0.5 rounded-md bg-white border border-border text-[10px] font-bold text-primary"
+                                className="px-2 py-0.5 rounded-md bg-surface border border-border text-[10px] font-bold text-primary"
                               >
                                 {collab.brandName}
                               </span>
                             ))}
                             {creator.brandCollaborations.length > 2 && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-gray-100 text-[10px] font-medium text-text-secondary">
+                              <span className="px-1.5 py-0.5 rounded-md bg-ink text-[10px] font-medium text-text-secondary">
                                 +{creator.brandCollaborations.length - 2}
                               </span>
                             )}
@@ -774,7 +774,7 @@ export default function AdminDashboard() {
                       </CardContent>
 
                       {/* Card Action */}
-                      <div className="p-4 bg-gray-50 border-t border-border flex items-center gap-2">
+                      <div className="p-4 bg-ink border-t border-border flex items-center gap-2">
                         <Link href={`/creators/${creator.id}`} className="flex-1">
                           <Button variant="outline" size="sm" className="w-full text-xs font-bold">
                             Scorecard

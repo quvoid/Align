@@ -22,7 +22,7 @@ export const Navbar = () => {
 
   return (
     // DESIGN.md Top Navigation Bar: full-width white bar, 64px, no shadow, no glass/blur
-    <header className="sticky top-0 inset-x-0 z-50 h-16 flex items-center bg-white border-b border-border">
+    <header className="sticky top-0 inset-x-0 z-50 h-16 flex items-center bg-surface border-b border-border">
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-1 group">
@@ -117,7 +117,7 @@ export const Navbar = () => {
 
       {/* Mobile Drawer Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-16 inset-x-0 bg-white border-b border-border p-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
+        <div className="md:hidden absolute top-16 inset-x-0 bg-surface border-b border-border p-5 space-y-4 animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-2 text-sm font-medium">
             <Link
               href="/brands"

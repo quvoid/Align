@@ -24,7 +24,7 @@ export default function AboutPage() {
 
         {/* Core Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-          <div className="p-8 rounded-3xl bg-white border border-border">
+          <div className="p-8 rounded-3xl bg-surface border border-border">
             <div className="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mb-4">
               <Target className="w-6 h-6" />
             </div>
@@ -34,7 +34,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-white border border-border">
+          <div className="p-8 rounded-3xl bg-surface border border-border">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
               <ShieldCheck className="w-6 h-6" />
             </div>
@@ -44,7 +44,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-white border border-border">
+          <div className="p-8 rounded-3xl bg-surface border border-border">
             <div className="w-12 h-12 rounded-2xl bg-green-500/10 text-green-600 flex items-center justify-center mb-4">
               <Zap className="w-6 h-6" />
             </div>
@@ -54,7 +54,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-white border border-border">
+          <div className="p-8 rounded-3xl bg-surface border border-border">
             <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4">
               <Users className="w-6 h-6" />
             </div>
@@ -66,7 +66,7 @@ export default function AboutPage() {
         </div>
 
         {/* CTA Card */}
-        <div className="bg-primary text-white rounded-3xl p-10 text-center relative overflow-hidden">
+        <div className="bg-ink text-white rounded-3xl p-10 text-center relative overflow-hidden">
           <h2 className="text-2xl md:text-3xl font-extrabold mb-3">
             Ready to collaborate with marquee brands?
           </h2>
@@ -81,7 +81,7 @@ export default function AboutPage() {
               </Button>
             </Link>
             <Link href="/auth/register">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto border-white/20 bg-white/10 hover:bg-white/20 text-white">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto border-white/20 bg-surface/10 hover:bg-surface/20 text-white">
                 Join Creator Roster
               </Button>
             </Link>

@@ -49,7 +49,7 @@ export default function CreatorProfileDetailPage({
   if (session?.user?.role === "CREATOR") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center pt-10 pb-16 px-4 bg-background">
-        <div className="max-w-md w-full text-center space-y-5 p-8 bg-white rounded-3xl border border-border shadow-xl">
+        <div className="max-w-md w-full text-center space-y-5 p-8 bg-surface rounded-3xl border border-border shadow-xl">
           <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
             <Lock className="w-6 h-6" />
           </div>
@@ -106,7 +106,7 @@ export default function CreatorProfileDetailPage({
   return (
     <div className="bg-background min-h-screen pb-24">
       {/* Breadcrumbs */}
-      <div className="bg-white border-b border-border pt-20 pb-3">
+      <div className="bg-surface border-b border-border pt-20 pb-3">
         <div className="container mx-auto px-4">
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-text-secondary">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>
@@ -119,7 +119,7 @@ export default function CreatorProfileDetailPage({
       </div>
 
       {/* Hero Header */}
-      <div className="bg-primary text-white py-12 border-b border-white/10">
+      <div className="bg-ink text-white py-12 border-b border-white/10">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-center gap-5">
@@ -127,7 +127,7 @@ export default function CreatorProfileDetailPage({
                 <img
                   src={creator.avatar}
                   alt={creator.name}
-                  className="w-24 h-24 rounded-3xl object-cover border-2 border-white shadow-xl bg-white"
+                  className="w-24 h-24 rounded-3xl object-cover border-2 border-surface shadow-xl bg-surface"
                 />
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center border-2 border-primary shadow-xs">
                   <CheckCircle2 className="w-4 h-4" />
@@ -174,7 +174,7 @@ export default function CreatorProfileDetailPage({
       <div className="container mx-auto px-4 py-10">
         {/* Performance Scorecard KPI Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-          <div className="bg-white p-6 rounded-3xl border border-border shadow-xs">
+          <div className="bg-surface p-6 rounded-3xl border border-border shadow-xs">
             <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
               <span className="font-bold uppercase tracking-wider text-[10px]">Lifetime Reach</span>
               <Eye className="w-4 h-4 text-accent" />
@@ -185,7 +185,7 @@ export default function CreatorProfileDetailPage({
             <p className="text-[11px] text-text-secondary mt-1">Across all Schbang campaigns</p>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-border shadow-xs">
+          <div className="bg-surface p-6 rounded-3xl border border-border shadow-xs">
             <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
               <span className="font-bold uppercase tracking-wider text-[10px]">Average ER Delivered</span>
               <Percent className="w-4 h-4 text-green-600" />
@@ -196,7 +196,7 @@ export default function CreatorProfileDetailPage({
             <p className="text-[11px] text-text-secondary mt-1">Verified audience interaction</p>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-border shadow-xs">
+          <div className="bg-surface p-6 rounded-3xl border border-border shadow-xs">
             <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
               <span className="font-bold uppercase tracking-wider text-[10px]">Total Brand Collabs</span>
               <Briefcase className="w-4 h-4 text-blue-600" />
@@ -207,7 +207,7 @@ export default function CreatorProfileDetailPage({
             <p className="text-[11px] text-text-secondary mt-1">Marquee brand briefs completed</p>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-border shadow-xs">
+          <div className="bg-surface p-6 rounded-3xl border border-border shadow-xs">
             <div className="flex items-center justify-between text-xs text-text-secondary mb-2">
               <span className="font-bold uppercase tracking-wider text-[10px]">Reliability &amp; Delivery</span>
               <Star className="w-4 h-4 fill-amber-500 text-amber-500" />
@@ -222,7 +222,7 @@ export default function CreatorProfileDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left 2 Cols: Brand Collaboration History Timeline */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white p-8 rounded-3xl border border-border">
+            <div className="bg-surface p-8 rounded-3xl border border-border">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-xl font-bold text-primary flex items-center gap-2">
@@ -240,14 +240,14 @@ export default function CreatorProfileDetailPage({
                 {creator.brandCollaborations.map((collab, idx) => (
                   <div
                     key={idx}
-                    className="p-5 rounded-2xl border border-border bg-gray-50/70 hover:bg-white hover:shadow-md transition-all duration-200"
+                    className="p-5 rounded-2xl border border-border bg-ink/70 hover:bg-surface hover:shadow-md transition-all duration-200"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-3.5">
                         <img
                           src={collab.brandLogo}
                           alt={collab.brandName}
-                          className="w-12 h-12 rounded-xl object-cover border border-border bg-white"
+                          className="w-12 h-12 rounded-xl object-cover border border-border bg-surface"
                         />
                         <div>
                           <div className="flex items-center gap-2">
@@ -288,7 +288,7 @@ export default function CreatorProfileDetailPage({
             </div>
 
             {/* Bio & Content Style */}
-            <div className="bg-white p-8 rounded-3xl border border-border">
+            <div className="bg-surface p-8 rounded-3xl border border-border">
               <h2 className="text-lg font-bold text-primary mb-3">About Creator &amp; Creative Style</h2>
               <p className="text-sm text-text-secondary leading-relaxed mb-6">
                 {creator.bio}
@@ -302,7 +302,7 @@ export default function CreatorProfileDetailPage({
                   {creator.niche.map((n, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 rounded-xl bg-gray-100 text-xs font-semibold text-primary"
+                      className="px-3 py-1 rounded-xl bg-ink text-xs font-semibold text-primary"
                     >
                       {n}
                     </span>
@@ -315,10 +315,10 @@ export default function CreatorProfileDetailPage({
           {/* Right Col: Audience Demographics & Platforms */}
           <div className="space-y-6">
             {/* Social Platform Breakdown */}
-            <div className="bg-white p-6 rounded-3xl border border-border shadow-xs">
+            <div className="bg-surface p-6 rounded-3xl border border-border shadow-xs">
               <h3 className="font-bold text-primary text-sm mb-4">Platform Reach</h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-gray-50 border border-border">
+                <div className="flex items-center justify-between p-3 rounded-2xl bg-ink border border-border">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary">
                     <Instagram className="w-4 h-4 text-pink-600" />
                     <span>Instagram</span>
@@ -334,7 +334,7 @@ export default function CreatorProfileDetailPage({
                 </div>
 
                 {creator.ytSubscribers && (
-                  <div className="flex items-center justify-between p-3 rounded-2xl bg-gray-50 border border-border">
+                  <div className="flex items-center justify-between p-3 rounded-2xl bg-ink border border-border">
                     <div className="flex items-center gap-2 text-xs font-bold text-primary">
                       <Youtube className="w-4 h-4 text-red-600" />
                       <span>YouTube</span>
@@ -353,26 +353,26 @@ export default function CreatorProfileDetailPage({
             </div>
 
             {/* Audience Demographics */}
-            <div className="bg-white p-6 rounded-3xl border border-border shadow-xs">
+            <div className="bg-surface p-6 rounded-3xl border border-border shadow-xs">
               <h3 className="font-bold text-primary text-sm mb-4">Audience Demographics</h3>
               <div className="space-y-3.5 text-xs">
                 <div>
                   <span className="text-text-secondary font-medium block mb-1">Top Audience Geography:</span>
-                  <div className="font-bold text-primary p-2.5 rounded-xl bg-gray-50 border border-border">
+                  <div className="font-bold text-primary p-2.5 rounded-xl bg-ink border border-border">
                     {creator.audienceDemographics.topCity}
                   </div>
                 </div>
 
                 <div>
                   <span className="text-text-secondary font-medium block mb-1">Age Distribution:</span>
-                  <div className="font-bold text-primary p-2.5 rounded-xl bg-gray-50 border border-border">
+                  <div className="font-bold text-primary p-2.5 rounded-xl bg-ink border border-border">
                     {creator.audienceDemographics.topAgeBracket}
                   </div>
                 </div>
 
                 <div>
                   <span className="text-text-secondary font-medium block mb-1">Gender Split:</span>
-                  <div className="font-bold text-primary p-2.5 rounded-xl bg-gray-50 border border-border">
+                  <div className="font-bold text-primary p-2.5 rounded-xl bg-ink border border-border">
                     {creator.audienceDemographics.genderRatio}
                   </div>
                 </div>
@@ -380,7 +380,7 @@ export default function CreatorProfileDetailPage({
             </div>
 
             {/* Action Card */}
-            <div className="bg-gradient-to-br from-primary to-slate-900 text-white p-6 rounded-3xl shadow-lg">
+            <div className="bg-gradient-to-br from-primary to-ink text-white p-6 rounded-3xl shadow-lg">
               <h3 className="font-bold text-base mb-1">Ready to feature {creator.name}?</h3>
               <p className="text-xs text-white/70 mb-4 leading-relaxed">
                 Send an official campaign brief invite directly to this creator with pre-approved budget terms.
@@ -407,7 +407,7 @@ export default function CreatorProfileDetailPage({
             onClick={() => setIsInviteModalOpen(false)}
           />
 
-          <div className="relative bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl z-10 border border-border animate-in zoom-in-95 duration-200">
+          <div className="relative bg-surface rounded-3xl max-w-lg w-full p-8 shadow-2xl z-10 border border-border animate-in zoom-in-95 duration-200">
             <h2 className="text-2xl font-black text-primary mb-1">
               Send Campaign Offer
             </h2>
@@ -423,7 +423,7 @@ export default function CreatorProfileDetailPage({
                 <select
                   value={selectedBrandSlug}
                   onChange={(e) => setSelectedBrandSlug(e.target.value)}
-                  className="w-full bg-gray-50 border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full bg-ink border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
                 >
                   {INITIAL_BRANDS.map((brand) => (
                     <option key={brand.id} value={brand.slug}>
@@ -441,7 +441,7 @@ export default function CreatorProfileDetailPage({
                   type="number"
                   value={offeredFee}
                   onChange={(e) => setOfferedFee(e.target.value)}
-                  className="w-full bg-gray-50 border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full bg-ink border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
                   required
                 />
               </div>
@@ -455,7 +455,7 @@ export default function CreatorProfileDetailPage({
                   placeholder={`Hey ${creator.name}, we loved your past work with ${creator.brandCollaborations[0]?.brandName || "Schbang"} and want to feature you in our upcoming campaign...`}
                   value={customMessage}
                   onChange={(e) => setCustomMessage(e.target.value)}
-                  className="w-full bg-gray-50 border border-border rounded-xl p-3 text-xs text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full bg-ink border border-border rounded-xl p-3 text-xs text-primary focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
 

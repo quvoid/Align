@@ -63,7 +63,7 @@ export default function CompetitorIntelligenceHubPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero Header */}
-      <div className="bg-primary text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
+      <div className="bg-ink text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -75,7 +75,7 @@ export default function CompetitorIntelligenceHubPage() {
               </p>
             </div>
             <Link href="/admin">
-              <Button variant="outline" className="text-xs font-bold bg-transparent border-white/20 text-white hover:bg-white/10 hover:border-white/40">
+              <Button variant="outline" className="text-xs font-bold bg-transparent border-white/20 text-white hover:bg-surface/10 hover:border-white/40">
                 &larr; Back to admin
               </Button>
             </Link>
@@ -85,7 +85,7 @@ export default function CompetitorIntelligenceHubPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         {/* Custom Audit Bar */}
-        <Card className="rounded-3xl border-border bg-white shadow-sm overflow-hidden">
+        <Card className="rounded-3xl border-border bg-surface shadow-sm overflow-hidden">
           <CardContent className="p-6">
             <form onSubmit={handleRunCustomAudit} className="space-y-4">
               <div className="flex items-center justify-between">
@@ -108,25 +108,25 @@ export default function CompetitorIntelligenceHubPage() {
             </form>
 
             {adHocResult && (
-              <div className="mt-6 p-5 rounded-2xl bg-gray-50 border border-border space-y-3">
+              <div className="mt-6 p-5 rounded-2xl bg-ink border border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-primary text-sm">{adHocResult.brandName} vs {adHocResult.competitorName}</h3>
                   <Badge variant="approved" className="text-[10px]">Analysis Complete</Badge>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-                  <div className="p-3 bg-white rounded-xl border border-border">
+                  <div className="p-3 bg-surface rounded-xl border border-border">
                     <span className="text-[10px] font-bold uppercase text-text-secondary block">Brand SOV</span>
                     <span className="text-lg font-black text-accent">{adHocResult.shareOfVoicePct.brand}%</span>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-border">
+                  <div className="p-3 bg-surface rounded-xl border border-border">
                     <span className="text-[10px] font-bold uppercase text-text-secondary block">Competitor SOV</span>
                     <span className="text-lg font-black text-red-600">{adHocResult.shareOfVoicePct.competitor}%</span>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-border">
+                  <div className="p-3 bg-surface rounded-xl border border-border">
                     <span className="text-[10px] font-bold uppercase text-text-secondary block">Brand ER%</span>
                     <span className="text-lg font-black text-green-600">{adHocResult.brand.avgEngagementRate}%</span>
                   </div>
-                  <div className="p-3 bg-white rounded-xl border border-border">
+                  <div className="p-3 bg-surface rounded-xl border border-border">
                     <span className="text-[10px] font-bold uppercase text-text-secondary block">Comp Boost Rate</span>
                     <span className="text-lg font-black text-red-600">{adHocResult.competitor.paidAdSpendRatioPct}%</span>
                   </div>
@@ -150,7 +150,7 @@ export default function CompetitorIntelligenceHubPage() {
 
               return (
                 <Link key={config.brandSlug} href={`/admin/brands/${config.brandSlug}/competitors`}>
-                  <Card className="rounded-3xl border-border bg-white shadow-xs hover:shadow-md hover:border-accent/30 transition-all cursor-pointer group">
+                  <Card className="rounded-3xl border-border bg-surface shadow-xs hover:shadow-md hover:border-accent/30 transition-all cursor-pointer group">
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -172,17 +172,17 @@ export default function CompetitorIntelligenceHubPage() {
                       </div>
 
                       <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border text-center">
-                        <div className="p-2 bg-gray-50 rounded-xl">
+                        <div className="p-2 bg-ink rounded-xl">
                           <ShieldCheck className="w-3.5 h-3.5 text-accent mx-auto mb-0.5" />
                           <span className="text-[10px] font-bold text-text-secondary block">Tracked</span>
                           <span className="text-sm font-black text-primary">{config.competitors.length}/4</span>
                         </div>
-                        <div className="p-2 bg-gray-50 rounded-xl">
+                        <div className="p-2 bg-ink rounded-xl">
                           <Users className="w-3.5 h-3.5 text-accent mx-auto mb-0.5" />
                           <span className="text-[10px] font-bold text-text-secondary block">Creators</span>
                           <span className="text-sm font-black text-primary">{totalCompetitorCreators}</span>
                         </div>
-                        <div className="p-2 bg-gray-50 rounded-xl">
+                        <div className="p-2 bg-ink rounded-xl">
                           <TrendingUp className="w-3.5 h-3.5 text-red-500 mx-auto mb-0.5" />
                           <span className="text-[10px] font-bold text-text-secondary block">Avg Boost</span>
                           <span className="text-sm font-black text-red-600">{avgBoostRate}%</span>

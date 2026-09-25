@@ -109,7 +109,7 @@ function ProfilePageInner() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-primary text-white pt-8 pb-12 border-b border-white/10">
+      <div className="bg-ink text-white pt-8 pb-12 border-b border-white/10">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
@@ -132,7 +132,7 @@ function ProfilePageInner() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
         {next && !isProfileComplete(profile) && (
-          <div className="rounded-3xl border border-accent/30 bg-white p-5 md:p-6">
+          <div className="rounded-3xl border border-accent/30 bg-surface p-5 md:p-6">
             <p className="font-bold text-primary">Finish your profile to continue</p>
             <p className="text-sm text-text-secondary mt-1">
               Brands see this with every pitch. Add at least your Instagram handle and niche, then save.

@@ -189,11 +189,11 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
 
           {/* One-click demo profiles — local/staging only */}
           {DEMO_MODE && (
-          <div className="bg-gray-50 rounded-2xl p-3 space-y-2">
+          <div className="bg-ink rounded-2xl p-3 space-y-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary px-1">Demo profiles</p>
             <Button
               variant="outline"
-              className="group w-full justify-start rounded-xl text-left bg-white border-border h-auto py-2.5"
+              className="group w-full justify-start rounded-xl text-left bg-surface border-border h-auto py-2.5"
               onClick={() => loginWithEmail("admin@schbang.com", "admin123", "/admin")}
               disabled={isLoading}
             >
@@ -205,7 +205,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
             </Button>
             <Button
               variant="outline"
-              className="group w-full justify-start rounded-xl text-left bg-white border-border h-auto py-2.5"
+              className="group w-full justify-start rounded-xl text-left bg-surface border-border h-auto py-2.5"
               onClick={() => loginWithEmail("rohan.creates@gmail.com", "creator123", "/dashboard")}
               disabled={isLoading}
             >
@@ -241,7 +241,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="rounded-xl border-border bg-white"
+                className="rounded-xl border-border bg-surface"
                 autoFocus
                 required
               />
@@ -250,7 +250,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="rounded-xl border-border bg-white"
+                className="rounded-xl border-border bg-surface"
                 required
               />
               <Button type="submit" className="w-full h-11 rounded-xl bg-accent hover:bg-accent/90 text-white" disabled={isLoading}>

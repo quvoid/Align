@@ -13,13 +13,13 @@ export const Button = ({
   isLoading?: boolean;
 }) => {
   // DESIGN.md: buttons are flat (no shadow), radius 16px at every size, Pin Red reserved
-  // as the sole filled high-emphasis color. `primary` is the Ink Plum filled variant,
+  // as the sole filled high-emphasis color. `primary` is the yellow filled variant,
   // `accent` is the Pin Red filled CTA, `outline` is the ghost-outline secondary action,
   // `ghost` is the borderless tertiary text link.
   const variants = {
-    primary: 'bg-primary text-white hover:bg-primary/85 active:bg-primary',
+    primary: 'bg-highlight text-background hover:bg-highlight/85 active:bg-highlight',
     accent: 'bg-accent text-white hover:bg-accent-hover active:bg-accent-hover',
-    outline: 'border border-primary bg-transparent text-primary hover:bg-primary hover:text-white',
+    outline: 'border border-primary bg-transparent text-primary hover:bg-primary hover:text-background',
     ghost: 'bg-transparent text-primary hover:underline underline-offset-4',
   };
 

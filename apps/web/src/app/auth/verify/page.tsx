@@ -122,8 +122,8 @@ function VerifyEmail() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md rounded-4xl bg-white/70 backdrop-blur-xl ring-1 ring-inset ring-white/70 shadow-[0_24px_60px_-28px_rgba(33,25,34,0.45)] p-8 sm:p-10">
-        <span className="flex items-center justify-center w-12 h-12 rounded-2xl bg-primary text-white">
+      <div className="w-full max-w-md rounded-4xl bg-surface/70 backdrop-blur-xl ring-1 ring-inset ring-white/70 shadow-[0_24px_60px_-28px_rgba(33,25,34,0.45)] p-8 sm:p-10">
+        <span className="flex items-center justify-center w-12 h-12 rounded-2xl bg-ink text-white">
           <MailCheck className="w-6 h-6" aria-hidden="true" />
         </span>
         <h1 className="text-2xl font-black tracking-tight text-primary mt-6">Confirm your email</h1>
@@ -147,7 +147,7 @@ function VerifyEmail() {
             placeholder="000000"
             aria-invalid={!!error}
             aria-describedby={error ? "otp-error" : undefined}
-            className="w-full h-16 rounded-2xl border border-border bg-white text-center text-3xl font-extrabold tracking-[0.5em] tabular-nums text-primary placeholder:text-primary/15 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-16 rounded-2xl border border-border bg-surface text-center text-3xl font-extrabold tracking-[0.5em] tabular-nums text-primary placeholder:text-primary/15 focus:outline-none focus:ring-2 focus:ring-primary"
           />
           {error && (
             <p id="otp-error" role="alert" className="text-sm font-medium text-error">

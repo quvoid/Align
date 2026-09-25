@@ -18,7 +18,7 @@ interface BriefCardProps {
 }
 
 const SHELL =
-  "group relative flex flex-col h-full rounded-4xl bg-white/55 backdrop-blur-xl ring-1 ring-inset ring-white/70 shadow-[0_24px_60px_-28px_rgba(33,25,34,0.45)] p-2 text-left transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.2,0,0,1)] hover:-translate-y-1 hover:bg-white/70 hover:shadow-[0_32px_70px_-28px_rgba(33,25,34,0.55)]";
+  "group relative flex flex-col h-full rounded-4xl bg-surface/55 backdrop-blur-xl ring-1 ring-inset ring-white/70 shadow-[0_24px_60px_-28px_rgba(33,25,34,0.45)] p-2 text-left transition-[transform,box-shadow,background-color] duration-300 ease-[cubic-bezier(0.2,0,0,1)] hover:-translate-y-1 hover:bg-surface/70 hover:shadow-[0_32px_70px_-28px_rgba(33,25,34,0.55)]";
 
 const FOCUS =
   "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-4xl";
@@ -42,13 +42,13 @@ export function BriefCard({ brand, href, onSelect, action }: BriefCardProps) {
           className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0,0,1)] group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-primary/55 via-primary/0 to-primary/0" />
-        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/85 backdrop-blur text-[11px] font-semibold text-primary">
+        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface/85 backdrop-blur text-[11px] font-semibold text-primary">
           {brand.budgetTier} creators
         </span>
         <img
           src={brand.logo}
           alt=""
-          className="absolute bottom-3 left-3 w-11 h-11 rounded-2xl object-cover bg-white ring-2 ring-white"
+          className="absolute bottom-3 left-3 w-11 h-11 rounded-2xl object-cover bg-surface ring-2 ring-white"
         />
       </div>
 
@@ -58,7 +58,7 @@ export function BriefCard({ brand, href, onSelect, action }: BriefCardProps) {
             <h3 className="font-bold text-lg text-primary leading-tight truncate">{brand.name}</h3>
             <p className="text-xs font-medium text-primary/60 mt-1">{brand.industry}</p>
           </div>
-          <span className="shrink-0 flex items-center justify-center w-9 h-9 rounded-full bg-primary text-white transition-transform duration-300 group-hover:rotate-45">
+          <span className="shrink-0 flex items-center justify-center w-9 h-9 rounded-full bg-ink text-white transition-transform duration-300 group-hover:rotate-45">
             <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
           </span>
         </div>
@@ -69,7 +69,7 @@ export function BriefCard({ brand, href, onSelect, action }: BriefCardProps) {
           {brand.campaignTypes.slice(0, 3).map((type) => (
             <li
               key={type}
-              className="px-2.5 py-1 rounded-full bg-white/70 ring-1 ring-inset ring-primary/10 text-[11px] font-medium text-primary/80"
+              className="px-2.5 py-1 rounded-full bg-surface/70 ring-1 ring-inset ring-primary/10 text-[11px] font-medium text-primary/80"
             >
               {type}
             </li>

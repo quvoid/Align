@@ -41,7 +41,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Contact Details */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl border border-border">
+            <div className="bg-surface p-6 rounded-3xl border border-border">
               <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-4">
                 <Mail className="w-5 h-5" />
               </div>
@@ -52,7 +52,7 @@ export default function ContactPage() {
               </a>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-border">
+            <div className="bg-surface p-6 rounded-3xl border border-border">
               <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
                 <MapPin className="w-5 h-5" />
               </div>
@@ -64,7 +64,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-border">
+            <div className="bg-surface p-6 rounded-3xl border border-border">
               <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center mb-4">
                 <Phone className="w-5 h-5" />
               </div>
@@ -77,7 +77,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form */}
-          <div className="md:col-span-2 bg-white p-8 rounded-3xl border border-border">
+          <div className="md:col-span-2 bg-surface p-8 rounded-3xl border border-border">
             {submitted ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-4">

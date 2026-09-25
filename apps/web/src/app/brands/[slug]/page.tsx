@@ -114,7 +114,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
       />
 
       {/* Breadcrumb Navigation for SEO */}
-      <div className="bg-white border-b border-border pt-20 pb-3">
+      <div className="bg-surface border-b border-border pt-20 pb-3">
         <div className="container mx-auto px-4">
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-text-secondary">
             <Link href="/" className="hover:text-accent transition-colors">Home</Link>
@@ -139,12 +139,12 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
 
       <div className="container mx-auto px-4 -mt-16 relative z-10">
         {/* Brand Card Header */}
-        <div className="bg-white rounded-3xl border border-border p-6 md:p-8 shadow-xl mb-8 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+        <div className="bg-surface rounded-3xl border border-border p-6 md:p-8 shadow-xl mb-8 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
           <div className="flex items-center gap-5">
             <img
               src={brand.logo}
               alt={`${brand.name} Logo`}
-              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-white shadow-lg object-cover bg-white"
+              className="w-20 h-20 md:w-24 md:h-24 rounded-2xl border-2 border-surface shadow-lg object-cover bg-surface"
             />
             <div>
               <div className="flex items-center gap-2 mb-1.5">
@@ -182,16 +182,16 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
         {/* Content Details */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white p-8 rounded-3xl border border-border">
+            <div className="bg-surface p-8 rounded-3xl border border-border">
               <h2 className="text-lg font-bold text-primary mb-3">About the Campaign Brief</h2>
               <p className="text-sm text-text-secondary leading-relaxed">{brand.description}</p>
             </div>
             
-            <div className="bg-white p-8 rounded-3xl border border-border">
+            <div className="bg-surface p-8 rounded-3xl border border-border">
               <h2 className="text-lg font-bold text-primary mb-4">Required Creative Deliverables</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {brand.campaignTypes.map(type => (
-                  <div key={type} className="flex items-center gap-2.5 bg-gray-50 px-4 py-3 rounded-xl border border-border text-xs font-semibold text-primary">
+                  <div key={type} className="flex items-center gap-2.5 bg-ink px-4 py-3 rounded-xl border border-border text-xs font-semibold text-primary">
                     <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
                     <span>{type}</span>
                   </div>
@@ -201,7 +201,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
           </div>
 
           <div>
-            <div className="bg-white rounded-3xl p-6 border border-border shadow-sm space-y-6">
+            <div className="bg-surface rounded-3xl p-6 border border-border shadow-sm space-y-6">
               <div>
                 <h3 className="font-bold text-primary text-sm mb-3">Creator Eligibility Criteria</h3>
                 <div className="bg-emerald-50/60 border border-emerald-200/70 p-4 rounded-2xl text-xs text-emerald-950 leading-relaxed font-medium">
@@ -231,7 +231,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
 
         {/* Competitor Intelligence Section (Admin / Brand Managers Only) */}
         {isAdminOrBrand && competitorConfig && (
-          <div className="mt-12 p-6 rounded-3xl bg-primary text-white space-y-4">
+          <div className="mt-12 p-6 rounded-3xl bg-ink text-white space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-xl font-bold">
@@ -251,7 +251,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
               {competitorConfig.competitors.map((comp) => (
-                <div key={comp.id} className="p-3 bg-white/10 rounded-2xl flex items-center justify-between">
+                <div key={comp.id} className="p-3 bg-surface/10 rounded-2xl flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <img src={comp.avatar} alt={comp.name} className="w-8 h-8 rounded-xl object-cover border border-white/20" />
                     <div>
@@ -283,7 +283,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedBrands.map(item => (
               <Card key={item.id} className="hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col border-border group">
-                <div className="h-36 overflow-hidden relative bg-gray-100">
+                <div className="h-36 overflow-hidden relative bg-ink">
                   <img src={item.coverImage} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
                   <div className="absolute top-3 right-3 px-2.5 py-0.5 bg-black/70 backdrop-blur-md text-white text-[10px] font-semibold rounded-full uppercase tracking-wider">
                     {item.budgetTier}
@@ -291,7 +291,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
                 </div>
                 <CardContent className="p-5 flex-1 flex flex-col justify-between">
                   <div className="flex items-center gap-3 mb-3">
-                    <img src={item.logo} alt={item.name} className="w-10 h-10 rounded-xl border border-border object-cover bg-white" />
+                    <img src={item.logo} alt={item.name} className="w-10 h-10 rounded-xl border border-border object-cover bg-surface" />
                     <div>
                       <h3 className="font-bold text-sm text-primary">{item.name}</h3>
                       <span className="text-[11px] text-text-secondary">{item.industry}</span>

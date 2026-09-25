@@ -10,11 +10,11 @@ import type { NeatConfig } from "@firecms/neat";
 
 export const NEAT_CONFIG: NeatConfig = {
   colors: [
-    { color: "#cdb4db", enabled: true }, // thistle
-    { color: "#ffc8dd", enabled: true }, // pastel petal
-    { color: "#ffafcc", enabled: true }, // baby pink
-    { color: "#bde0fe", enabled: true }, // icy blue
-    { color: "#a2d2ff", enabled: true }, // sky blue
+    { color: "#FF9A9D", enabled: true }, // coral
+    { color: "#F7B6C8", enabled: true }, // pink
+    { color: "#C9B1DE", enabled: true }, // lavender
+    { color: "#9CCCF2", enabled: true }, // sky blue
+    { color: "#FFF36A", enabled: false }, // yellow
   ],
   speed: 4.5,
   horizontalPressure: 6,
@@ -29,7 +29,7 @@ export const NEAT_CONFIG: NeatConfig = {
   wireframe: true,
   antialias: false,
   colorBlending: 6,
-  backgroundColor: "#ffc8dd",
+  backgroundColor: "#1B171D",
   backgroundAlpha: 1,
   grainScale: 0,
   grainSparsity: 0,

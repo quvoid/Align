@@ -325,7 +325,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         {/* Comparison Hero Scorecards */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
           {/* Brand Card */}
-          <Card className="md:col-span-5 rounded-3xl border-2 border-accent/30 bg-white shadow-md">
+          <Card className="md:col-span-5 rounded-3xl border-2 border-accent/30 bg-surface shadow-md">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-3">
                 <img
@@ -340,19 +340,19 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 pt-3 border-t border-border text-center">
-                <div className="p-2.5 bg-gray-50 rounded-xl">
+                <div className="p-2.5 bg-ink rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Views Delivered</span>
                   <span className="text-base font-black text-primary">{formatNumber(benchmarkData.brand.totalViewsDelivered)}</span>
                 </div>
-                <div className="p-2.5 bg-gray-50 rounded-xl">
+                <div className="p-2.5 bg-ink rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Avg ER</span>
                   <span className="text-base font-black text-green-600">{benchmarkData.brand.avgEngagementRate}%</span>
                 </div>
-                <div className="p-2.5 bg-gray-50 rounded-xl">
+                <div className="p-2.5 bg-ink rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Paid Boost</span>
                   <span className="text-base font-black text-primary">{benchmarkData.brand.paidAdSpendRatioPct}%</span>
                 </div>
-                <div className="p-2.5 bg-gray-50 rounded-xl">
+                <div className="p-2.5 bg-ink rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Collabs</span>
                   <span className="text-base font-black text-primary">{benchmarkData.brand.collabsAnalyzed}</span>
                 </div>
@@ -361,19 +361,19 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           </Card>
 
           {/* SOV Gauge */}
-          <div className="md:col-span-2 flex flex-col items-center justify-center p-4 bg-primary text-white rounded-3xl text-center space-y-2">
+          <div className="md:col-span-2 flex flex-col items-center justify-center p-4 bg-ink text-white rounded-3xl text-center space-y-2">
             <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Share of Voice</span>
             <div className="text-2xl font-black">
               {benchmarkData.shareOfVoicePct.brand}% <span className="text-xs text-white/50">vs</span> {benchmarkData.shareOfVoicePct.competitor}%
             </div>
-            <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden flex">
+            <div className="w-full bg-surface/20 h-2 rounded-full overflow-hidden flex">
               <div style={{ width: `${benchmarkData.shareOfVoicePct.brand}%` }} className="bg-accent h-full" />
               <div style={{ width: `${benchmarkData.shareOfVoicePct.competitor}%` }} className="bg-red-500 h-full" />
             </div>
           </div>
 
           {/* Competitor Card */}
-          <Card className="md:col-span-5 rounded-3xl border border-red-200 bg-white shadow-md">
+          <Card className="md:col-span-5 rounded-3xl border border-red-200 bg-surface shadow-md">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-3">
                 <img
@@ -436,13 +436,13 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         </div>
 
         {/* AI Strategy Insights */}
-        <Card className="rounded-3xl border-border bg-white shadow-xs p-6 space-y-4">
+        <Card className="rounded-3xl border-border bg-surface shadow-xs p-6 space-y-4">
           <h2 className="text-sm font-bold text-primary">Suggested counter-plays for {config.brandName}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {benchmarkData.recommendedCounterPlays.map((play, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-gray-50 border border-border text-xs leading-relaxed text-primary font-medium"
+                className="p-4 rounded-2xl bg-ink border border-border text-xs leading-relaxed text-primary font-medium"
                 dangerouslySetInnerHTML={{ __html: play }}
               />
             ))}
@@ -480,7 +480,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-text-secondary bg-white px-4 py-2 rounded-full border border-border shadow-xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-text-secondary bg-surface px-4 py-2 rounded-full border border-border shadow-xs">
             <BarChart2 className="w-4 h-4 text-accent" />
             <span>{config.competitors.length} / 4 Competitors Monitored</span>
           </div>
@@ -506,7 +506,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
             {config.competitors.map((comp, idx) => (
               <Card
                 key={comp.id}
-                className="interactive-card-accent rounded-3xl border-border bg-white shadow-xs animate-in fade-in slide-in-from-bottom-2 duration-300"
+                className="interactive-card-accent rounded-3xl border-border bg-surface shadow-xs animate-in fade-in slide-in-from-bottom-2 duration-300"
                 style={{ animationDelay: `${idx * 80}ms` }}
               >
                 <CardContent className="p-6 space-y-4">
@@ -536,15 +536,15 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border text-center">
-                    <div className="p-2 bg-gray-50 rounded-xl">
+                    <div className="p-2 bg-ink rounded-xl">
                       <span className="text-[9px] font-bold text-text-secondary uppercase block">Followers</span>
                       <span className="text-xs font-black text-primary">{formatNumber(comp.stats.followers)}</span>
                     </div>
-                    <div className="p-2 bg-gray-50 rounded-xl">
+                    <div className="p-2 bg-ink rounded-xl">
                       <span className="text-[9px] font-bold text-text-secondary uppercase block">Avg ER</span>
                       <span className="text-xs font-black text-green-600">{comp.stats.avgEngagementRate}%</span>
                     </div>
-                    <div className="p-2 bg-gray-50 rounded-xl">
+                    <div className="p-2 bg-ink rounded-xl">
                       <span className="text-[9px] font-bold text-text-secondary uppercase block">Paid Boost</span>
                       <span className="text-xs font-black text-red-600 font-extrabold">{comp.stats.paidAdSpendRatioPct}%</span>
                     </div>
@@ -588,7 +588,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
 
       {/* Add Competitor Form */}
       {config.competitors.length < 4 && (
-        <Card className="rounded-3xl border-border bg-white shadow-xs p-6">
+        <Card className="rounded-3xl border-border bg-surface shadow-xs p-6">
           <form onSubmit={handleAddCompetitor} className="space-y-3">
             <div>
               <h2 className="text-sm font-bold text-primary mb-1">
@@ -641,8 +641,8 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           onClick={() => setActiveTab('roster')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             activeTab === 'roster'
-              ? 'bg-primary text-white'
-              : 'text-text-secondary hover:text-primary hover:bg-gray-100'
+              ? 'bg-ink text-white'
+              : 'text-text-secondary hover:text-primary hover:bg-ink'
           }`}
         >
           <Users className="w-3.5 h-3.5 inline mr-1.5" />
@@ -652,8 +652,8 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           onClick={() => setActiveTab('fusion_matrix')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             activeTab === 'fusion_matrix'
-              ? 'bg-primary text-white'
-              : 'text-text-secondary hover:text-primary hover:bg-gray-100'
+              ? 'bg-ink text-white'
+              : 'text-text-secondary hover:text-primary hover:bg-ink'
           }`}
         >
           <Layers className="w-3.5 h-3.5 inline mr-1.5 text-accent" />
@@ -677,7 +677,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               </p>
             </div>
             {rosterCompetitor && (
-              <Badge className="bg-primary text-white text-xs font-bold">{sortedCreators.length} Collabs</Badge>
+              <Badge className="bg-ink text-white text-xs font-bold">{sortedCreators.length} Collabs</Badge>
             )}
           </div>
 
@@ -694,7 +694,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                   className={`inline-flex items-center gap-1.5 pl-1.5 pr-3 py-1 rounded-full text-[11px] font-bold border transition-colors ${
                     active
                       ? 'bg-accent text-white border-accent'
-                      : 'bg-white text-text-secondary border-border hover:text-primary hover:border-primary/40'
+                      : 'bg-surface text-text-secondary border-border hover:text-primary hover:border-primary/40'
                   }`}
                 >
                   <img src={comp.avatar} alt="" className="w-5 h-5 rounded-full object-cover" />
@@ -709,10 +709,10 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               <p className="text-sm text-text-secondary">Select a competitor above to reveal their creator roster.</p>
             </Card>
           ) : (
-          <Card className="rounded-3xl border-border bg-white shadow-xs overflow-hidden">
+          <Card className="rounded-3xl border-border bg-surface shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-gray-50 border-b border-border">
+                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-ink border-b border-border">
                   <tr>
                     <th scope="col" className="px-6 py-4 font-bold">Creator</th>
                     <th scope="col" className="px-6 py-4 font-bold">Competitor</th>
@@ -849,25 +849,25 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                 Deduplicated entity list unifying public Instagram Grid posts and Meta Ad Library dark ads.
               </p>
             </div>
-            <Badge className="bg-primary text-white text-xs font-bold">{aggregatedFusion.length} Unified Entities</Badge>
+            <Badge className="bg-ink text-white text-xs font-bold">{aggregatedFusion.length} Unified Entities</Badge>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl bg-white border border-border shadow-xs">
+            <div className="p-4 rounded-2xl bg-surface border border-border shadow-xs">
               <span className="text-xs font-bold text-text-secondary uppercase">Dual-Platform Creators</span>
               <div className="text-2xl font-black text-accent mt-1">
                 {aggregatedFusion.filter((c) => c.on_instagram_grid && c.on_meta_adlibrary).length}
               </div>
               <span className="text-[11px] text-text-secondary">On both IG Grid &amp; Meta Dark Ads</span>
             </div>
-            <div className="p-4 rounded-2xl bg-white border border-border shadow-xs">
+            <div className="p-4 rounded-2xl bg-surface border border-border shadow-xs">
               <span className="text-xs font-bold text-text-secondary uppercase">IG Grid Only</span>
               <div className="text-2xl font-black text-primary mt-1">
                 {aggregatedFusion.filter((c) => c.on_instagram_grid && !c.on_meta_adlibrary).length}
               </div>
               <span className="text-[11px] text-text-secondary">Organic / Standard Collabs</span>
             </div>
-            <div className="p-4 rounded-2xl bg-white border border-border shadow-xs">
+            <div className="p-4 rounded-2xl bg-surface border border-border shadow-xs">
               <span className="text-xs font-bold text-text-secondary uppercase">Meta Dark Ads Only</span>
               <div className="text-2xl font-black text-red-600 mt-1">
                 {aggregatedFusion.filter((c) => !c.on_instagram_grid && c.on_meta_adlibrary).length}
@@ -876,10 +876,10 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
             </div>
           </div>
 
-          <Card className="rounded-3xl border-border bg-white shadow-xs overflow-hidden">
+          <Card className="rounded-3xl border-border bg-surface shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-gray-50 border-b border-border">
+                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-ink border-b border-border">
                   <tr>
                     <th scope="col" className="px-6 py-4 font-bold">Creator Handle</th>
                     <th scope="col" className="px-6 py-4 font-bold">Source Classification</th>
@@ -891,7 +891,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                 </thead>
                 <tbody className="divide-y divide-border">
                   {aggregatedFusion.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50/60 transition-colors">
+                    <tr key={idx} className="hover:bg-ink/60 transition-colors">
                       <td className="px-6 py-4 font-bold text-xs text-primary">
                         {item.handle}
                       </td>
@@ -961,19 +961,19 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               <>
                 {/* Audit Summary KPI Bar */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                  <div className="p-3 bg-ink rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Total Ads Found</span>
                     <span className="text-base font-black text-primary">{auditReport.summary.total_ads}</span>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                  <div className="p-3 bg-ink rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Creators Found</span>
                     <span className="text-base font-black text-accent">{auditReport.summary.total_creators}</span>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                  <div className="p-3 bg-ink rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Dual-Platform</span>
                     <span className="text-base font-black text-green-600">{auditReport.summary.dual_platform}</span>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-xl border text-center">
+                  <div className="p-3 bg-ink rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Buyer Intent Score</span>
                     <span className="text-base font-black text-primary">{auditReport.summary.avg_intent_score}%</span>
                   </div>
@@ -987,7 +987,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                   </h4>
                   <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
                     {auditReport.ads.slice(0, 6).map((ad) => (
-                      <div key={ad.library_id} className="p-3 rounded-xl border border-border bg-white space-y-1.5 shadow-xs">
+                      <div key={ad.library_id} className="p-3 rounded-xl border border-border bg-surface space-y-1.5 shadow-xs">
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-primary">{ad.advertiser}</span>
                           <span className="text-[10px] font-bold text-text-secondary">{ad.longevity?.label || 'Active'}</span>

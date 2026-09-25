@@ -241,13 +241,13 @@ export default function ApplyPage({
 
   return (
     <div className="min-h-screen bg-background pb-32">
-      <div className="bg-primary text-white pt-8 pb-8">
+      <div className="bg-ink text-white pt-8 pb-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-4">
             <img
               src={brand.logo}
               alt={brand.name}
-              className="w-14 h-14 rounded-xl border-2 border-white/20 object-cover bg-white"
+              className="w-14 h-14 rounded-xl border-2 border-white/20 object-cover bg-surface"
             />
             <div>
               <h1 className="text-2xl font-bold">
@@ -261,7 +261,7 @@ export default function ApplyPage({
         </div>
       </div>
 
-      <div className="border-b border-border bg-white sticky top-0 z-10">
+      <div className="border-b border-border bg-surface sticky top-0 z-10">
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto pt-16 pb-3 gap-1">
             {STEPS.map((s) => {
@@ -277,7 +277,7 @@ export default function ApplyPage({
                       ? "bg-accent text-white"
                       : isComplete
                       ? "bg-green-50 text-green-700"
-                      : "text-text-secondary hover:bg-gray-50"
+                      : "text-text-secondary hover:bg-ink"
                   }`}
                 >
                   {isComplete ? (
@@ -358,7 +358,7 @@ export default function ApplyPage({
             {step === 2 && (
               <div className="space-y-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-ink flex items-center justify-center">
                     <Instagram className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -569,7 +569,7 @@ export default function ApplyPage({
                         className={`px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
                           form.deliverables.includes(item)
                             ? "bg-accent text-white border-accent"
-                            : "bg-white text-text-secondary border-border hover:border-accent/50"
+                            : "bg-surface text-text-secondary border-border hover:border-accent/50"
                         }`}
                       >
                         {item}
@@ -595,7 +595,7 @@ export default function ApplyPage({
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-gray-50 rounded-xl p-4">
+                  <div className="bg-ink rounded-xl p-4">
                     <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-wider mb-3">
                       Personal Info
                     </h3>
@@ -624,7 +624,7 @@ export default function ApplyPage({
                   </div>
 
                   {form.igHandle && (
-                    <div className="bg-gray-50 border border-border rounded-xl p-4">
+                    <div className="bg-ink border border-border rounded-xl p-4">
                       <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-wider mb-3">
                         Instagram
                       </h3>

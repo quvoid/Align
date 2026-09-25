@@ -67,7 +67,7 @@ function VideoCard({ t }: { t: (typeof VIDEO_TESTIMONIALS)[number] }) {
   const [playing, setPlaying] = useState(false);
 
   return (
-    <figure className="relative shrink-0 w-[70vw] sm:w-auto snap-start aspect-[9/16] overflow-hidden rounded-3xl bg-primary">
+    <figure className="relative shrink-0 w-[70vw] sm:w-auto snap-start aspect-[9/16] overflow-hidden rounded-3xl bg-ink">
       {playing ? (
         <video
           src={DUMMY_VIDEO_SRC}
@@ -91,10 +91,10 @@ function VideoCard({ t }: { t: (typeof VIDEO_TESTIMONIALS)[number] }) {
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-          <span className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-white/90 text-[11px] font-semibold text-primary">
+          <span className="absolute top-4 left-4 px-2.5 py-1 rounded-full bg-surface/90 text-[11px] font-semibold text-primary">
             {t.niche}
           </span>
-          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-14 h-14 rounded-full bg-white/90 shadow-lg transition-transform group-hover:scale-110">
+          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-14 h-14 rounded-full bg-surface/90 shadow-lg transition-transform group-hover:scale-110">
             <Play className="w-5 h-5 ml-0.5 fill-primary text-primary" aria-hidden="true" />
           </span>
           <figcaption className="absolute bottom-0 inset-x-0 p-5 text-white">
