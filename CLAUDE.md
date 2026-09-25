@@ -56,13 +56,21 @@ not depend on `apps/api` being correct or even running.**
   membership) persist client-side via `apps/web/src/lib/user-store.ts`,
   keyed per-user in `localStorage` as `align_user_{email}` (see
   `docs/adr/0001-hybrid-user-store.md`). This is the actual source of truth
-  for the deployed demo today, *not* Postgres.
-- `packages/database`'s Prisma schema is the target schema this store is
+  for that product data in the deployed demo today, *not* Postgres.
+- **Exception: identity is already in Postgres.** Users, password hashes,
+  roles, email verification and OTP codes are read/written by `apps/web`
+  directly through Prisma (`apps/web/src/server/db.ts` re-exports the
+  `@branddeals/database` client) from Node-runtime route handlers and
+  `lib/auth.ts` — not via `apps/api`. Anything under `src/server/` is
+  `server-only`.
+- `packages/database`'s Prisma schema is the target schema the client store is
   designed to mirror 1:1, for when `apps/api` becomes authoritative. When
   changing a domain shape, update both `mock-data.ts`/`user-store.ts` *and*
   `packages/database/prisma/schema.prisma` — they're expected to stay in sync
   even though only one is live.
-- Payments/membership: `plans.ts` is the single source of pricing;
+- Payments/membership: `plans.ts` is the single source of pricing; creators
+  get `FREE_PITCHES` (3) before a plan is needed, gated by `canPitch()` in
+  `user-store.ts`. Never add "no commission" / "keep 100%" copy.
   `activateMembership()` in `user-store.ts` is the one seam meant for a real
   payment gateway webhook to call — see `docs/LAUNCH-DAY.md` §2 before wiring one.
 
@@ -70,20 +78,38 @@ not depend on `apps/api` being correct or even running.**
 
 Two roles: `CREATOR` and `ADMIN` (schema also allows `SUPER_ADMIN`).
 
-- NextAuth v5 (`apps/web/src/lib/auth.ts`) registers Google OAuth **only if**
-  `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` are set — otherwise only the
-  `Credentials` provider is available.
-- The `Credentials` provider is also the **demo login**: it auto-assigns a
-  role from the email — `admin@schbang.com` and any `@schbang.com` address
-  → `ADMIN`; specific seeded demo creators (`rohan@schbang.com`,
-  `aanya@schbang.com`, and their Gmail aliases) map to fixed creator
-  personas; any other email → a fresh `CREATOR`. Same domain rule applies to
-  real Google sign-in. See `docs/LAUNCH-DAY.md` §6 for the demo account table.
+- NextAuth v5, JWT sessions, split in two: `lib/auth.config.ts` is the
+  **edge-safe** half (no Prisma, no bcrypt) used by `middleware.ts`;
+  `lib/auth.ts` adds the providers and DB-backed callbacks for Node. Never
+  import `@/lib/auth` from middleware or anything edge-bundled. Edge-safe
+  helpers (`normalizeEmail`, `isSeededAdminEmail`, `safeRedirectPath`,
+  `postAuthUrl`) live in `lib/auth-shared.ts`.
+- Google OAuth registers **only if** `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`
+  are set. `Credentials` is a real email + password login against
+  `User.passwordHash` (`@node-rs/bcrypt`, not `bcryptjs`); accounts are created
+  by `POST /api/auth/register`.
+- **Role is never derived from the email domain.** New users are `CREATOR`
+  unless their email is in the `ADMIN_EMAILS` env allowlist; after that the
+  DB row is authoritative and re-login never changes it. `role` is stamped
+  into the JWT at sign-in and not refreshed, so a promotion needs a
+  sign-out/in, and admin route handlers must re-check the role in the DB.
+- **First sign-in requires an emailed 6-digit OTP** (credentials and Google
+  alike). `server/email-otp.ts` stores only an HMAC of the code (10-min TTL,
+  5 attempts, 60s resend cooldown); `server/email.ts` sends via Resend
+  (`RESEND_API_KEY`, `EMAIL_FROM`) and just logs the email to the server
+  console in dev when no key is set. On success the client calls
+  `useSession().update()` and the jwt callback re-reads `emailVerifiedAt`
+  from the DB. Every sign-in path lands on `/auth/continue` via `postAuthUrl()`.
+- Demo passkeys (seeded accounts, see `docs/LAUNCH-DAY.md` §6) are only shown
+  when `NEXT_PUBLIC_DEMO_MODE=true` — keep it unset in production.
 - Access control is enforced at two layers (`docs/adr/0002-edge-middleware-rbac.md`):
-  edge `middleware.ts` (redirects `/admin`, `/creators`, `/dashboard` by JWT
-  role before render) plus a component-level access-gate UI for `/creators`.
-  `middleware.ts`'s matcher list is the authoritative list of protected
-  route prefixes — update it when adding new gated sections.
+  edge `middleware.ts` (redirects anonymous users away from `/admin` and
+  `/creators`, sends unconfirmed users to `/auth/verify`, and redirects by JWT
+  role) plus a component-level access-gate UI for `/creators`. `/dashboard`,
+  `/apply` and `/join` are matched but use the client-side sign-in popup for
+  anonymous visitors so `?brief=` survives. The matcher list is the
+  authoritative list of protected route prefixes — update it when adding new
+  gated sections. Middleware is a UX guard, not the security boundary.
 - `robots.txt`/`sitemap.ts` intentionally exclude everything behind auth
   (`/admin`, `/dashboard`, `/apply`, `/join`, `/creators`, `/auth`, `/api`) —
   see `docs/LAUNCH-DAY.md` §4 for the full SEO surface and why routes stay
