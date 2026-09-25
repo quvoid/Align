@@ -142,7 +142,7 @@ export default function PricingPage() {
               </ul>
 
               <div className="mt-8">
-                <Suspense fallback={<div className="h-12 rounded-xl bg-ink" />}>
+                <Suspense fallback={<div className="h-12 rounded-xl bg-muted" />}>
                   <PlanButton plan={plan} />
                 </Suspense>
                 <p className="text-xs text-text-secondary text-center mt-3">

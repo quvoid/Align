@@ -340,19 +340,19 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 pt-3 border-t border-border text-center">
-                <div className="p-2.5 bg-ink rounded-xl">
+                <div className="p-2.5 bg-muted rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Views Delivered</span>
                   <span className="text-base font-black text-primary">{formatNumber(benchmarkData.brand.totalViewsDelivered)}</span>
                 </div>
-                <div className="p-2.5 bg-ink rounded-xl">
+                <div className="p-2.5 bg-muted rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Avg ER</span>
                   <span className="text-base font-black text-green-600">{benchmarkData.brand.avgEngagementRate}%</span>
                 </div>
-                <div className="p-2.5 bg-ink rounded-xl">
+                <div className="p-2.5 bg-muted rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Paid Boost</span>
                   <span className="text-base font-black text-primary">{benchmarkData.brand.paidAdSpendRatioPct}%</span>
                 </div>
-                <div className="p-2.5 bg-ink rounded-xl">
+                <div className="p-2.5 bg-muted rounded-xl">
                   <span className="text-[10px] font-bold text-text-secondary block">Collabs</span>
                   <span className="text-base font-black text-primary">{benchmarkData.brand.collabsAnalyzed}</span>
                 </div>
@@ -442,7 +442,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
             {benchmarkData.recommendedCounterPlays.map((play, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-ink border border-border text-xs leading-relaxed text-primary font-medium"
+                className="p-4 rounded-2xl bg-muted border border-border text-xs leading-relaxed text-primary font-medium"
                 dangerouslySetInnerHTML={{ __html: play }}
               />
             ))}
@@ -536,15 +536,15 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border text-center">
-                    <div className="p-2 bg-ink rounded-xl">
+                    <div className="p-2 bg-muted rounded-xl">
                       <span className="text-[9px] font-bold text-text-secondary uppercase block">Followers</span>
                       <span className="text-xs font-black text-primary">{formatNumber(comp.stats.followers)}</span>
                     </div>
-                    <div className="p-2 bg-ink rounded-xl">
+                    <div className="p-2 bg-muted rounded-xl">
                       <span className="text-[9px] font-bold text-text-secondary uppercase block">Avg ER</span>
                       <span className="text-xs font-black text-green-600">{comp.stats.avgEngagementRate}%</span>
                     </div>
-                    <div className="p-2 bg-ink rounded-xl">
+                    <div className="p-2 bg-muted rounded-xl">
                       <span className="text-[9px] font-bold text-text-secondary uppercase block">Paid Boost</span>
                       <span className="text-xs font-black text-red-600 font-extrabold">{comp.stats.paidAdSpendRatioPct}%</span>
                     </div>
@@ -642,7 +642,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             activeTab === 'roster'
               ? 'bg-ink text-white'
-              : 'text-text-secondary hover:text-primary hover:bg-ink'
+              : 'text-text-secondary hover:text-primary hover:bg-muted'
           }`}
         >
           <Users className="w-3.5 h-3.5 inline mr-1.5" />
@@ -653,7 +653,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             activeTab === 'fusion_matrix'
               ? 'bg-ink text-white'
-              : 'text-text-secondary hover:text-primary hover:bg-ink'
+              : 'text-text-secondary hover:text-primary hover:bg-muted'
           }`}
         >
           <Layers className="w-3.5 h-3.5 inline mr-1.5 text-accent" />
@@ -712,7 +712,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           <Card className="rounded-3xl border-border bg-surface shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-ink border-b border-border">
+                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-muted border-b border-border">
                   <tr>
                     <th scope="col" className="px-6 py-4 font-bold">Creator</th>
                     <th scope="col" className="px-6 py-4 font-bold">Competitor</th>
@@ -879,7 +879,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
           <Card className="rounded-3xl border-border bg-surface shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-ink border-b border-border">
+                <thead className="text-xs text-text-secondary uppercase tracking-wider bg-muted border-b border-border">
                   <tr>
                     <th scope="col" className="px-6 py-4 font-bold">Creator Handle</th>
                     <th scope="col" className="px-6 py-4 font-bold">Source Classification</th>
@@ -891,7 +891,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
                 </thead>
                 <tbody className="divide-y divide-border">
                   {aggregatedFusion.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-ink/60 transition-colors">
+                    <tr key={idx} className="hover:bg-muted/60 transition-colors">
                       <td className="px-6 py-4 font-bold text-xs text-primary">
                         {item.handle}
                       </td>
@@ -961,19 +961,19 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               <>
                 {/* Audit Summary KPI Bar */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 bg-ink rounded-xl border text-center">
+                  <div className="p-3 bg-muted rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Total Ads Found</span>
                     <span className="text-base font-black text-primary">{auditReport.summary.total_ads}</span>
                   </div>
-                  <div className="p-3 bg-ink rounded-xl border text-center">
+                  <div className="p-3 bg-muted rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Creators Found</span>
                     <span className="text-base font-black text-accent">{auditReport.summary.total_creators}</span>
                   </div>
-                  <div className="p-3 bg-ink rounded-xl border text-center">
+                  <div className="p-3 bg-muted rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Dual-Platform</span>
                     <span className="text-base font-black text-green-600">{auditReport.summary.dual_platform}</span>
                   </div>
-                  <div className="p-3 bg-ink rounded-xl border text-center">
+                  <div className="p-3 bg-muted rounded-xl border text-center">
                     <span className="text-[10px] font-bold text-text-secondary uppercase block">Buyer Intent Score</span>
                     <span className="text-base font-black text-primary">{auditReport.summary.avg_intent_score}%</span>
                   </div>

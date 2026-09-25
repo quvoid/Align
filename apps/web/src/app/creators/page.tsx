@@ -238,7 +238,7 @@ export default function CreatorDiscoveryPage() {
                   {creator.niche.map((n, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-0.5 rounded-lg bg-ink text-[10px] font-semibold text-text-secondary"
+                      className="px-2.5 py-0.5 rounded-lg bg-muted text-[10px] font-semibold text-text-secondary"
                     >
                       {n}
                     </span>
@@ -246,7 +246,7 @@ export default function CreatorDiscoveryPage() {
                 </div>
 
                 {/* Platform Metrics Strip */}
-                <div className="grid grid-cols-2 gap-2 bg-ink/80 p-3 rounded-2xl border border-border/80 text-center mb-4">
+                <div className="grid grid-cols-2 gap-2 bg-muted/80 p-3 rounded-2xl border border-border/80 text-center mb-4">
                   <div className="border-r border-border/60 pr-2">
                     <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-text-secondary mb-0.5">
                       <Instagram className="w-3 h-3 text-pink-600" />
@@ -318,7 +318,7 @@ export default function CreatorDiscoveryPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="p-4 bg-ink border-t border-border flex items-center gap-2">
+              <div className="p-4 bg-muted border-t border-border flex items-center gap-2">
                 <Link
                   href={`/creators/${creator.id}`}
                   className="flex-1"

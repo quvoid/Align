@@ -240,7 +240,7 @@ export default function CreatorProfileDetailPage({
                 {creator.brandCollaborations.map((collab, idx) => (
                   <div
                     key={idx}
-                    className="p-5 rounded-2xl border border-border bg-ink/70 hover:bg-surface hover:shadow-md transition-all duration-200"
+                    className="p-5 rounded-2xl border border-border bg-muted/70 hover:bg-surface hover:shadow-md transition-all duration-200"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-3.5">
@@ -302,7 +302,7 @@ export default function CreatorProfileDetailPage({
                   {creator.niche.map((n, idx) => (
                     <span
                       key={idx}
-                      className="px-3 py-1 rounded-xl bg-ink text-xs font-semibold text-primary"
+                      className="px-3 py-1 rounded-xl bg-muted text-xs font-semibold text-primary"
                     >
                       {n}
                     </span>
@@ -318,7 +318,7 @@ export default function CreatorProfileDetailPage({
             <div className="bg-surface p-6 rounded-3xl border border-border shadow-xs">
               <h3 className="font-bold text-primary text-sm mb-4">Platform Reach</h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-ink border border-border">
+                <div className="flex items-center justify-between p-3 rounded-2xl bg-muted border border-border">
                   <div className="flex items-center gap-2 text-xs font-bold text-primary">
                     <Instagram className="w-4 h-4 text-pink-600" />
                     <span>Instagram</span>
@@ -334,7 +334,7 @@ export default function CreatorProfileDetailPage({
                 </div>
 
                 {creator.ytSubscribers && (
-                  <div className="flex items-center justify-between p-3 rounded-2xl bg-ink border border-border">
+                  <div className="flex items-center justify-between p-3 rounded-2xl bg-muted border border-border">
                     <div className="flex items-center gap-2 text-xs font-bold text-primary">
                       <Youtube className="w-4 h-4 text-red-600" />
                       <span>YouTube</span>
@@ -358,21 +358,21 @@ export default function CreatorProfileDetailPage({
               <div className="space-y-3.5 text-xs">
                 <div>
                   <span className="text-text-secondary font-medium block mb-1">Top Audience Geography:</span>
-                  <div className="font-bold text-primary p-2.5 rounded-xl bg-ink border border-border">
+                  <div className="font-bold text-primary p-2.5 rounded-xl bg-muted border border-border">
                     {creator.audienceDemographics.topCity}
                   </div>
                 </div>
 
                 <div>
                   <span className="text-text-secondary font-medium block mb-1">Age Distribution:</span>
-                  <div className="font-bold text-primary p-2.5 rounded-xl bg-ink border border-border">
+                  <div className="font-bold text-primary p-2.5 rounded-xl bg-muted border border-border">
                     {creator.audienceDemographics.topAgeBracket}
                   </div>
                 </div>
 
                 <div>
                   <span className="text-text-secondary font-medium block mb-1">Gender Split:</span>
-                  <div className="font-bold text-primary p-2.5 rounded-xl bg-ink border border-border">
+                  <div className="font-bold text-primary p-2.5 rounded-xl bg-muted border border-border">
                     {creator.audienceDemographics.genderRatio}
                   </div>
                 </div>
@@ -423,7 +423,7 @@ export default function CreatorProfileDetailPage({
                 <select
                   value={selectedBrandSlug}
                   onChange={(e) => setSelectedBrandSlug(e.target.value)}
-                  className="w-full bg-ink border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full bg-muted border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
                 >
                   {INITIAL_BRANDS.map((brand) => (
                     <option key={brand.id} value={brand.slug}>
@@ -441,7 +441,7 @@ export default function CreatorProfileDetailPage({
                   type="number"
                   value={offeredFee}
                   onChange={(e) => setOfferedFee(e.target.value)}
-                  className="w-full bg-ink border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full bg-muted border border-border rounded-xl p-3 text-sm font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent"
                   required
                 />
               </div>
@@ -455,7 +455,7 @@ export default function CreatorProfileDetailPage({
                   placeholder={`Hey ${creator.name}, we loved your past work with ${creator.brandCollaborations[0]?.brandName || "Schbang"} and want to feature you in our upcoming campaign...`}
                   value={customMessage}
                   onChange={(e) => setCustomMessage(e.target.value)}
-                  className="w-full bg-ink border border-border rounded-xl p-3 text-xs text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full bg-muted border border-border rounded-xl p-3 text-xs text-primary focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
 

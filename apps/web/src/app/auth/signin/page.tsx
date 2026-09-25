@@ -93,7 +93,7 @@ function SignInPageInner() {
             <span className="text-3xl font-bold tracking-tighter text-primary">Align</span>
             <span className="w-2 h-2 rounded-full bg-accent mt-2" />
           </Link>
-          <div className="mt-2 inline-flex items-center rounded-full border border-border bg-ink px-2.5 py-0.5 text-xs font-semibold text-text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+          <div className="mt-2 inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-semibold text-text-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             by Schbang
           </div>
           <h2 className="mt-6 text-2xl font-bold tracking-tight text-primary">Sign in to your account</h2>
@@ -148,7 +148,7 @@ function SignInPageInner() {
                   </div>
                 </div>
 
-                <div className="bg-ink rounded-2xl p-4 space-y-3">
+                <div className="bg-muted rounded-2xl p-4 space-y-3">
                   <Button
                     variant="outline"
                     className="group w-full justify-start rounded-xl text-left bg-surface border-border"

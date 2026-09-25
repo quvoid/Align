@@ -277,7 +277,7 @@ export default function ApplyPage({
                       ? "bg-accent text-white"
                       : isComplete
                       ? "bg-green-50 text-green-700"
-                      : "text-text-secondary hover:bg-ink"
+                      : "text-text-secondary hover:bg-muted"
                   }`}
                 >
                   {isComplete ? (
@@ -595,7 +595,7 @@ export default function ApplyPage({
                 </div>
 
                 <div className="space-y-4">
-                  <div className="bg-ink rounded-xl p-4">
+                  <div className="bg-muted rounded-xl p-4">
                     <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-wider mb-3">
                       Personal Info
                     </h3>
@@ -624,7 +624,7 @@ export default function ApplyPage({
                   </div>
 
                   {form.igHandle && (
-                    <div className="bg-ink border border-border rounded-xl p-4">
+                    <div className="bg-muted border border-border rounded-xl p-4">
                       <h3 className="font-semibold text-sm text-text-secondary uppercase tracking-wider mb-3">
                         Instagram
                       </h3>

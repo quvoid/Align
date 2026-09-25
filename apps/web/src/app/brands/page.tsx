@@ -275,7 +275,7 @@ export default function BrandsPage() {
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
             <div className="w-screen max-w-xl bg-surface shadow-2xl border-l border-border flex flex-col animate-in slide-in-from-right duration-300">
-              <div className="p-5 border-b border-border flex items-center justify-between bg-ink/80">
+              <div className="p-5 border-b border-border flex items-center justify-between bg-muted/80">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-accent">
                     Campaign Brief
@@ -310,7 +310,7 @@ export default function BrandsPage() {
 
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 <div className="relative rounded-2xl overflow-hidden border border-border">
-                  <div className="h-36 bg-ink">
+                  <div className="h-36 bg-muted">
                     <img
                       src={selectedBrand.coverImage}
                       alt={selectedBrand.name}
@@ -345,7 +345,7 @@ export default function BrandsPage() {
                     <Award className="w-4 h-4 text-accent" />
                     Campaign Overview
                   </h3>
-                  <p className="text-sm text-text-primary leading-relaxed bg-ink p-4 rounded-xl border border-border">
+                  <p className="text-sm text-text-primary leading-relaxed bg-muted p-4 rounded-xl border border-border">
                     {selectedBrand.description}
                   </p>
                 </div>
@@ -371,7 +371,7 @@ export default function BrandsPage() {
                     {selectedBrand.campaignTypes.map((item, idx) => (
                       <div
                         key={idx}
-                        className="p-3 rounded-xl border border-border bg-ink flex items-center gap-2 text-xs font-semibold text-primary"
+                        className="p-3 rounded-xl border border-border bg-muted flex items-center gap-2 text-xs font-semibold text-primary"
                       >
                         <span className="w-2 h-2 rounded-full bg-accent" />
                         <span>{item}</span>
@@ -404,7 +404,7 @@ export default function BrandsPage() {
                 </div>
               </div>
 
-              <div className="p-5 border-t border-border bg-ink flex items-center justify-between gap-4">
+              <div className="p-5 border-t border-border bg-muted flex items-center justify-between gap-4">
                 <Button
                   variant="outline"
                   onClick={() => setSelectedBrand(null)}

@@ -189,7 +189,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
 
           {/* One-click demo profiles — local/staging only */}
           {DEMO_MODE && (
-          <div className="bg-ink rounded-2xl p-3 space-y-2">
+          <div className="bg-muted rounded-2xl p-3 space-y-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary px-1">Demo profiles</p>
             <Button
               variant="outline"

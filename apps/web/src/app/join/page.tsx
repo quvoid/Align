@@ -84,7 +84,7 @@ function JoinCheckout() {
                     key={id}
                     className={`cursor-pointer rounded-xl border px-3 py-3 text-sm font-semibold text-center transition-colors ${
                       method === id
-                        ? "border-highlight bg-highlight text-background"
+                        ? "border-highlight bg-highlight text-primary"
                         : "border-border bg-surface text-primary hover:border-primary/40"
                     }`}
                   >

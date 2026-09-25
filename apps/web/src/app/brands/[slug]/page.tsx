@@ -191,7 +191,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
               <h2 className="text-lg font-bold text-primary mb-4">Required Creative Deliverables</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {brand.campaignTypes.map(type => (
-                  <div key={type} className="flex items-center gap-2.5 bg-ink px-4 py-3 rounded-xl border border-border text-xs font-semibold text-primary">
+                  <div key={type} className="flex items-center gap-2.5 bg-muted px-4 py-3 rounded-xl border border-border text-xs font-semibold text-primary">
                     <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
                     <span>{type}</span>
                   </div>
@@ -283,7 +283,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedBrands.map(item => (
               <Card key={item.id} className="hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col border-border group">
-                <div className="h-36 overflow-hidden relative bg-ink">
+                <div className="h-36 overflow-hidden relative bg-muted">
                   <img src={item.coverImage} alt={item.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
                   <div className="absolute top-3 right-3 px-2.5 py-0.5 bg-black/70 backdrop-blur-md text-white text-[10px] font-semibold rounded-full uppercase tracking-wider">
                     {item.budgetTier}

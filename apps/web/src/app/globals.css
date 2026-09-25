@@ -1,35 +1,42 @@
 @import "tailwindcss";
 
 @theme {
-  /* Midnight-violet palette: #361134 · #B0228C · #EA3788 · #E56B70 · #F391A0.
-     `primary` is the light ink for text and outlines; dark filled panels use
-     `ink`; `highlight` (cotton candy, dark text) is the default filled button;
-     `accent` (barbie pink) is the sole charging CTA. */
-  --color-background: #361134;    /* Midnight violet */
-  --color-ink: #2A0D28;           /* Deeper violet — hero bands, stat strips, muted fills */
-  --color-surface: #45173F;       /* Card background — lifted violet */
-  --color-border: #5E2558;
-  --color-primary: #FFF4F6;       /* Primary text, outline buttons */
-  --color-text-primary: #FFF4F6;
-  --color-text-secondary: #F391A0; /* Cotton candy */
-  --color-accent: #EA3788;        /* Barbie pink — CTA */
-  --color-accent-hover: #B0228C;  /* Raspberry plum */
-  --color-highlight: #F391A0;     /* Cotton candy — filled button, dark text */
-  --color-success: #4ADE80;
-  --color-warning: #FBBF24;
-  --color-error: #FF6B6B;
+  /* Palette: raspberry plum #AF4D98 · sweet peony #D66BA0 · powder blush
+     #E5A9A9 · pearl beige #F4E4BA · soft cyan #9DF7E5. Light theme on a
+     pearl-tinted canvas. `primary` is the text/outline ink (deep plum, derived
+     from raspberry plum); `ink` is the dark band behind white text; `muted` is
+     the soft fill for inputs, chips and quiet panels; `highlight` (soft cyan,
+     dark text) is the default filled button; `accent` (raspberry plum) is the
+     sole charging CTA. */
+  --color-background: #FDF8EC;    /* Pearl beige, lightened for canvas */
+  --color-surface: #FFFFFF;       /* Cards */
+  --color-muted: #F4E4BA;         /* Pearl beige */
+  --color-ink: #3A1932;           /* Deep plum — hero bands, stat strips */
+  --color-border: #E8D3B0;
+  --color-primary: #3A1932;       /* Text, outline buttons */
+  --color-text-primary: #3A1932;
+  --color-text-secondary: #7A5470;
+  --color-accent: #AF4D98;        /* Raspberry plum — CTA */
+  --color-accent-hover: #8E3C7B;
+  --color-highlight: #9DF7E5;     /* Soft cyan */
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-error: #DC2626;
 
   /* Decorative accents — illustrated/highlight moments, never chrome */
-  --color-raspberry-plum: #B0228C;
-  --color-barbie-pink: #EA3788;
-  --color-coral: #E56B70;         /* Light coral */
-  --color-pink: #F391A0;          /* Cotton candy */
-  --color-lavender: #B0228C;
-  --color-linen: #5E2558;
-  --color-stone: #8c6a88;
-  --color-halo: #F391A0;
-  --color-wine: #F391A0;          /* Hero highlight word */
-  --color-link: #F391A0;
+  --color-raspberry-plum: #AF4D98;
+  --color-sweet-peony: #D66BA0;
+  --color-powder-blush: #E5A9A9;
+  --color-pearl-beige: #F4E4BA;
+  --color-soft-cyan: #9DF7E5;
+  --color-coral: #E5A9A9;
+  --color-pink: #D66BA0;
+  --color-lavender: #AF4D98;
+  --color-linen: #E8D3B0;
+  --color-stone: #8c8c8c;
+  --color-halo: #9DF7E5;
+  --color-wine: #D66BA0;          /* Hero highlight word — sweet peony */
+  --color-link: #AF4D98;
 
   --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
@@ -66,7 +73,7 @@
 
 /* Hide scrollbar for IE, Edge and Firefox while keeping scrolling active */
 html, body {
-  color-scheme: dark;
+  color-scheme: light;
   font-family: var(--font-sans);
   background-color: var(--color-background);
   color: var(--color-text-primary);

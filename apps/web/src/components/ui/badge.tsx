@@ -16,7 +16,7 @@ export const Badge = ({
     under_review: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
     shortlisted: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
     withdrawn: 'bg-gray-500/10 text-text-secondary border-gray-500/20',
-    default: 'bg-ink text-text-primary border-gray-200'
+    default: 'bg-muted text-text-primary border-gray-200'
   };
 
   return (

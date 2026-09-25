@@ -108,7 +108,7 @@ export default function CompetitorIntelligenceHubPage() {
             </form>
 
             {adHocResult && (
-              <div className="mt-6 p-5 rounded-2xl bg-ink border border-border space-y-3">
+              <div className="mt-6 p-5 rounded-2xl bg-muted border border-border space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-primary text-sm">{adHocResult.brandName} vs {adHocResult.competitorName}</h3>
                   <Badge variant="approved" className="text-[10px]">Analysis Complete</Badge>
@@ -172,17 +172,17 @@ export default function CompetitorIntelligenceHubPage() {
                       </div>
 
                       <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border text-center">
-                        <div className="p-2 bg-ink rounded-xl">
+                        <div className="p-2 bg-muted rounded-xl">
                           <ShieldCheck className="w-3.5 h-3.5 text-accent mx-auto mb-0.5" />
                           <span className="text-[10px] font-bold text-text-secondary block">Tracked</span>
                           <span className="text-sm font-black text-primary">{config.competitors.length}/4</span>
                         </div>
-                        <div className="p-2 bg-ink rounded-xl">
+                        <div className="p-2 bg-muted rounded-xl">
                           <Users className="w-3.5 h-3.5 text-accent mx-auto mb-0.5" />
                           <span className="text-[10px] font-bold text-text-secondary block">Creators</span>
                           <span className="text-sm font-black text-primary">{totalCompetitorCreators}</span>
                         </div>
-                        <div className="p-2 bg-ink rounded-xl">
+                        <div className="p-2 bg-muted rounded-xl">
                           <TrendingUp className="w-3.5 h-3.5 text-red-500 mx-auto mb-0.5" />
                           <span className="text-[10px] font-bold text-text-secondary block">Avg Boost</span>
                           <span className="text-sm font-black text-red-600">{avgBoostRate}%</span>

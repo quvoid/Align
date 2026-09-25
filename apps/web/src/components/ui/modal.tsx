@@ -90,7 +90,7 @@ export function Modal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-ink transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-muted transition-colors"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />

@@ -274,7 +274,7 @@ export default function AdminDashboard() {
               </div>
               <div className="divide-y divide-border">
                 {applications.slice(0, 3).map((app) => (
-                  <div key={app.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-ink transition-colors">
+                  <div key={app.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-muted transition-colors">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-primary">{app.creatorName}</span>
@@ -355,7 +355,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredBrands.map((brand) => (
                 <Card key={brand.id} className="border-border hover:shadow-md transition-all flex flex-col">
-                  <div className="h-32 relative bg-ink overflow-hidden">
+                  <div className="h-32 relative bg-muted overflow-hidden">
                     <img
                       src={brand.coverImage}
                       alt={brand.name}
@@ -443,7 +443,7 @@ export default function AdminDashboard() {
                     className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                       appFilter === pill.key
                         ? "bg-ink text-white shadow-sm"
-                        : "bg-surface text-text-secondary border border-border hover:bg-ink"
+                        : "bg-surface text-text-secondary border border-border hover:bg-muted"
                     }`}
                   >
                     {pill.label}
@@ -507,7 +507,7 @@ export default function AdminDashboard() {
                         {/* Metrics Badges */}
                         <div className="flex flex-wrap gap-3 pt-3 border-t border-border text-xs text-text-secondary">
                           {app.metrics.instagramHandle && (
-                            <span className="flex items-center gap-1.5 bg-ink text-text-primary px-2 py-1 rounded-md font-medium">
+                            <span className="flex items-center gap-1.5 bg-muted text-text-primary px-2 py-1 rounded-md font-medium">
                               <Instagram className="w-3.5 h-3.5" />
                               {app.metrics.instagramFollowers?.toLocaleString()} (ER: {app.metrics.instagramER})
                             </span>
@@ -545,7 +545,7 @@ export default function AdminDashboard() {
                       </div>
 
                       {/* Brand Applied */}
-                      <div className="p-3 bg-ink rounded-xl border border-border">
+                      <div className="p-3 bg-muted rounded-xl border border-border">
                         <div className="text-xs text-text-secondary font-medium">Target Brand Brief</div>
                         <div className="text-sm font-bold text-primary">{selectedApp.brandName}</div>
                       </div>
@@ -582,7 +582,7 @@ export default function AdminDashboard() {
                         <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                           Collaboration Pitch
                         </h3>
-                        <p className="text-xs text-text-primary leading-relaxed bg-ink p-3 rounded-xl border border-border">
+                        <p className="text-xs text-text-primary leading-relaxed bg-muted p-3 rounded-xl border border-border">
                           {selectedApp.proposal}
                         </p>
                       </div>
@@ -597,7 +597,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {selectedApp.deliverables.map((d, i) => (
-                            <span key={i} className="px-2 py-0.5 rounded bg-ink text-[11px] text-text-secondary font-medium">
+                            <span key={i} className="px-2 py-0.5 rounded bg-muted text-[11px] text-text-secondary font-medium">
                               {d}
                             </span>
                           ))}
@@ -649,7 +649,7 @@ export default function AdminDashboard() {
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="p-8 text-center bg-ink border border-dashed border-border rounded-2xl text-xs text-text-secondary">
+                  <div className="p-8 text-center bg-muted border border-dashed border-border rounded-2xl text-xs text-text-secondary">
                     Select an application to inspect creator analytics and make a review decision.
                   </div>
                 )}
@@ -735,7 +735,7 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* Social Metrics */}
-                        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-ink border border-border text-center text-xs mb-4">
+                        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-muted border border-border text-center text-xs mb-4">
                           <div>
                             <span className="text-text-secondary text-[10px] font-medium block">Followers</span>
                             <span className="font-black text-primary">
@@ -765,7 +765,7 @@ export default function AdminDashboard() {
                               </span>
                             ))}
                             {creator.brandCollaborations.length > 2 && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-ink text-[10px] font-medium text-text-secondary">
+                              <span className="px-1.5 py-0.5 rounded-md bg-muted text-[10px] font-medium text-text-secondary">
                                 +{creator.brandCollaborations.length - 2}
                               </span>
                             )}
@@ -774,7 +774,7 @@ export default function AdminDashboard() {
                       </CardContent>
 
                       {/* Card Action */}
-                      <div className="p-4 bg-ink border-t border-border flex items-center gap-2">
+                      <div className="p-4 bg-muted border-t border-border flex items-center gap-2">
                         <Link href={`/creators/${creator.id}`} className="flex-1">
                           <Button variant="outline" size="sm" className="w-full text-xs font-bold">
                             Scorecard

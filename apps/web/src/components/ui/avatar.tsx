@@ -13,7 +13,7 @@ export const Avatar = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-ink", className)}>
+    <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted", className)}>
       {src ? (
         <img className="aspect-square h-full w-full object-cover" src={src} alt={alt} />
       ) : (

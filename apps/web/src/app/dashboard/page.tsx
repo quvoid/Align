@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 {steps.map((s, i) => (
                   <li
                     key={s.label}
-                    className={`rounded-2xl border p-4 flex flex-col gap-1 ${s.done ? "border-border bg-ink" : "border-primary/20 bg-surface"}`}
+                    className={`rounded-2xl border p-4 flex flex-col gap-1 ${s.done ? "border-border bg-muted" : "border-primary/20 bg-surface"}`}
                   >
                     <div className="flex items-center gap-2 text-sm font-semibold text-primary">
                       <span
@@ -251,7 +251,7 @@ export default function DashboardPage() {
           {applications.length === 0 ? (
             <Card className="rounded-3xl border-dashed border-2 border-border bg-surface shadow-xs">
               <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-ink flex items-center justify-center mb-4 border border-border">
+                <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center mb-4 border border-border">
                   <Layers className="h-8 w-8 text-text-secondary opacity-40" />
                 </div>
                 <h3 className="text-lg font-bold text-primary mb-1">No pitches yet</h3>
@@ -270,7 +270,7 @@ export default function DashboardPage() {
             <div className="bg-surface rounded-3xl border border-border overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                  <thead className="text-xs text-text-secondary uppercase tracking-wider bg-ink/80 border-b border-border">
+                  <thead className="text-xs text-text-secondary uppercase tracking-wider bg-muted/80 border-b border-border">
                     <tr>
                       <th scope="col" className="px-6 py-4 font-bold">Brand Campaign</th>
                       <th scope="col" className="px-6 py-4 font-bold">Deliverables</th>
@@ -282,7 +282,7 @@ export default function DashboardPage() {
                   </thead>
                   <tbody className="divide-y divide-border">
                     {applications.map((app) => (
-                      <tr key={app.id} className="hover:bg-ink/60 transition-colors">
+                      <tr key={app.id} className="hover:bg-muted/60 transition-colors">
                         <td className="px-6 py-4">
                           <div className="font-extrabold text-primary text-sm">{app.brandName}</div>
                           <span className="text-[11px] text-text-secondary">Schbang Campaign Brief</span>
@@ -293,7 +293,7 @@ export default function DashboardPage() {
                               app.deliverables.map((d, i) => (
                                 <span
                                   key={i}
-                                  className="px-2 py-0.5 rounded-md bg-ink text-[10px] font-semibold text-text-secondary"
+                                  className="px-2 py-0.5 rounded-md bg-muted text-[10px] font-semibold text-text-secondary"
                                 >
                                   {d}
                                 </span>
@@ -347,7 +347,7 @@ export default function DashboardPage() {
         >
           <div className="space-y-6 mt-4">
             {/* Status Strip */}
-            <div className="p-4 rounded-2xl bg-ink border border-border flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-muted border border-border flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary block">
                   Current Status
@@ -373,7 +373,7 @@ export default function DashboardPage() {
               <h4 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
                 Your Creative Proposal
               </h4>
-              <p className="p-4 rounded-2xl bg-ink border border-border text-xs text-primary leading-relaxed whitespace-pre-wrap">
+              <p className="p-4 rounded-2xl bg-muted border border-border text-xs text-primary leading-relaxed whitespace-pre-wrap">
                 {selectedApp.proposal}
               </p>
             </div>
@@ -388,7 +388,7 @@ export default function DashboardPage() {
                   selectedApp.deliverables.map((d, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1.5 rounded-xl bg-ink border border-border text-xs font-semibold text-primary"
+                      className="px-3 py-1.5 rounded-xl bg-muted border border-border text-xs font-semibold text-primary"
                     >
                       ✓ {d}
                     </span>

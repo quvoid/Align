@@ -12,12 +12,12 @@ export const Button = ({
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }) => {
-  // DESIGN.md: buttons are flat (no shadow), radius 16px at every size, Pin Red reserved
-  // as the sole filled high-emphasis color. `primary` is the yellow filled variant,
-  // `accent` is the Pin Red filled CTA, `outline` is the ghost-outline secondary action,
+  // DESIGN.md: buttons are flat (no shadow), radius 16px at every size, the accent reserved
+  // as the sole filled high-emphasis color. `primary` is the soft-cyan filled variant,
+  // `accent` is the raspberry-plum filled CTA, `outline` is the ghost-outline secondary action,
   // `ghost` is the borderless tertiary text link.
   const variants = {
-    primary: 'bg-highlight text-background hover:bg-highlight/85 active:bg-highlight',
+    primary: 'bg-highlight text-primary hover:bg-highlight/85 active:bg-highlight',
     accent: 'bg-accent text-white hover:bg-accent-hover active:bg-accent-hover',
     outline: 'border border-primary bg-transparent text-primary hover:bg-primary hover:text-background',
     ghost: 'bg-transparent text-primary hover:underline underline-offset-4',
