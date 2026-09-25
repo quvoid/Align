@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { signIn, useSession, getSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { postAuthUrl } from "@/lib/auth-shared";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Modal } from "@/components/ui/modal";
@@ -150,18 +151,11 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
         return;
       }
 
-      // Route on the role the server assigned rather than guessing from the
-      // email string, which used to send admin@gmail.com to /admin only for
-      // middleware to bounce it straight back.
-      let destination = callbackUrl || fallbackUrl;
-      if (!destination) {
-        const fresh = await getSession();
-        destination = fresh?.user?.role === "ADMIN" ? "/admin" : "/dashboard";
-      }
-
       toast({ title: "Welcome back", description: "Signed in successfully." });
-      // Full reload so middleware + server session are in sync with the new role.
-      window.location.href = destination;
+      // /auth/continue routes on the server-assigned role and sends creators
+      // with an incomplete profile through onboarding first. Full reload so
+      // middleware + server session are in sync with the new cookie.
+      window.location.href = postAuthUrl(callbackUrl || fallbackUrl);
     } catch {
       toast({ title: "Error", description: "Something went wrong", type: "error" });
     } finally {
@@ -228,7 +222,7 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
             <Button
               variant="outline"
               className="w-full h-11 rounded-xl text-primary font-medium"
-              onClick={() => signIn("google", { callbackUrl: callbackUrl || "/dashboard/profile" })}
+              onClick={() => signIn("google", { callbackUrl: postAuthUrl(callbackUrl) })}
               disabled={isLoading}
             >
               <GoogleIcon />

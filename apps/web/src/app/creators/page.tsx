@@ -151,7 +151,7 @@ export default function CreatorDiscoveryPage() {
               >
                 <option value="ALL" className="bg-slate-900 text-white">Past Brand Collabs</option>
                 <option value="Britannia" className="bg-slate-900 text-white">Worked with Britannia</option>
-                <option value="NIVEA" className="bg-slate-900 text-white">Worked with NIVEA</option>
+                <option value="Enamor" className="bg-slate-900 text-white">Worked with Enamor</option>
                 <option value="Swiggy" className="bg-slate-900 text-white">Worked with Swiggy</option>
                 <option value="Fevicol" className="bg-slate-900 text-white">Worked with Fevicol</option>
                 <option value="Kotak811" className="bg-slate-900 text-white">Worked with Kotak811</option>

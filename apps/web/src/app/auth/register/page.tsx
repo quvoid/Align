@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
+import { postAuthUrl } from "@/lib/auth-shared";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,12 +21,11 @@ export default function RegisterPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Matches handleSubmit's own post-signup redirect below — kept in sync so
-    // an already-authenticated visit to /auth/register (or the session
-    // hook resolving mid-submit) never races handleSubmit to a different
-    // destination.
+    // Same destination as handleSubmit's post-signup redirect, so the session
+    // hook resolving mid-submit never races it somewhere else. An existing
+    // user landing here is routed like any other sign-in.
     if (status === "authenticated") {
-      window.location.href = "/dashboard/profile";
+      window.location.replace(postAuthUrl());
     }
   }, [status]);
 
@@ -73,7 +73,8 @@ export default function RegisterPage() {
         window.location.href = "/auth/signin";
       } else {
         toast({ title: "Welcome to Align", description: "Account created successfully" });
-        window.location.href = "/dashboard/profile";
+        // New account → empty profile → /auth/continue sends them to onboarding.
+        window.location.href = postAuthUrl();
       }
     } catch {
       toast({ title: "Error", description: "Something went wrong", type: "error" });
@@ -109,7 +110,7 @@ export default function RegisterPage() {
             <Button
               variant="outline"
               className="w-full h-12 rounded-xl text-primary font-medium"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard/profile" })}
+              onClick={() => signIn("google", { callbackUrl: postAuthUrl() })}
               disabled={isLoading}
             >
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

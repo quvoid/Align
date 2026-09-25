@@ -5,6 +5,7 @@ import { Reveal } from "cube-motion/react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { BriefCard } from "@/components/brands/brief-card";
 import { useToast } from "@/components/ui/toast";
 import { INITIAL_BRANDS, BrandItem } from "@/lib/mock-data";
 import { getUserData, toggleLike as toggleLikeStore } from "@/lib/user-store";
@@ -218,92 +219,26 @@ export default function BrandsPage() {
             const isLiked = !!likedBrandIds[brand.id];
 
             return (
-              <div
+              <BriefCard
                 key={brand.id}
-                onClick={() => setSelectedBrand(brand)}
-                className="group cursor-pointer bg-white rounded-3xl border border-border overflow-hidden hover:shadow-2xl hover:border-accent/40 transform hover:-translate-y-1.5 transition-all duration-300 flex flex-col relative"
-              >
-                <div className="h-44 relative bg-gray-100 overflow-hidden">
-                  <img
-                    src={brand.coverImage}
-                    alt={brand.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-white text-[11px] font-bold uppercase tracking-wider border border-white/20">
-                    {brand.budgetTier} Tier
-                  </div>
-
+                brand={brand}
+                onSelect={() => setSelectedBrand(brand)}
+                action={
                   <button
+                    type="button"
                     onClick={(e) => handleToggleLike(brand.id, brand.name, e)}
-                    className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 backdrop-blur-md border transition-all duration-200 shadow-md active:scale-90 cursor-pointer ${
-                      isLiked
-                        ? "bg-red-500 text-white border-red-400 scale-105 shadow-red-500/30"
-                        : "bg-black/70 text-white/90 border-white/20 hover:bg-black/90 hover:text-white"
+                    aria-pressed={isLiked}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 backdrop-blur transition-all duration-200 active:scale-90 cursor-pointer ${
+                      isLiked ? "bg-accent text-white" : "bg-white/85 text-primary hover:bg-white"
                     }`}
                     title={isLiked ? "Remove interest" : "Express interest in this brief"}
                   >
-                    <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-white text-white scale-110" : "text-white"} transition-transform`} />
-                    <span>{brand.likesCount} Likes</span>
+                    <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-white" : ""}`} aria-hidden="true" />
+                    <span>{brand.likesCount}</span>
+                    <span className="sr-only">{isLiked ? "Liked" : "Like"} {brand.name}</span>
                   </button>
-
-                  <div className="absolute bottom-3 left-3 text-white text-xs font-semibold flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                    <span>{brand.industry}</span>
-                  </div>
-                </div>
-
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-3">
-                      <img
-                        src={brand.logo}
-                        alt={brand.name}
-                        className="w-12 h-12 rounded-xl border border-border object-cover bg-white shadow-sm"
-                      />
-                      <div>
-                        <h3 className="font-bold text-lg text-primary group-hover:text-accent transition-colors">
-                          {brand.name}
-                        </h3>
-                        <span className="text-[11px] font-medium text-text-secondary uppercase tracking-wider">
-                          Schbang Account
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
-                      {brand.description}
-                    </p>
-                  </div>
-
-                  <div className="pt-3 border-t border-border/80">
-                    <div className="text-[11px] font-bold text-text-secondary uppercase tracking-wider mb-2">
-                      Open Deliverables
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {brand.campaignTypes.slice(0, 2).map((type, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2.5 py-0.5 rounded-md bg-gray-100 text-[11px] font-medium text-text-secondary"
-                        >
-                          {type}
-                        </span>
-                      ))}
-                      {brand.campaignTypes.length > 2 && (
-                        <span className="px-2 py-0.5 rounded-md bg-accent/10 text-[11px] font-bold text-accent">
-                          +{brand.campaignTypes.length - 2} more
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="pt-2 flex items-center justify-between text-xs font-bold text-accent group-hover:translate-x-1 transition-transform">
-                    <span>Quick View Brief</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
+                }
+              />
             );
           })}
         </Reveal>

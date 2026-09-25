@@ -46,6 +46,7 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.role = user.role ?? "CREATOR";
+        token.emailConfirmed = user.emailConfirmed === true;
       }
       return token;
     },
@@ -54,6 +55,7 @@ export const authConfig = {
         session.user.id = (token.id as string) || "";
         session.user.role =
           (token.role as "CREATOR" | "ADMIN" | "SUPER_ADMIN") || "CREATOR";
+        session.user.emailConfirmed = token.emailConfirmed === true;
       }
       return session;
     },

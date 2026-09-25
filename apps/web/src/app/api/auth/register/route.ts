@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import bcrypt from "bcryptjs";
+import { hash } from "@node-rs/bcrypt";
 import { prisma } from "@/server/db";
 import { normalizeEmail, isSeededAdminEmail } from "@/lib/auth-shared";
 
@@ -58,7 +58,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
+  // Off the JS thread — see the note in lib/auth.ts.
+  const passwordHash = await hash(password, 12);
 
   try {
     await prisma.user.create({

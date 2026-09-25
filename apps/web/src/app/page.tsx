@@ -3,12 +3,13 @@ import { Rise, Reveal } from 'cube-motion/react';
 import { HowItWorks } from '@/components/home/how-it-works';
 import { HeroParallax } from '@/components/home/hero-parallax';
 import { BrandMarquee } from '@/components/home/brand-marquee';
+import { Testimonials } from '@/components/home/testimonials';
+import { BriefCard } from '@/components/brands/brief-card';
 import { PAGE_SHELL } from '@/lib/layout';
-import { PLANS, formatINR, JOIN_CTA } from '@/lib/plans';
+import { PLAN_LIST, FREE_PITCHES, formatINR, JOIN_CTA } from '@/lib/plans';
 import { Button } from '@/components/ui/button';
 import { MOCK_BRANDS } from '@/lib/mock-data';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, Check, ChevronDown } from "lucide-react";
 
 // Brands shown in the hero's tilted image stack, front-to-back.
 
@@ -50,11 +51,53 @@ const HOW_IT_WORKS = [
   },
 ] as const;
 
+/**
+ * PLACEHOLDER earnings figures. Illustrative numbers to show the section's
+ * shape; replace with verified payout data before launch.
+ */
+const EARNINGS_STATS = [
+  { value: '₹1M+', label: 'earned by a single creator on Align' },
+  { value: '₹1.2L', label: 'largest single brand deal paid out' },
+  { value: '11 days', label: 'average from pitch to signed deal' },
+] as const;
+
+const TOP_EARNERS = [
+  {
+    name: 'Riya Kapoor',
+    niche: 'Beauty · 180K followers',
+    earned: '₹10.4L',
+    deals: 14,
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop',
+  },
+  {
+    name: 'Dev Malhotra',
+    niche: 'Tech · 95K followers',
+    earned: '₹6.8L',
+    deals: 11,
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop',
+  },
+  {
+    name: 'Tara Sen',
+    niche: 'Food · 42K followers',
+    earned: '₹3.1L',
+    deals: 9,
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop',
+  },
+] as const;
+
+/** The free tier shown beside the paid plans in the closing pricing section. */
+const FREE_TIER_INCLUDES = [
+  'Browse every open brief',
+  `${FREE_PITCHES} free pitches to any brand`,
+  'Verified media kit on your profile',
+  'Pitch status tracking',
+];
+
 export default function Home() {
   const faqList = [
     {
       q: "How does Align by Schbang work for creators?",
-      a: "Align connects creators directly with active campaign briefs from marquee brands managed by Schbang (such as Britannia, NIVEA, Swiggy, Kotak811). Creators browse open briefs, submit verified social analytics and a creative pitch, and receive direct collaboration approvals without intermediaries.",
+      a: "Align connects creators directly with active campaign briefs from marquee brands managed by Schbang (such as Britannia, Enamor, Swiggy, Kotak811). Creators browse open briefs, submit verified social analytics and a creative pitch, and receive direct collaboration approvals without intermediaries.",
     },
     {
       q: "What follower count and metrics are required to join?",
@@ -66,7 +109,7 @@ export default function Home() {
     },
     {
       q: "What does Align cost?",
-      a: "Browsing briefs is free. To send a pitch you need a plan: ₹200 once for every current and future brand brief, or ₹50 a month, cancelled anytime. Align takes no commission on the fee a brand pays you.",
+      a: `Align is free to start: browse every brief and send your first ${FREE_PITCHES} pitches at no cost. Once your free pitches are used up, pick a plan to keep pitching: ₹200 once for every current and future brand brief, or ₹50 a month, cancelled anytime.`,
     },
     {
       q: "How are creator analytics and engagement rates verified?",
@@ -102,12 +145,12 @@ export default function Home() {
           copy={
           <Rise targets="children" className="text-center lg:text-left max-w-xl mx-auto lg:mx-0">
             <h1 className="text-[2.75rem] sm:text-5xl md:text-6xl font-black tracking-tight text-primary mb-6 leading-[1.05]">
-              Get paid by India&apos;s biggest brands,{' '}
-              <span className="italic text-lavender">no agency in between</span>
+              Pitch India&apos;s biggest brands.{' '}
+              <span className="italic text-wine">Directly.</span>
             </h1>
 
             <p className="text-base md:text-lg text-primary/75 max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
-              Britannia, NIVEA, Swiggy, Myntra and more post paid campaign briefs here. Pitch your real numbers, keep 100% of your fee.
+              Britannia, Enamor, Swiggy, Myntra and 300+ brands post paid briefs on Align. Pitch with your real numbers, close deals faster and stand out from the crowd.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3.5">
@@ -123,6 +166,9 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
+            <p className="text-sm text-primary/70 mt-4">
+              Your first {FREE_PITCHES} pitches are free.
+            </p>
           </Rise>
           }
           art={
@@ -160,8 +206,8 @@ export default function Home() {
               <dt className="text-sm text-white/70">briefs executed</dt>
             </div>
             <div className="sm:px-8 flex items-baseline gap-3">
-              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">₹0</dd>
-              <dt className="text-sm text-white/70">commission on your fee: 0%</dt>
+              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">{FREE_PITCHES}</dd>
+              <dt className="text-sm text-white/70">free pitches to get started</dt>
             </div>
           </dl>
 
@@ -189,6 +235,52 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Earnings — dark band so the numbers read as the page's proof point. */}
+      <section className="bg-primary text-white py-24 md:py-28">
+        <div className={PAGE_SHELL}>
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-12 lg:gap-16 items-center">
+            <Reveal>
+              <p className="text-sm font-semibold text-halo">Earning potential</p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mt-3">
+                Creators have earned <span className="text-halo">₹1M+</span> using Align
+              </h2>
+              <p className="text-white/70 text-base md:text-lg leading-relaxed mt-5 max-w-lg">
+                Brand deals add up fast when you pitch brands directly. No waiting on a manager to
+                forward your rate card, no getting lost in an agency inbox.
+              </p>
+              <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10 pt-8 border-t border-white/15">
+                {EARNINGS_STATS.map((stat) => (
+                  <div key={stat.label}>
+                    <dd className="text-3xl font-extrabold tracking-tight tabular-nums">{stat.value}</dd>
+                    <dt className="text-sm text-white/65 mt-1 leading-snug">{stat.label}</dt>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+
+            <Reveal targets="children" className="flex flex-col gap-3">
+              {TOP_EARNERS.map((c, idx) => (
+                <div
+                  key={c.name}
+                  className="flex items-center gap-4 rounded-3xl bg-white/[0.06] border border-white/10 p-5"
+                >
+                  <span className="text-sm font-bold text-white/40 tabular-nums w-5">{idx + 1}</span>
+                  <img src={c.avatar} alt="" className="w-12 h-12 rounded-full object-cover" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold truncate">{c.name}</p>
+                    <p className="text-xs text-white/60 truncate">{c.niche}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-extrabold tabular-nums">{c.earned}</p>
+                    <p className="text-xs text-white/60">{c.deals} brand deals</p>
+                  </div>
+                </div>
+              ))}
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Brands */}
       <section className="py-20 border-t border-border">
         <div className={PAGE_SHELL}>
@@ -197,31 +289,9 @@ export default function Home() {
             <p className="text-primary/75">Active briefs looking for creators right now.</p>
           </div>
           
-          <Reveal targets="children" className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {MOCK_BRANDS.slice(0,3).map((brand, idx) => (
-              <Card key={brand.id} className="interactive-card overflow-hidden flex flex-col border-border/80 group">
-                <div className="h-44 overflow-hidden relative bg-gray-100">
-                  <img src={brand.coverImage} alt={brand.name} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/75 text-white text-xs font-semibold rounded-full">
-                    {brand.budgetTier} tier
-                  </div>
-                </div>
-                <CardContent className="p-6 flex-1 flex flex-col">
-                  <div className="flex items-center gap-3.5 mb-4">
-                    <img src={brand.logo} alt={brand.name} className="w-12 h-12 rounded-2xl border border-border object-cover bg-white" />
-                    <div>
-                      <h3 className="font-bold text-lg text-primary group-hover:text-accent transition-colors">{brand.name}</h3>
-                      <span className="text-xs font-medium text-text-secondary">{brand.industry}</span>
-                    </div>
-                  </div>
-                  <p className="text-sm text-text-secondary line-clamp-3 mb-6 flex-1 leading-relaxed">{brand.description}</p>
-                  <Link href={`/brands/${brand.slug}`} className="mt-auto">
-                    <Button variant="outline" className="w-full group-hover:border-accent group-hover:text-accent font-semibold transition-all">
-                      View brief
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+          <Reveal targets="children" className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {MOCK_BRANDS.slice(0, 3).map((brand) => (
+              <BriefCard key={brand.id} brand={brand} href={`/brands/${brand.slug}`} />
             ))}
           </Reveal>
           
@@ -232,6 +302,22 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Testimonials — video row first, text quotes under it. */}
+      <section className="py-24 border-t border-border">
+        <div className={PAGE_SHELL}>
+          <div className="max-w-2xl mb-10 md:mb-14">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-[1.05]">
+              Creators closing deals on Align
+            </h2>
+            <p className="text-primary/75 text-base md:text-lg leading-relaxed mt-4">
+              Hear it from the creators who pitched brands directly.
+            </p>
+          </div>
+
+          <Testimonials />
         </div>
       </section>
 
@@ -272,25 +358,86 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 text-center border-t border-border">
-        <div className="mx-auto w-full max-w-3xl px-4 lg:px-10 flex flex-col items-center justify-center text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4 text-primary">
-            {MOCK_BRANDS.length} briefs are open right now.
-          </h2>
-          <p className="text-primary/75 mb-8 text-lg leading-relaxed max-w-xl mx-auto">
-            {JOIN_CTA} and pitch to every one of them — plus every brand we add later.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
-            <Link href="/join?plan=all_access" className="inline-flex justify-center">
-              <Button variant="accent" size="lg" className="px-10 py-6 text-base font-bold">
-                {PLANS.all_access.cta}
-              </Button>
-            </Link>
-            <Link href="/pricing" className="text-sm font-semibold text-primary/75 hover:text-primary underline-offset-4 hover:underline">
-              Or {formatINR(PLANS.monthly.price)}/month, cancel anytime
-            </Link>
+      {/* Pricing — last on the page. Free until the free pitches run out,
+          then a plan (the LinkedIn InMail / Tinder swipes model). Prices come
+          from plans.ts. */}
+      <section id="pricing" className="py-24 border-t border-border">
+        <div className={PAGE_SHELL}>
+          <div className="max-w-2xl mx-auto text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-[1.05]">
+              Start free. Pay only when you want more pitches.
+            </h2>
+            <p className="text-primary/75 text-base md:text-lg leading-relaxed mt-4">
+              Every creator gets {FREE_PITCHES} free pitches. When they&apos;re used up, pick a plan to keep
+              pitching. {MOCK_BRANDS.length} briefs are open right now.
+            </p>
           </div>
+
+          <Reveal targets="children" className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+            <div className="rounded-3xl border border-border bg-surface p-7 flex flex-col">
+              <h3 className="text-lg font-bold text-primary">Free</h3>
+              <p className="mt-5 flex items-baseline gap-1.5">
+                <span className="text-4xl font-black tracking-tight text-primary tabular-nums">₹0</span>
+                <span className="text-sm text-text-secondary">to start</span>
+              </p>
+              <p className="text-sm text-text-secondary mt-1">No card needed.</p>
+              <ul className="mt-7 space-y-3 text-sm text-text-primary flex-1">
+                {FREE_TIER_INCLUDES.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <Check className="w-4 h-4 text-accent mt-0.5 shrink-0" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/brands" className="mt-8">
+                <Button variant="outline" size="lg" className="w-full">
+                  Browse open briefs
+                </Button>
+              </Link>
+            </div>
+
+            {PLAN_LIST.map((plan) => (
+              <div
+                key={plan.id}
+                className={`rounded-3xl border bg-surface p-7 flex flex-col ${
+                  plan.recommended ? 'border-primary shadow-[0_12px_40px_-16px_rgba(0,0,0,0.25)]' : 'border-border'
+                }`}
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="text-lg font-bold text-primary">{plan.name}</h3>
+                  {plan.recommended && (
+                    <span className="text-xs font-semibold text-accent">Most creators pick this</span>
+                  )}
+                </div>
+                <p className="mt-5 flex items-baseline gap-1.5">
+                  <span className="text-4xl font-black tracking-tight text-primary tabular-nums">
+                    {formatINR(plan.price)}
+                  </span>
+                  <span className="text-sm text-text-secondary">
+                    {plan.period === 'month' ? 'per month' : 'one time'}
+                  </span>
+                </p>
+                <p className="text-sm text-text-secondary mt-1">{plan.tagline}</p>
+                <ul className="mt-7 space-y-3 text-sm text-text-primary flex-1">
+                  {plan.includes.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5">
+                      <Check className="w-4 h-4 text-accent mt-0.5 shrink-0" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href={`/join?plan=${plan.id}`} className="mt-8">
+                  <Button variant={plan.recommended ? 'accent' : 'outline'} size="lg" className="w-full">
+                    {plan.cta}
+                  </Button>
+                </Link>
+              </div>
+            ))}
+          </Reveal>
+
+          <p className="text-sm text-text-secondary text-center mt-8">
+            Prices include GST. Cancel the monthly plan anytime from your dashboard.
+          </p>
         </div>
       </section>
     </div>

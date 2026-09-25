@@ -43,3 +43,20 @@ export const normalizeHandle = (handle?: string | null): string | null => {
   const trimmed = (handle ?? "").trim().toLowerCase().replace(/^@+/, "");
   return trimmed.length > 0 ? trimmed : null;
 };
+
+/**
+ * A post-sign-in destination taken from the URL (`?callbackUrl=`, `?next=`).
+ * Only same-origin relative paths pass; anything else (absolute URLs,
+ * protocol-relative `//evil.com`, backslash tricks) falls back, so these
+ * params can't be used as an open redirect.
+ */
+export const safeRedirectPath = (path?: string | null, fallback = ""): string => {
+  if (!path || !path.startsWith("/") || path.startsWith("//") || path.includes("\\")) return fallback;
+  return path;
+};
+
+/** Every sign-in path ends here; `/auth/continue` decides where to go next. */
+export const postAuthUrl = (next?: string | null): string => {
+  const safe = safeRedirectPath(next);
+  return safe ? `/auth/continue?next=${encodeURIComponent(safe)}` : "/auth/continue";
+};

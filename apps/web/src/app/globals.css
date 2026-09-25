@@ -22,6 +22,7 @@
   --color-halo: #fffd92;
   --color-coral: #fa5f2e;
   --color-lavender: #9270d7;
+  --color-wine: #7a1535;     /* Hero highlight — deep berry that sits tonally on the rose wash */
   --color-link: #2b48d4;
 
   --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;

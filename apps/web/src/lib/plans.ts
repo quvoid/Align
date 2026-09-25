@@ -6,6 +6,13 @@
  * brief gate and schema markup all follow.
  */
 
+/**
+ * Pitches every creator gets before a plan is needed — the LinkedIn/Tinder
+ * model: free until the free allowance runs out, then pay to keep going.
+ * Counted from the creator's applications in `user-store.ts`.
+ */
+export const FREE_PITCHES = 3;
+
 export type PlanId = "monthly" | "all_access";
 
 export interface Plan {
@@ -33,7 +40,7 @@ export const PLANS: Record<PlanId, Plan> = {
     period: "month",
     tagline: "Pay as you go. Cancel anytime.",
     includes: [
-      "Apply to every open brief",
+      "Unlimited pitches to every open brief",
       "Verified media kit on your profile",
       "Pitch status tracking",
       "Renews every month at ₹50",

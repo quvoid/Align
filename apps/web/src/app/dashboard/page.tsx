@@ -256,7 +256,7 @@ export default function DashboardPage() {
                 </div>
                 <h3 className="text-lg font-bold text-primary mb-1">No pitches yet</h3>
                 <p className="text-xs text-text-secondary max-w-sm mb-6">
-                  Pick a brief that fits your niche. Britannia, NIVEA, Swiggy and more are open now.
+                  Pick a brief that fits your niche. Britannia, Enamor, Swiggy and more are open now.
                 </p>
                 <Link href="/brands">
                   <Button variant="accent" >

@@ -22,6 +22,12 @@ export default auth((req) => {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
+  // Signed in but the first-sign-in email code not entered yet: confirm first.
+  if (isLoggedIn && !req.auth?.user?.emailConfirmed) {
+    const next = `${pathname}${req.nextUrl.search}`;
+    return NextResponse.redirect(new URL(`/auth/verify?next=${encodeURIComponent(next)}`, req.nextUrl));
+  }
+
   // Signed-in non-admins cannot access /admin → redirect to /dashboard
   if (isAdminRoute && isLoggedIn && role !== "ADMIN") {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));

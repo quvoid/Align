@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
-import { PLAN_LIST, PLANS, formatINR } from "@/lib/plans";
+import { FREE_PITCHES, PLAN_LIST, PLANS, formatINR } from "@/lib/plans";
 import { MOCK_BRANDS } from "@/lib/mock-data";
 import { PlanButton } from "./plan-button";
 
@@ -11,7 +11,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://align.schbang.com";
 export const metadata: Metadata = {
   title: "Creator Pricing — ₹200 all-access or ₹50/month",
   description:
-    "Apply to paid brand campaigns from Britannia, NIVEA, Swiggy, Myntra and more. One ₹200 payment for every current and future brief, or ₹50 a month. Cancel anytime.",
+    "Apply to paid brand campaigns from Britannia, Enamor, Swiggy, Myntra and more. One ₹200 payment for every current and future brief, or ₹50 a month. Cancel anytime.",
   alternates: { canonical: `${siteUrl}/pricing` },
   openGraph: {
     title: "Align creator pricing — ₹200 all-access or ₹50/month",
@@ -30,12 +30,8 @@ const pricingFaq = [
     a: "You get the same access to open briefs for as long as the plan is active. It renews every month at ₹50 and you can cancel from your dashboard at any time.",
   },
   {
-    q: "Do I pay anything when a brand hires me?",
-    a: "No. Align never takes a cut of your campaign fee. The brand pays you the fee agreed in your pitch, through Schbang's escrow.",
-  },
-  {
-    q: "Can I browse briefs before paying?",
-    a: "Yes. Every open brief is public. You only need a plan when you submit a pitch.",
+    q: "Can I start for free?",
+    a: `Yes. Every open brief is public, and your first ${FREE_PITCHES} pitches are free. You only need a plan once your free pitches are used up.`,
   },
   {
     q: "Which payment methods are accepted?",
@@ -103,8 +99,8 @@ export default function PricingPage() {
             One price. Every brand brief.
           </h1>
           <p className="text-lg text-text-secondary mt-4 leading-relaxed">
-            Browse {MOCK_BRANDS.length} open briefs for free. Pay once to pitch to all of them — and every
-            brand we add after. No commission on what brands pay you.
+            Browse {MOCK_BRANDS.length} open briefs and send your first {FREE_PITCHES} pitches free. When
+            they&apos;re used up, pay once to pitch to every brief — and every brand we add after.
           </p>
         </div>
 
@@ -160,8 +156,7 @@ export default function PricingPage() {
         </div>
 
         <p className="text-sm text-text-secondary mt-8">
-          Prices include GST. Brands pay your campaign fee separately through Schbang escrow — Align takes
-          no commission.
+          Prices include GST. Brands pay your campaign fee separately through Schbang escrow.
         </p>
 
         <section className="mt-20 max-w-3xl">

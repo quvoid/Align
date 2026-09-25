@@ -3,6 +3,13 @@ import { INITIAL_BRANDS } from "@/lib/mock-data";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://align.schbang.com";
 
+// Prerender every brief at build time. Without this the route rendered on
+// every request (~70 req/s locally under load vs ~1,600 for static pages) —
+// and it is where paid ad traffic lands.
+export function generateStaticParams() {
+  return INITIAL_BRANDS.map((b) => ({ slug: b.slug }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const brand = INITIAL_BRANDS.find((b) => b.slug === slug);

@@ -4,8 +4,8 @@ import { use } from "react";
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
-import { hasActiveMembership } from '@/lib/user-store';
-import { PLANS, formatINR } from '@/lib/plans';
+import { hasActiveMembership, freePitchesLeft } from '@/lib/user-store';
+import { FREE_PITCHES, PLANS, formatINR } from '@/lib/plans';
 import { INITIAL_BRANDS } from '@/lib/mock-data';
 import { getCompetitorsForBrand } from '@/lib/instagram-engine';
 import { Button } from '@/components/ui/button';
@@ -20,10 +20,15 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
   const { data: session } = useSession();
   const isAdminOrBrand = session?.user?.role === 'ADMIN' || (session?.user as any)?.role === 'BRAND';
 
-  // Members go straight to the pitch form; everyone else sees the price up front.
+  // Members and creators with free pitches left go straight to the pitch form;
+  // once the free pitches are used up, the price is shown up front. Signed-out
+  // visitors haven't used any yet, so they start with the full allowance.
   const [isMember, setIsMember] = useState(false);
+  const [freeLeft, setFreeLeft] = useState(FREE_PITCHES);
   useEffect(() => {
-    setIsMember(!!session?.user?.email && hasActiveMembership(session.user.email));
+    const email = session?.user?.email;
+    setIsMember(!!email && hasActiveMembership(email));
+    setFreeLeft(email ? freePitchesLeft(email) : FREE_PITCHES);
   }, [session]);
 
   if (!brand) {
@@ -38,8 +43,13 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
     );
   }
 
-  const applyHref = isMember ? `/apply/${brand.slug}` : `/pricing?brief=${brand.slug}`;
-  const applyLabel = isMember ? 'Pitch to this brief' : `Pitch to this brief — from ${formatINR(PLANS.monthly.price)}/month`;
+  const canPitchNow = isMember || freeLeft > 0;
+  const applyHref = canPitchNow ? `/apply/${brand.slug}` : `/pricing?brief=${brand.slug}`;
+  const applyLabel = isMember
+    ? 'Pitch to this brief'
+    : freeLeft > 0
+      ? 'Pitch to this brief — free'
+      : `Pitch to this brief — from ${formatINR(PLANS.monthly.price)}/month`;
   const competitorConfig = getCompetitorsForBrand(brand.slug);
 
   // Related briefs for internal SEO linking
@@ -161,7 +171,9 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
             </Link>
             {!isMember && (
               <p className="text-xs text-text-secondary mt-2">
-                Or {formatINR(PLANS.all_access.price)} once for every brief. No commission on your fee.
+                {freeLeft > 0
+                  ? `${freeLeft} of ${FREE_PITCHES} free pitches left.`
+                  : `Or ${formatINR(PLANS.all_access.price)} once for every brief.`}
               </p>
             )}
           </div>
@@ -210,7 +222,7 @@ export default function BrandDetailPage({ params }: { params: Promise<{ slug: st
 
               <Link href={applyHref}>
                 <Button variant="accent" className="w-full mt-2">
-                  {isMember ? 'Pitch to this brief' : 'Unlock and pitch'}
+                  {canPitchNow ? 'Pitch to this brief' : 'Unlock and pitch'}
                 </Button>
               </Link>
             </div>

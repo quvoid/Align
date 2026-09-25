@@ -16,7 +16,7 @@ export const Footer = () => {
               </span>
             </div>
             <p className="text-text-secondary text-sm max-w-sm mb-6 leading-relaxed">
-              Paid brand campaigns for Indian creators, managed by Schbang. Browse open briefs free; pitch from ₹50 a month.
+              Paid brand campaigns for Indian creators, managed by Schbang. Browse open briefs and send your first 3 pitches free.
             </p>
           </div>
           

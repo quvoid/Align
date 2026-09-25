@@ -1,7 +1,11 @@
 import NextAuth, { type NextAuthResult } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import bcrypt from "bcryptjs";
+// Native (Rust) bcrypt: hashing runs on libuv's thread pool instead of the JS
+// thread. bcryptjs at cost 12 blocked the event loop ~250ms per login, which
+// under a burst stalled every other request on the instance for seconds.
+// Reads the existing $2a$ hashes written by bcryptjs.
+import { verify } from "@node-rs/bcrypt";
 import { prisma } from "@/server/db";
 import { authConfig } from "./auth.config";
 import { normalizeEmail, isSeededAdminEmail } from "./auth-shared";
@@ -52,11 +56,11 @@ const nextAuth = NextAuth({
         // Either no account, or an account that signs in with Google and has no
         // password set. Burn the same time as a real comparison, then refuse.
         if (!user?.passwordHash) {
-          await bcrypt.compare(password, DUMMY_HASH);
+          await verify(password, DUMMY_HASH);
           return null;
         }
 
-        const valid = await bcrypt.compare(password, user.passwordHash);
+        const valid = await verify(password, user.passwordHash);
         if (!valid) return null;
 
         return {
@@ -65,12 +69,28 @@ const nextAuth = NextAuth({
           name: user.name,
           role: user.role,
           image: user.avatar ?? undefined,
+          emailConfirmed: Boolean(user.emailVerifiedAt),
         };
       },
     }),
   ],
   callbacks: {
     ...authConfig.callbacks,
+
+    // Node-side override of the edge-safe jwt callback. `update` is fired by
+    // `useSession().update()` after the OTP is accepted; re-read verification
+    // from the database rather than trusting anything the client sends.
+    async jwt(params) {
+      const token = authConfig.callbacks.jwt(params);
+      if (params.trigger === "update" && token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { emailVerifiedAt: true },
+        });
+        token.emailConfirmed = Boolean(dbUser?.emailVerifiedAt);
+      }
+      return token;
+    },
 
     async signIn({ user, account, profile }) {
       // Credentials sign-ins already resolved against the database in
@@ -93,7 +113,8 @@ const nextAuth = NextAuth({
           avatar: user.image ?? null,
           provider: "GOOGLE",
           providerId: profile?.sub ?? null,
-          emailVerifiedAt: new Date(),
+          // Left unset: first sign-in is confirmed by the emailed OTP, the
+          // same as a credentials signup.
           // Role is never taken from the email domain. A brand-new Google user
           // is a CREATOR unless they are on the seeded admin allowlist.
           role: isSeededAdminEmail(email) ? "ADMIN" : "CREATOR",
@@ -102,7 +123,6 @@ const nextAuth = NextAuth({
         update: {
           avatar: user.image ?? undefined,
           providerId: profile?.sub ?? undefined,
-          emailVerifiedAt: new Date(),
           // Deliberately NOT updating `role` or `name`: re-logging in must never
           // demote an admin or overwrite a name the creator has edited.
         },
@@ -112,6 +132,7 @@ const nextAuth = NextAuth({
       // query the database itself because it also runs at the edge.
       user.id = dbUser.id;
       user.role = dbUser.role;
+      user.emailConfirmed = Boolean(dbUser.emailVerifiedAt);
 
       return true;
     },

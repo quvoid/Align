@@ -6,7 +6,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://align.schbang.com";
 export const metadata: Metadata = {
   title: `${INITIAL_BRANDS.length} Open Brand Briefs for Creators`,
   description:
-    "Paid Instagram and YouTube campaign briefs from Britannia, NIVEA, Swiggy, Myntra, Fevicol and Kotak811. Browse free, pitch from ₹50/month. Managed by Schbang.",
+    "Paid Instagram and YouTube campaign briefs from Britannia, Enamor, Swiggy, Myntra, Fevicol and Kotak811. Browse free, pitch from ₹50/month. Managed by Schbang.",
   alternates: { canonical: `${siteUrl}/brands` },
   openGraph: {
     title: `${INITIAL_BRANDS.length} open brand briefs for creators`,

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { getUserData, updateProfile, isProfileComplete, type CreatorProfile } from "@/lib/user-store";
+import { safeRedirectPath } from "@/lib/auth-shared";
 import { Instagram, Youtube, Save, ShieldCheck, Sparkles, Loader2 } from "lucide-react";
 
 // useSearchParams() (used for ?next=) requires a Suspense boundary above it
@@ -39,7 +40,7 @@ function ProfilePageInner() {
   // new/incomplete creators here before /dashboard, and applying to a brief
   // sends them here before /apply/[slug]. A complete profile skips straight
   // through instead of showing the form again.
-  const next = searchParams.get("next");
+  const next = safeRedirectPath(searchParams.get("next"));
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -66,6 +67,16 @@ function ProfilePageInner() {
 
   const handleSave = () => {
     if (!session?.user?.email || !profile) return;
+
+    // Onboarding: the gate that sent them here would only bounce them back.
+    if (next && !isProfileComplete(profile)) {
+      toast({
+        title: "Two fields left",
+        description: "Add your Instagram handle and niche so brands can review your pitch.",
+        type: "error",
+      });
+      return;
+    }
 
     setLoading(true);
     updateProfile(session.user.email, profile);
@@ -120,6 +131,14 @@ function ProfilePageInner() {
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+        {next && !isProfileComplete(profile) && (
+          <div className="rounded-3xl border border-accent/30 bg-white p-5 md:p-6">
+            <p className="font-bold text-primary">Finish your profile to continue</p>
+            <p className="text-sm text-text-secondary mt-1">
+              Brands see this with every pitch. Add at least your Instagram handle and niche, then save.
+            </p>
+          </div>
+        )}
         {/* Section 1: Basic Creator Details */}
         <Card className="rounded-3xl border-border shadow-xs">
           <CardContent className="p-6 md:p-8 space-y-6">

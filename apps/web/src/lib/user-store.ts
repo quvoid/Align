@@ -1,7 +1,7 @@
 "use client";
 
 import { INITIAL_APPLICATIONS, type ApplicationItem } from "./mock-data";
-import { PLANS, isMembershipActive, type Membership, type PlanId } from "./plans";
+import { FREE_PITCHES, PLANS, isMembershipActive, type Membership, type PlanId } from "./plans";
 
 // ─────────────────────────────────────────────────────────
 // Per-user data store using localStorage
@@ -329,6 +329,16 @@ export function getMembership(email: string): Membership | undefined {
 
 export function hasActiveMembership(email: string): boolean {
   return isMembershipActive(getMembership(email));
+}
+
+/** Free pitches left before a plan is needed. Unlimited plans are not counted here. */
+export function freePitchesLeft(email: string): number {
+  return Math.max(0, FREE_PITCHES - getUserData(email).applications.length);
+}
+
+/** Members pitch without limit; everyone else until their free pitches run out. */
+export function canPitch(email: string): boolean {
+  return hasActiveMembership(email) || freePitchesLeft(email) > 0;
 }
 
 /**

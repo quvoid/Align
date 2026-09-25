@@ -24,7 +24,7 @@ Design rules that fall out of this:
   land on; a login wall there kills conversion and crawl.
 - **The brief travels with the creator.** `?brief=<slug>` is carried from
   brief → pricing → join → apply so a creator who arrived from an Instagram
-  ad for the NIVEA brief ends up on the NIVEA form, not a generic dashboard.
+  ad for the Enamor brief ends up on the Enamor form, not a generic dashboard.
 - **Sign-in is a popup, not a page.** `SignInModalProvider` opens over the
   page on `/join`, `/apply`, `/dashboard`. Google is the fastest path; the
   demo passkeys stay for internal use.
@@ -41,9 +41,12 @@ Defined once in `apps/web/src/lib/plans.ts`. Everything else reads from it.
 | All-access (recommended) | ₹200 | one-time, never renews | "Every brand, now and in future. Launch price locked for life." |
 | Monthly | ₹50 | per month, cancel anytime | Low-commitment entry; the pricing page shows ₹200 = 4 months |
 
-- Align takes **no commission** on the campaign fee. Say it everywhere price
-  is mentioned; it is the strongest objection-handler for creators who have
-  been burned by agencies.
+- **Free until the free pitches run out** (the LinkedIn InMail / Tinder
+  swipes model): every creator gets `FREE_PITCHES` (3) pitches before a plan
+  is needed. `canPitch()` in `user-store.ts` gates `/apply` and the brief
+  page's pitch CTA; it counts the creator's applications.
+- **Do not claim "no commission" / "keep 100%"** anywhere. Align will be
+  charging, so that copy was removed site-wide on 2026-09-25.
 - `activateMembership()` in `user-store.ts` is the only seam for a payment
   gateway. `/join` currently simulates a successful order. When Razorpay (or
   Cashfree) lands: create the order server-side, open the checkout, and call
@@ -76,8 +79,9 @@ Current primary CTAs:
 |---|---|---|
 | Navbar (anonymous) | Join for ₹200 | /pricing |
 | Home hero | Browse open briefs · Join for ₹200 — all brands, forever | /brands · /pricing |
-| Home close | Get all-access for ₹200 · Or ₹50/month, cancel anytime | /join?plan=all_access · /pricing |
-| Brief page (non-member) | Pitch to this brief — from ₹50/month | /pricing?brief=slug |
+| Home pricing (last section) | Browse open briefs · Get all-access for ₹200 · Start for ₹50/month | /brands · /join?plan=… |
+| Brief page (free pitches left) | Pitch to this brief — free | /apply/slug |
+| Brief page (free pitches used) | Pitch to this brief — from ₹50/month | /pricing?brief=slug |
 | Brief page (member) | Pitch to this brief | /apply/slug |
 | Pricing cards | Get all-access for ₹200 / Start for ₹50/month | /join?plan=… |
 | Checkout | Pay ₹200 / Pay ₹50 for the first month | activates plan → apply or profile |
@@ -121,6 +125,28 @@ What is already in place:
 - Membership, profile and pitches are stored client-side (`user-store.ts`)
   for the demo, so the app itself has no write bottleneck.
 
+Load test (2026-09-25, `next start` on one 16-core machine, autocannon,
+2,000 concurrent connections × 20s per route, gzip on):
+
+| Route | req/s | p99 | errors |
+|---|---|---|---|
+| `/` | 800 | 3.2s | 0 |
+| `/brands`, `/pricing`, `/brands/<slug>` | ~1,300 | ~1.9s | 0 |
+| `/api/auth/session` | 1,200 | 2.6s | 0 |
+| Credential login (100 at once, 50 parallel) | 14.5 logins/s | p95 4.9s | 0 |
+
+That is one Node process with every connection re-requesting instantly —
+far harsher than 2,000 people reading pages. On Vercel the static routes are
+served from the CDN and never reach Node. Fixes that came out of it:
+
+- `/brands/[slug]` was rendered per request (69 req/s, 3.7k timeouts); now
+  prerendered via `generateStaticParams` in its layout.
+- Password hashing moved from `bcryptjs` to `@node-rs/bcrypt`. bcryptjs ran on
+  the JS thread: a login burst managed 3.9 logins/s and stalled *unrelated*
+  requests for up to 11s. Now 14.5 logins/s, other requests unaffected.
+- Remaining login ceiling is the DB (`connection_limit=1` per instance, by
+  design for the Supabase transaction pooler) — scale is horizontal.
+
 What has to be true before real money and real users:
 
 1. **Payments.** Wire the gateway behind `activateMembership()` and move
@@ -129,7 +155,10 @@ What has to be true before real money and real users:
 2. **Google OAuth.** Publish the OAuth consent screen (unverified apps cap at
    100 users) and add the production domain to authorised redirect URIs.
 3. **Hosting.** Deploy `apps/web` to Vercel or equivalent with the CDN in
-   front; set `NEXT_PUBLIC_SITE_URL`, `AUTH_SECRET`, `GOOGLE_CLIENT_*`.
+   front; set `NEXT_PUBLIC_SITE_URL`, `AUTH_SECRET`, `GOOGLE_CLIENT_*`,
+   `RESEND_API_KEY` and `EMAIL_FROM` (first-sign-in OTP emails; the sender
+   domain must be verified in Resend, and without a key production sign-ups
+   cannot finish — `/api/auth/otp/send` returns 502).
 4. **Rate limits.** Put a limit on `/api/auth/callback/credentials` and the
    future order-create endpoint (10/min/IP is plenty).
 5. **Watch these on the day:** OAuth error rate, checkout drop-off between

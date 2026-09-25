@@ -120,8 +120,8 @@ model User {
   passwordHash String?
   provider     AuthProvider    @default(CREDENTIALS)
   providerId   String?
-  // Proof the address is theirs. Google sets this at sign-in (email_verified);
-  // credentials signups set it when the verification link is clicked.
+  // Proof the address is theirs. Set when the creator enters the one-time
+  // code emailed on their first sign-in (credentials and Google alike).
   emailVerifiedAt DateTime?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
@@ -129,12 +129,25 @@ model User {
   creatorProfile CreatorProfile?
   applications   Application[]
   sessions       Session[]
+  emailOtp       EmailOtp?
   membership     Membership?
   payments       Payment[]
   brandLikes     BrandLike[]
 
   @@index([email])
   @@index([role])
+}
+
+/// The one live email-confirmation code for a user. One row per user: sending
+/// a new code replaces the old one. Only an HMAC of the code is stored.
+model EmailOtp {
+  userId    String   @id
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  sentAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {

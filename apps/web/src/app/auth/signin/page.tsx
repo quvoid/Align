@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { signIn, useSession, getSession } from "next-auth/react";
+import React, { useState, useEffect, Suspense } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { postAuthUrl, safeRedirectPath } from "@/lib/auth-shared";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,18 +16,29 @@ const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
 // production, where anyone finding the button becomes a seeded account.
 const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
+// useSearchParams() needs a Suspense boundary for static prerendering.
 export default function SignInPage() {
-  const { data: session, status } = useSession();
+  return (
+    <Suspense fallback={null}>
+      <SignInPageInner />
+    </Suspense>
+  );
+}
+
+function SignInPageInner() {
+  const { status } = useSession();
+  // Set by middleware, NextAuth's own error redirects and the continue page.
+  const callbackUrl = safeRedirectPath(useSearchParams().get("callbackUrl"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user) {
-      window.location.href = session.user.role === "ADMIN" ? "/admin" : "/dashboard";
+    if (status === "authenticated") {
+      window.location.replace(postAuthUrl(callbackUrl));
     }
-  }, [session, status]);
+  }, [status, callbackUrl]);
 
   const loginWithEmail = async (
     loginEmail: string,
@@ -48,17 +61,10 @@ export default function SignInPage() {
         return;
       }
 
-      // Route on the role the server actually assigned, not on a guess from the
-      // email string. The old `email.includes("admin")` heuristic sent
-      // admin@gmail.com to /admin, where middleware immediately bounced it back.
-      let target = redirectUrl;
-      if (!target) {
-        const fresh = await getSession();
-        target = fresh?.user?.role === "ADMIN" ? "/admin" : "/dashboard";
-      }
-
+      // /auth/continue routes on the role the server assigned and onboards
+      // creators whose profile is still empty.
       toast({ title: "Welcome back", description: "Signed in successfully" });
-      window.location.href = target;
+      window.location.href = postAuthUrl(redirectUrl || callbackUrl);
     } catch {
       toast({ title: "Error", description: "Something went wrong", type: "error" });
     } finally {
@@ -102,7 +108,7 @@ export default function SignInPage() {
             <Button
               variant="outline"
               className="w-full h-12 rounded-xl text-primary font-medium"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard/profile" })}
+              onClick={() => signIn("google", { callbackUrl: postAuthUrl(callbackUrl) })}
               disabled={isLoading}
             >
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">

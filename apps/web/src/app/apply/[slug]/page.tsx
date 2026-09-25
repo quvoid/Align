@@ -11,7 +11,7 @@ import { INITIAL_BRANDS, ApplicationItem } from "@/lib/mock-data";
 import { getUserData, addApplication, isProfileComplete } from "@/lib/user-store";
 import { useSession } from "next-auth/react";
 import { useSignInModal } from "@/components/auth/sign-in-modal";
-import { hasActiveMembership } from "@/lib/user-store";
+import { canPitch } from "@/lib/user-store";
 import Link from "next/link";
 import {
   CheckCircle,
@@ -58,10 +58,10 @@ export default function ApplyPage({
   const { data: session } = useSession();
   const { openSignIn } = useSignInModal();
 
-  // Pitching needs an active plan. Send non-members to pricing and bring
-  // them back here after checkout.
+  // Pitching needs a free pitch left or an active plan. Send everyone else to
+  // pricing and bring them back here after checkout.
   useEffect(() => {
-    if (session?.user?.email && !hasActiveMembership(session.user.email)) {
+    if (session?.user?.email && !canPitch(session.user.email)) {
       router.replace(`/pricing?brief=${encodeURIComponent(resolvedParams.slug)}`);
     }
   }, [session, resolvedParams.slug, router]);
@@ -70,7 +70,7 @@ export default function ApplyPage({
   // minimum) — that's what a brand actually sees when reviewing a pitch.
   // Send incomplete profiles to fill it in first, then bounce back here.
   useEffect(() => {
-    if (!session?.user?.email || !hasActiveMembership(session.user.email)) return;
+    if (!session?.user?.email || !canPitch(session.user.email)) return;
     if (!isProfileComplete(getUserData(session.user.email).profile)) {
       router.replace(
         `/dashboard/profile?next=${encodeURIComponent(`/apply/${resolvedParams.slug}`)}`
