@@ -14,7 +14,6 @@
     "@auth/core": "^0.41.3",
     "@branddeals/database": "workspace:*",
     "@branddeals/shared": "workspace:*",
-    "@firecms/neat": "^1.0.2",
     "@hookform/resolvers": "^4.0.0",
     "@node-rs/bcrypt": "^1.10.9",
     "@prisma/client": "^6.19.3",

@@ -380,7 +380,7 @@ export default function CreatorProfileDetailPage({
             </div>
 
             {/* Action Card */}
-            <div className="bg-gradient-to-br from-primary to-ink text-white p-6 rounded-3xl shadow-lg">
+            <div className="bg-ink border border-border text-white p-6 rounded-3xl shadow-lg">
               <h3 className="font-bold text-base mb-1">Ready to feature {creator.name}?</h3>
               <p className="text-xs text-white/70 mb-4 leading-relaxed">
                 Send an official campaign brief invite directly to this creator with pre-approved budget terms.

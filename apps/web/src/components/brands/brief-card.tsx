@@ -41,7 +41,7 @@ export function BriefCard({ brand, href, onSelect, action }: BriefCardProps) {
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0,0,1)] group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/55 via-primary/0 to-primary/0" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/0 to-ink/0" />
         <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface/85 backdrop-blur text-[11px] font-semibold text-primary">
           {brand.budgetTier} creators
         </span>

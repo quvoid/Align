@@ -1,35 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  /* Dark palette. `primary` is the light ink for text and outlines; dark
-     filled panels use `ink`; the yellow `highlight` is the default filled
-     button (dark text on it). Red `accent` stays the sole charging CTA. */
-  --color-background: #1B171D;    /* Main background */
-  --color-ink: #242027;           /* Secondary dark — hero bands, stat strips, muted fills */
-  --color-surface: #2B262D;       /* Card background */
-  --color-border: #443D46;
-  --color-primary: #FAF8FA;       /* Primary text, outline buttons */
-  --color-text-primary: #FAF8FA;
-  --color-text-secondary: #B8B1B9;
-  --color-accent: #F20D32;        /* CTA red */
-  --color-accent-hover: #C90A29;
-  --color-highlight: #FFF36A;     /* Yellow accent */
-  --color-gradient-start: #1B171D;
-  --color-gradient-end: #1B171D;
+  /* Midnight-violet palette: #361134 · #B0228C · #EA3788 · #E56B70 · #F391A0.
+     `primary` is the light ink for text and outlines; dark filled panels use
+     `ink`; `highlight` (cotton candy, dark text) is the default filled button;
+     `accent` (barbie pink) is the sole charging CTA. */
+  --color-background: #361134;    /* Midnight violet */
+  --color-ink: #2A0D28;           /* Deeper violet — hero bands, stat strips, muted fills */
+  --color-surface: #45173F;       /* Card background — lifted violet */
+  --color-border: #5E2558;
+  --color-primary: #FFF4F6;       /* Primary text, outline buttons */
+  --color-text-primary: #FFF4F6;
+  --color-text-secondary: #F391A0; /* Cotton candy */
+  --color-accent: #EA3788;        /* Barbie pink — CTA */
+  --color-accent-hover: #B0228C;  /* Raspberry plum */
+  --color-highlight: #F391A0;     /* Cotton candy — filled button, dark text */
   --color-success: #4ADE80;
   --color-warning: #FBBF24;
-  --color-error: #F87171;
+  --color-error: #FF6B6B;
 
   /* Decorative accents — illustrated/highlight moments, never chrome */
-  --color-coral: #FF9A9D;
-  --color-pink: #F7B6C8;
-  --color-lavender: #C9B1DE;
-  --color-sky-blue: #9CCCF2;
-  --color-linen: #443D46;
-  --color-stone: #8c8c8c;
-  --color-halo: #FFF36A;
-  --color-wine: #FFF36A;          /* Hero highlight word */
-  --color-link: #9CCCF2;
+  --color-raspberry-plum: #B0228C;
+  --color-barbie-pink: #EA3788;
+  --color-coral: #E56B70;         /* Light coral */
+  --color-pink: #F391A0;          /* Cotton candy */
+  --color-lavender: #B0228C;
+  --color-linen: #5E2558;
+  --color-stone: #8c6a88;
+  --color-halo: #F391A0;
+  --color-wine: #F391A0;          /* Hero highlight word */
+  --color-link: #F391A0;
 
   --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
@@ -68,7 +68,7 @@
 html, body {
   color-scheme: dark;
   font-family: var(--font-sans);
-  background-color: var(--color-gradient-end); /* fallback: flat end-stop if the gradient is unsupported */
+  background-color: var(--color-background);
   color: var(--color-text-primary);
   overflow-x: hidden;
   overflow-y: auto;
@@ -77,30 +77,6 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.037em;
-}
-
-/*
- * Page wash. Sits on <body> only (not html, or it paints twice) and stays
- * fixed so a long page shows one continuous sweep instead of restarting the
- * ramp per scroll. Sections over it are transparent; cards keep their white
- * surface so text contrast is unaffected.
- */
-body {
-  background-image: linear-gradient(
-    to right,
-    var(--color-gradient-start),
-    var(--color-gradient-end)
-  );
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-}
-
-/* PROTOTYPE: while the Neat canvas is mounted, the static wash steps aside so
-   the two never stack. Removing the canvas removes the attribute and the wash
-   comes straight back. */
-html[data-neat] body {
-  background-image: none;
-  background-color: transparent;
 }
 
 /* Logo ribbon: hold still while the pointer is over it, so a logo can be read.
