@@ -11,6 +11,22 @@ jobs:
     name: Lint, Test, and Build
     runs-on: ubuntu-latest
 
+    # Throwaway Postgres for the pitch-rule integration tests
+    # (apps/web/src/server/__tests__/*.int.test.ts).
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: align_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -45,8 +61,16 @@ jobs:
       - name: Run TypeScript Type Check
         run: pnpm --filter @branddeals/web type-check
 
-      - name: Run Vitest Unit Tests
+      - name: Prepare Test Database
+        run: pnpm --filter @branddeals/database exec prisma db push --skip-generate
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/align_test
+          DIRECT_URL: postgres://postgres:postgres@localhost:5432/align_test
+
+      - name: Run Vitest Unit and Integration Tests
         run: pnpm --filter @branddeals/web test
+        env:
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/align_test?connection_limit=10
 
       - name: Build Web App
         run: pnpm --filter @branddeals/web build

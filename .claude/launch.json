@@ -4,8 +4,27 @@
     {
       "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@branddeals/web", "dev"],
+      "runtimeArgs": [
+        "--filter",
+        "@branddeals/web",
+        "dev"
+      ],
       "port": 3000
+    },
+    {
+      "name": "web-neo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "-C",
+        "/home/omkar/Desktop/Align-neo/apps/web",
+        "exec",
+        "next",
+        "dev",
+        "--turbo",
+        "--port",
+        "3002"
+      ],
+      "port": 3002
     }
   ]
 }

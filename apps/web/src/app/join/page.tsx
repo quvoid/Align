@@ -7,9 +7,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useSignInModal } from "@/components/auth/sign-in-modal";
-import { PLANS, formatINR, type PlanId } from "@/lib/plans";
-import { activateMembership, hasActiveMembership } from "@/lib/user-store";
-import { MOCK_BRANDS } from "@/lib/mock-data";
+import { PLANS, formatINR, isMembershipActive, type PlanId } from "@/lib/plans";
+import { activateMembership, fetchBrief, fetchMe } from "@/lib/user-store";
+import { errorMessage } from "@/lib/fetch-json";
 
 type PayMethod = "upi" | "card" | "netbanking";
 
@@ -23,7 +23,13 @@ function JoinCheckout() {
   const planParam = params.get("plan") as PlanId | null;
   const plan = planParam && PLANS[planParam] ? PLANS[planParam] : PLANS.all_access;
   const brief = params.get("brief");
-  const briefName = brief ? MOCK_BRANDS.find((b) => b.slug === brief)?.name : undefined;
+  const [briefName, setBriefName] = useState<string | undefined>();
+  useEffect(() => {
+    if (!brief) return;
+    fetchBrief(brief)
+      .then((b) => setBriefName(b?.name))
+      .catch(() => {});
+  }, [brief]);
 
   const [method, setMethod] = useState<PayMethod>("upi");
   const [paying, setPaying] = useState(false);
@@ -32,11 +38,19 @@ function JoinCheckout() {
   const afterPay = brief ? `/apply/${brief}` : "/dashboard/profile?welcome=1";
 
   // Already a member → nothing to buy.
+  const email = session?.user?.email;
   useEffect(() => {
-    if (session?.user?.email && hasActiveMembership(session.user.email)) {
-      router.replace(afterPay);
-    }
-  }, [session, router, afterPay]);
+    if (!email) return;
+    let cancelled = false;
+    fetchMe()
+      .then((me) => {
+        if (!cancelled && isMembershipActive(me.membership)) router.replace(afterPay);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [email, router, afterPay]);
 
   const handlePay = async () => {
     if (!session?.user?.email) {
@@ -46,8 +60,15 @@ function JoinCheckout() {
     setPaying(true);
     // Payment gateway goes here. Until it is wired, we simulate a successful
     // order so the rest of the flow (membership, gating, dashboard) is real.
+    // The plan itself is recorded server-side (server/membership.ts).
     await new Promise((r) => setTimeout(r, 900));
-    activateMembership(session.user.email, plan.id);
+    try {
+      await activateMembership(plan.id);
+    } catch (err) {
+      toast({ title: "Plan not activated", description: errorMessage(err), type: "error" });
+      setPaying(false);
+      return;
+    }
     toast({
       title: `${plan.name} activated`,
       description: brief ? `You can pitch to ${briefName} now.` : "You can pitch to every open brief.",
@@ -63,7 +84,7 @@ function JoinCheckout() {
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-10">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-primary">Activate your membership</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-primary">Activate your membership</h1>
             <p className="text-text-secondary mt-2">
               {briefName
                 ? `You'll be sent straight to your ${briefName} pitch after payment.`
@@ -110,7 +131,7 @@ function JoinCheckout() {
 
             <Button
               variant="accent"
-              className="w-full h-12 rounded-xl font-bold mt-6"
+              className="w-full h-12 rounded-xl font-semibold mt-6"
               onClick={handlePay}
               isLoading={paying}
               disabled={paying || status === "loading"}
@@ -128,8 +149,8 @@ function JoinCheckout() {
           <aside className="rounded-3xl border border-border bg-surface p-6 h-fit">
             <h2 className="text-sm font-semibold text-text-secondary">Order summary</h2>
             <div className="mt-4 flex items-baseline justify-between">
-              <span className="font-bold text-primary">{plan.name} plan</span>
-              <span className="font-bold text-primary tabular-nums">{formatINR(plan.price)}</span>
+              <span className="font-semibold text-primary">{plan.name} plan</span>
+              <span className="font-semibold text-primary tabular-nums">{formatINR(plan.price)}</span>
             </div>
             <p className="text-xs text-text-secondary mt-1">
               {plan.period === "month" ? "Renews monthly. Cancel anytime." : "One-time payment. Never renews."}
@@ -141,7 +162,7 @@ function JoinCheckout() {
             </ul>
             <div className="mt-5 border-t border-border pt-4 flex items-baseline justify-between">
               <span className="text-sm font-semibold text-primary">Total due now</span>
-              <span className="text-xl font-black text-primary tabular-nums">{formatINR(plan.price)}</span>
+              <span className="text-xl font-semibold text-primary tabular-nums">{formatINR(plan.price)}</span>
             </div>
             <Link
               href={`/pricing${brief ? `?brief=${encodeURIComponent(brief)}` : ""}`}

@@ -1,49 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { analyzeCompetitorPair } from '@/lib/instagram-engine';
+import { z } from "zod";
+import { analyzeCompetitorPair } from "@/lib/instagram-engine";
+import { HttpError, readBody, respond } from "@/server/http";
+import { requireAdmin } from "@/server/session";
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
-    const { brandHandle, competitorHandle } = body;
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-    if (!brandHandle || !competitorHandle) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Both brandHandle and competitorHandle are required.',
-        },
-        { status: 400 }
-      );
-    }
+// Instagram handles: letters, digits, dots and underscores, up to 30 chars.
+const handle = z
+  .string()
+  .trim()
+  .transform((h) => h.replace(/^@/, ""))
+  .pipe(z.string().regex(/^[A-Za-z0-9._]{1,30}$/, "Enter an Instagram handle"));
 
-    const benchmarkData = analyzeCompetitorPair(brandHandle, competitorHandle);
+const PairSchema = z.object({ brandHandle: handle, competitorHandle: handle });
 
-    return NextResponse.json({
-      success: true,
-      data: benchmarkData,
-      analyzedAt: new Date().toISOString(),
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error?.message || 'Failed to analyze competitor profile.',
-      },
-      { status: 500 }
-    );
-  }
+/** Competitor benchmark for the admin Competitor Intel pages. Admins only. */
+export function POST(request: Request) {
+  return respond(async () => {
+    await requireAdmin();
+    const { brandHandle, competitorHandle } = await readBody(request, PairSchema);
+    return { success: true, data: analyzeCompetitorPair(brandHandle, competitorHandle), analyzedAt: new Date().toISOString() };
+  });
 }
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const brand = searchParams.get('brand') || 'britannia';
-  const competitor = searchParams.get('competitor') || 'parle';
-
-  const benchmarkData = analyzeCompetitorPair(brand, competitor);
-
-  return NextResponse.json({
-    success: true,
-    data: benchmarkData,
-    analyzedAt: new Date().toISOString(),
+export function GET(request: Request) {
+  return respond(async () => {
+    await requireAdmin();
+    const { searchParams } = new URL(request.url);
+    const parsed = PairSchema.safeParse({
+      brandHandle: searchParams.get("brand") ?? "britannia",
+      competitorHandle: searchParams.get("competitor") ?? "parle",
+    });
+    if (!parsed.success) throw new HttpError(400, parsed.error.issues[0]?.message ?? "Invalid handles");
+    const { brandHandle, competitorHandle } = parsed.data;
+    return { success: true, data: analyzeCompetitorPair(brandHandle, competitorHandle), analyzedAt: new Date().toISOString() };
   });
 }

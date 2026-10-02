@@ -43,15 +43,18 @@ Defined once in `apps/web/src/lib/plans.ts`. Everything else reads from it.
 
 - **Free until the free pitches run out** (the LinkedIn InMail / Tinder
   swipes model): every creator gets `FREE_PITCHES` (3) pitches before a plan
-  is needed. `canPitch()` in `user-store.ts` gates `/apply` and the brief
-  page's pitch CTA; it counts the creator's applications.
+  is needed. `pitchAllowance()` in `db-records.ts` counts the creator's
+  non-withdrawn pitches; `POST /api/me/applications` enforces it (402 when
+  used up) and `/api/me` returns `canPitch` for `/apply` and the brief page CTA.
 - **Do not claim "no commission" / "keep 100%"** anywhere. Align will be
   charging, so that copy was removed site-wide on 2026-09-25.
-- `activateMembership()` in `user-store.ts` is the only seam for a payment
-  gateway. `/join` currently simulates a successful order. When Razorpay (or
-  Cashfree) lands: create the order server-side, open the checkout, and call
-  `activateMembership(email, plan, gatewayOrderId)` from the verified
-  webhook — not from the client.
+- `activateMembership()` in `apps/web/src/server/membership.ts` is the only
+  seam for a payment gateway. `/join` currently simulates a successful order
+  and calls `POST /api/me/membership`, which records the plan in Postgres with
+  `source: GRANT` (nothing was paid). When Razorpay (or Cashfree) lands:
+  create the order server-side, open the checkout, create the `Payment` and
+  call `activateMembership` with `source: PAYMENT` from the verified webhook —
+  and stop exposing `POST /api/me/membership` to the browser.
 
 ## 3. CTA naming rules (SEO + media-buyer lens)
 
@@ -122,8 +125,10 @@ What is already in place:
   2,000 open tabs do not hammer `/api/auth/session`.
 - Sign-in is Google OAuth (JWT sessions, no session table) — no DB write per
   login.
-- Membership, profile and pitches are stored client-side (`user-store.ts`)
-  for the demo, so the app itself has no write bottleneck.
+- Membership, profile, pitches and likes are written to Postgres by
+  `apps/web` route handlers — one small write per action, well under the
+  pooler's limits at 2,000/day. Public brief pages are still static (60s
+  revalidate), so page traffic does not reach the database.
 
 Load test (2026-09-25, `next start` on one 16-core machine, autocannon,
 2,000 concurrent connections × 20s per route, gzip on):
@@ -149,16 +154,19 @@ served from the CDN and never reach Node. Fixes that came out of it:
 
 What has to be true before real money and real users:
 
-1. **Payments.** Wire the gateway behind `activateMembership()` and move
-   membership + pitches to the database (`packages/database` already has the
-   Prisma schema). Verify by webhook, never trust the client.
+1. **Payments.** Wire the gateway behind `activateMembership()` in
+   `server/membership.ts` (membership and pitches are already in the
+   database). Verify by webhook, never trust the client.
+1a. **Briefs.** Run `seed:briefs` against the production database once, or
+   `/brands` is empty (see `packages/database/prisma/seed-briefs.ts`).
 2. **Google OAuth.** Publish the OAuth consent screen (unverified apps cap at
    100 users) and add the production domain to authorised redirect URIs.
 3. **Hosting.** Deploy `apps/web` to Vercel or equivalent with the CDN in
    front; set `NEXT_PUBLIC_SITE_URL`, `AUTH_SECRET`, `GOOGLE_CLIENT_*`,
-   `RESEND_API_KEY` and `EMAIL_FROM` (first-sign-in OTP emails; the sender
-   domain must be verified in Resend, and without a key production sign-ups
-   cannot finish — `/api/auth/otp/send` returns 502).
+   and, only if you want the first-sign-in email code, `RESEND_API_KEY`,
+   `EMAIL_FROM` (sender domain verified in Resend) and `REQUIRE_EMAIL_OTP=true`.
+   The code is off by default because without working email nobody can get
+   past `/auth/verify`.
 4. **Rate limits.** Put a limit on `/api/auth/callback/credentials` and the
    future order-create endpoint (10/min/IP is plenty).
 5. **Watch these on the day:** OAuth error rate, checkout drop-off between
@@ -178,3 +186,8 @@ What has to be true before real money and real users:
 Any other email signs in as a creator with **no** plan, which is the state a
 real day-one visitor is in — use one of those to walk the paid flow end to
 end.
+
+The two passkey buttons are shown by default, production included
+(`NEXT_PUBLIC_DEMO_MODE=false` hides them). Both accounts exist in the
+production database with these passwords. Anyone can use the admin button, so
+hide it before real creators sign up.

@@ -1,7 +1,8 @@
 import { cn } from '@/lib/utils';
 
+/** A white card on the grey ground: 20px radius, no border. */
 export const Card = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("rounded-3xl border border-border bg-surface transition-all duration-300 ease-out", className)} {...props} />
+  <div className={cn("rounded-4xl bg-surface shadow-card", className)} {...props} />
 );
 
 export const CardHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (

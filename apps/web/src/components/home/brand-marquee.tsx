@@ -1,11 +1,11 @@
 /**
  * Brands that have run briefs through Schbang.
  *
- * Every logo is rendered monochrome via `brightness(0) invert(1)`, which turns
- * any single-colour mark on a transparent ground into white. That is the one
- * thing it can do: a wordmark sitting *on* a filled shape flattens into a blob,
- * so those files (Britannia, McCain, Mochi) are pre-extracted to white-on-
- * transparent in `public/logos` and the filter is a no-op on them.
+ * Every logo is rendered as an ink silhouette via `brightness(0)`, which turns
+ * any single-colour mark on a transparent ground solid black (dimmed to sit
+ * quietly on the paper ground). A wordmark sitting *on* a filled shape would
+ * flatten into a blob, so those files (Britannia, McCain, Mochi) are
+ * pre-extracted to a single colour on transparent in `public/logos`.
  *
  * Where a sub-brand has no accessible mark of its own, the parent's is used
  * and noted here so nobody thinks it was an oversight.
@@ -46,7 +46,7 @@ function Strip({ hidden = false }: { hidden?: boolean }) {
             src={b.src}
             alt={hidden ? "" : b.name}
             decoding="async"
-            className="h-6 md:h-7 w-auto max-w-[140px] object-contain brightness-0 invert opacity-60 transition-opacity duration-300 hover:opacity-100"
+            className="h-6 md:h-8 w-auto max-w-[150px] object-contain brightness-0 opacity-45 transition-opacity duration-300 hover:opacity-90"
           />
         </li>
       ))}
@@ -57,8 +57,8 @@ function Strip({ hidden = false }: { hidden?: boolean }) {
 export function BrandMarquee() {
   return (
     <div aria-label="Brands we work with" role="region">
-      <p className="text-center text-[0.7rem] font-semibold tracking-[0.22em] uppercase text-white/45 mb-7">
-        Brands we work with
+      <p className="text-center text-[14px] font-medium text-text-secondary mb-8">
+        Brands Schbang has run briefs for
       </p>
       {/* Edges fade so logos enter and leave rather than get clipped. */}
       <div className="marquee overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">

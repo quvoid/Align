@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { FREE_PITCHES, PLAN_LIST, PLANS, formatINR } from "@/lib/plans";
-import { MOCK_BRANDS } from "@/lib/mock-data";
+import { listActiveBriefs } from "@/server/briefs";
 import { PlanButton } from "./plan-button";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://align.schbang.com";
@@ -39,7 +39,11 @@ const pricingFaq = [
   },
 ];
 
-export default function PricingPage() {
+// Static; the open-brief count refreshes every minute.
+export const revalidate = 60;
+
+export default async function PricingPage() {
+  const briefCount = (await listActiveBriefs()).length;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -95,11 +99,11 @@ export default function PricingPage() {
 
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="max-w-2xl mb-12">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-primary text-balance">
+          <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-primary text-balance">
             One price. Every brand brief.
           </h1>
           <p className="text-lg text-text-secondary mt-4 leading-relaxed">
-            Browse {MOCK_BRANDS.length} open briefs and send your first {FREE_PITCHES} pitches free. When
+            Browse {briefCount} open briefs and send your first {FREE_PITCHES} pitches free. When
             they&apos;re used up, pay once to pitch to every brief — and every brand we add after.
           </p>
         </div>
@@ -114,7 +118,7 @@ export default function PricingPage() {
               }`}
             >
               <div className="flex items-baseline justify-between">
-                <h2 id={`plan-${plan.id}`} className="text-lg font-bold text-primary">
+                <h2 id={`plan-${plan.id}`} className="text-lg font-semibold text-primary">
                   {plan.name}
                 </h2>
                 {plan.recommended && (
@@ -123,7 +127,7 @@ export default function PricingPage() {
               </div>
 
               <p className="mt-6 flex items-baseline gap-1.5">
-                <span className="text-5xl font-black tracking-tight text-primary tabular-nums">
+                <span className="text-5xl font-semibold tracking-tight text-primary tabular-nums">
                   {formatINR(plan.price)}
                 </span>
                 <span className="text-sm text-text-secondary">
@@ -160,7 +164,7 @@ export default function PricingPage() {
         </p>
 
         <section className="mt-20 max-w-3xl">
-          <h2 className="text-2xl font-bold tracking-tight text-primary mb-8">Pricing questions</h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-primary mb-8">Pricing questions</h2>
           <dl className="divide-y divide-border border-y border-border">
             {pricingFaq.map((f) => (
               <div key={f.q} className="py-5">

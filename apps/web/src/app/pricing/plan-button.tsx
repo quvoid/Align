@@ -5,8 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { hasActiveMembership } from "@/lib/user-store";
-import type { Plan } from "@/lib/plans";
+import { fetchMe } from "@/lib/user-store";
+import { isMembershipActive, type Plan } from "@/lib/plans";
 
 /**
  * Primary CTA on a pricing card. Carries the brief the creator came from
@@ -18,14 +18,22 @@ export function PlanButton({ plan }: { plan: Plan }) {
   const brief = params.get("brief");
   const [active, setActive] = useState(false);
 
+  const email = session?.user?.email;
   useEffect(() => {
-    if (session?.user?.email) setActive(hasActiveMembership(session.user.email));
-  }, [session]);
+    if (!email) return;
+    let cancelled = false;
+    fetchMe()
+      .then((me) => !cancelled && setActive(isMembershipActive(me.membership)))
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [email]);
 
   if (active) {
     return (
       <Link href={brief ? `/apply/${brief}` : "/brands"} className="block">
-        <Button variant="outline" className="w-full h-12 rounded-xl font-bold">
+        <Button variant="outline" className="w-full h-12 rounded-xl font-semibold">
           {brief ? "Continue to your pitch" : "You're a member — browse briefs"}
         </Button>
       </Link>
@@ -36,7 +44,7 @@ export function PlanButton({ plan }: { plan: Plan }) {
 
   return (
     <Link href={href} className="block">
-      <Button variant={plan.recommended ? "accent" : "primary"} className="w-full h-12 rounded-xl font-bold">
+      <Button variant={plan.recommended ? "accent" : "primary"} className="w-full h-12 rounded-xl font-semibold">
         {plan.cta}
       </Button>
     </Link>

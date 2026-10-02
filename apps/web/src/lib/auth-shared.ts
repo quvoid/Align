@@ -29,11 +29,25 @@ export const isSeededAdminEmail = (email?: string | null): boolean => {
 };
 
 /**
- * One-click demo passkeys are a convenience for local walkthroughs and a hole in
- * production, where anyone who finds the button becomes a seeded persona.
+ * One-click demo passkeys (seeded admin + creator, docs/LAUNCH-DAY.md §6).
+ * On by default — the client demo depends on them — so set
+ * NEXT_PUBLIC_DEMO_MODE=false to hide them. While they're shown, anyone who
+ * opens the sign-in screen can enter as the seeded ADMIN and see every
+ * creator's contact details, so turn them off before real creators sign up.
+ * Inlined at build time: changing it needs a redeploy.
  */
 export const isDemoModeEnabled = (): boolean =>
-  process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+  process.env.NEXT_PUBLIC_DEMO_MODE !== "false";
+
+/**
+ * Whether first sign-in needs the emailed 6-digit code (server/email-otp.ts).
+ * Off by default: it needs a working Resend setup (RESEND_API_KEY + a
+ * verified EMAIL_FROM domain), and without one nobody can get past
+ * /auth/verify. Set REQUIRE_EMAIL_OTP=true once email delivery works.
+ * Server-only (read in auth callbacks, middleware and API routes).
+ */
+export const isEmailOtpRequired = (): boolean =>
+  process.env.REQUIRE_EMAIL_OTP === "true";
 
 /**
  * Social handles are stored lowercased and without a leading '@' so that the

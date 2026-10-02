@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { safeRedirectPath } from "@/lib/auth-shared";
-import { getUserData, isProfileComplete } from "@/lib/user-store";
+import { fetchMe, isProfileComplete } from "@/lib/user-store";
 
 /**
  * The single post-sign-in router. Credentials (page + modal), registration and
@@ -19,8 +19,8 @@ import { getUserData, isProfileComplete } from "@/lib/user-store";
  *   first: /dashboard/profile?next=<where they were going>.
  * - Everyone else goes to `next`, or /dashboard.
  *
- * Profile completeness lives in the client-side user store, which is why this
- * is a client page rather than a server redirect or a NextAuth callback.
+ * Profile completeness comes from /api/me; this stays a client page so it can
+ * wait for the session cookie that sign-in just set.
  */
 export default function AuthContinuePage() {
   return (
@@ -50,29 +50,36 @@ function AuthContinue() {
       return;
     }
 
-    const { email, name, image, role, emailConfirmed } = session.user;
-    let destination: string;
+    const { role, emailConfirmed } = session.user;
 
     if (!emailConfirmed) {
       window.location.replace(`/auth/verify${next ? `?next=${encodeURIComponent(next)}` : ""}`);
       return;
     }
 
+    // Full navigation so middleware and server components see the new cookie.
     if (role === "ADMIN" || role === "SUPER_ADMIN") {
-      destination = next && !next.startsWith("/dashboard/profile") ? next : "/admin";
-    } else {
-      // Also initialises the creator's store on first sign-in, seeded with
-      // their session name and avatar.
-      const { profile } = getUserData(email, name || undefined, image);
-      const target = next || "/dashboard";
-      destination =
-        isProfileComplete(profile) || target.startsWith("/dashboard/profile")
-          ? target
-          : `/dashboard/profile?next=${encodeURIComponent(target)}`;
+      window.location.replace(next && !next.startsWith("/dashboard/profile") ? next : "/admin");
+      return;
     }
 
-    // Full navigation so middleware and server components see the new cookie.
-    window.location.replace(destination);
+    const target = next || "/dashboard";
+    let cancelled = false;
+    fetchMe()
+      .then(({ profile }) => {
+        if (cancelled) return;
+        window.location.replace(
+          isProfileComplete(profile) || target.startsWith("/dashboard/profile")
+            ? target
+            : `/dashboard/profile?next=${encodeURIComponent(target)}`
+        );
+      })
+      // Can't tell whether the profile is complete; the pages behind `target`
+      // gate on it themselves, so just go.
+      .catch(() => !cancelled && window.location.replace(target));
+    return () => {
+      cancelled = true;
+    };
   }, [status, session, next]);
 
   return <Spinner />;

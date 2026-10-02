@@ -1,0 +1,44 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          "apps/web/.impeccable/mocks/align-minimal.html"
+        ],
+        "createdAt": "2026-10-02T11:38:43.447Z",
+        "reason": "Exploration mock of an alternative direction the user asked for; DESIGN.md documents the incumbent clay system, so its tokens don't apply here"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          "apps/web/.impeccable/mocks/align-minimal.html"
+        ],
+        "createdAt": "2026-10-02T11:38:43.484Z",
+        "reason": "Exploration mock of an alternative direction the user asked for; DESIGN.md documents the incumbent clay system, so its tokens don't apply here"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          "apps/web/.impeccable/mocks/align-minimal.html"
+        ],
+        "createdAt": "2026-10-02T11:38:43.522Z",
+        "reason": "Exploration mock of an alternative direction the user asked for; DESIGN.md documents the incumbent clay system, so its tokens don't apply here"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          "apps/web/.impeccable/mocks/align-minimal.html"
+        ],
+        "createdAt": "2026-10-02T11:38:43.559Z",
+        "reason": "Exploration mock of an alternative direction the user asked for; DESIGN.md documents the incumbent clay system, so its tokens don't apply here"
+      }
+    ]
+  }
+}

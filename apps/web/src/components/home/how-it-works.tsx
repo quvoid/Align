@@ -190,7 +190,7 @@ export function HowItWorks({ steps }: { steps: readonly HowItWorksStep[] }) {
 
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 md:px-8">
                 <h3
-                  className={`text-[1.6rem] md:text-3xl lg:text-[2rem] font-bold text-white leading-[1.15] tracking-tight text-balance max-w-[15ch] transition-transform duration-700 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none ${
+                  className={`text-[1.6rem] md:text-3xl lg:text-[2rem] font-semibold text-white leading-[1.15] tracking-tight text-balance max-w-[15ch] transition-transform duration-700 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none ${
                     isActive && mode !== "static" ? "-translate-y-1.5" : ""
                   }`}
                 >

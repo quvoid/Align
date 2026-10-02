@@ -1,5 +1,7 @@
 # ADR 0001: Isolated User-Scoped Client Store with Offline-First Fallback
 
+**Status: superseded by [ADR 0003](0003-postgres-creator-data.md).** Creator data now lives in Postgres; `user-store.ts` is an API client.
+
 ## Context
 When creators test or use the platform on Vercel preview and client demonstration sessions without an active PostgreSQL database connection, sharing a single static mock array causes data leakage where one user's pitches and profile appear for all other concurrent users.
 

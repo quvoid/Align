@@ -2,16 +2,17 @@ import { Providers } from './providers';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
-import { DM_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import type { Metadata } from 'next';
 
-// Pin Sans (DESIGN.md) substitute — DM Sans is the closest free geometric humanist sans
-const dmSans = DM_Sans({
-  subsets: ['latin'],
+// General Sans (Indian Type Foundry, self-hosted from Fontshare under the ITF
+// Free Font License — fonts/ITF-FFL.txt): the one family for everything.
+const generalSans = localFont({
+  src: './fonts/GeneralSans-Variable.woff2',
+  weight: '200 700',
   display: 'swap',
-  variable: '--font-dm-sans',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-general',
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://align.schbang.com';
@@ -114,14 +115,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={dmSans.variable}>
+    <html lang="en" className={generalSans.variable}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`min-h-screen flex flex-col font-sans antialiased text-text-primary selection:bg-accent selection:text-white`}>
+      <body className={`min-h-screen flex flex-col font-sans antialiased text-text-primary`}>
         <AnalyticsProvider />
         <Providers>
           <Navbar />

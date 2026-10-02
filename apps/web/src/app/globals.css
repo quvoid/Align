@@ -1,46 +1,56 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette: raspberry plum #AF4D98 · sweet peony #D66BA0 · powder blush
-     #E5A9A9 · pearl beige #F4E4BA · soft cyan #9DF7E5. Light theme on a
-     pearl-tinted canvas. `primary` is the text/outline ink (deep plum, derived
-     from raspberry plum); `ink` is the dark band behind white text; `muted` is
-     the soft fill for inputs, chips and quiet panels; `highlight` (soft cyan,
-     dark text) is the default filled button; `accent` (raspberry plum) is the
-     sole charging CTA. */
-  --color-background: #FDF8EC;    /* Pearl beige, lightened for canvas */
-  --color-surface: #FFFFFF;       /* Cards */
-  --color-muted: #F4E4BA;         /* Pearl beige */
-  --color-ink: #3A1932;           /* Deep plum — hero bands, stat strips */
-  --color-border: #E8D3B0;
-  --color-primary: #3A1932;       /* Text, outline buttons */
-  --color-text-primary: #3A1932;
-  --color-text-secondary: #7A5470;
-  --color-accent: #AF4D98;        /* Raspberry plum — CTA */
-  --color-accent-hover: #8E3C7B;
-  --color-highlight: #9DF7E5;     /* Soft cyan */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-error: #DC2626;
+  /* Minimal — "Paper, Ink & Marigold". Warm paper ground, white cards with no
+     borders, one sans (General Sans). Ink does the acting (primary buttons,
+     the current selection); marigold is the spark (the highlight word, step
+     numbers, focus, "most popular", ink-on-marigold buttons on dark bands).
+     Soft tints carry brand avatars and pitch status. */
+  --color-background: #F6F4EF;    /* Paper */
+  --color-surface: #FFFFFF;       /* Cards, inputs */
+  --color-muted: #EFEBE3;         /* Oat — chips, fields and quiet fills */
+  --color-ink: #17150F;
+  --color-border: #E5E0D6;        /* Hairlines */
+  --color-primary: #17150F;       /* Text, outline controls */
+  --color-text-primary: #17150F;
+  --color-text-secondary: #6B665D; /* Stone — ≥4.7:1 on paper, oat and white */
+  --color-accent: #17150F;        /* Selected state and primary buttons: ink */
+  --color-accent-hover: #2E2A22;
+  --color-accent-soft: #EFEBE3;
+  --color-marigold: #E8601C;      /* The spark — large text, icons, fills with ink text */
+  --color-marigold-soft: #FFE7D6;
+  --color-marigold-ink: #A0400B;  /* Marigold for small text on marigold-soft */
+  --color-highlight: #FFE7D6;
+  --color-success: #2F6B3A;
+  --color-warning: #8A5A12;
+  --color-error: #B3261E;
 
-  /* Decorative accents — illustrated/highlight moments, never chrome */
-  --color-raspberry-plum: #AF4D98;
-  --color-sweet-peony: #D66BA0;
-  --color-powder-blush: #E5A9A9;
-  --color-pearl-beige: #F4E4BA;
-  --color-soft-cyan: #9DF7E5;
-  --color-coral: #E5A9A9;
-  --color-pink: #D66BA0;
-  --color-lavender: #AF4D98;
-  --color-linen: #E8D3B0;
-  --color-stone: #8c8c8c;
-  --color-halo: #9DF7E5;
-  --color-wine: #D66BA0;          /* Hero highlight word — sweet peony */
-  --color-link: #AF4D98;
+  /* Soft tints: brand avatars, stat tiles, status pills. Ink text on all. */
+  --color-tint-peach: #FFE7D6;    /* Marigold soft */
+  --color-tint-lilac: #ECE6F5;
+  --color-tint-mint: #E3EDDC;     /* Sage */
+  --color-tint-butter: #F4E9D2;   /* Sand */
+  --color-tint-sky: #E1EBF5;
+  --color-tint-rose: #F7E2DF;
+  --color-tint-cloud: #EEEBE5;
 
-  --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Legacy names still used by home/pricing, re-pointed into the set. */
+  --color-pink: #F7E2DF;
+  --color-lavender: #ECE6F5;
+  --color-linen: #E5E0D6;
+  --color-stone: #6B665D;
+  --color-halo: #E8601C;          /* Highlight word on the dark band */
+  --color-wine: #E8601C;          /* Hero highlight word */
 
-  /* Radius — 16px (2xl) for buttons/inputs/nav is already Tailwind's default; add the two larger card sizes DESIGN.md calls for */
+  --font-sans: var(--font-general), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Depth is almost none: cards sit on the grey ground; fields get a hairline. */
+  --shadow-card: 0 1px 2px rgb(23 21 15 / 0.04);
+  --shadow-pill: 0 0 0 0 transparent;
+  --shadow-btn: 0 0 0 0 transparent;
+  --shadow-field: inset 0 0 0 1px #E2DDD2;
+  --shadow-lift: 0 16px 32px -20px rgb(23 21 15 / 0.35);
+
   /* Logo ribbon. The track holds two copies of the strip, so -50% is exactly
      one strip's width and the loop is seamless. Duration is per-strip pace. */
   --animate-marquee: marquee 48s linear infinite;
@@ -49,8 +59,11 @@
     to   { transform: translateX(-50%); }
   }
 
-  --radius-4xl: 2rem;    /* 32px — image cards, tilted stack */
-  --radius-5xl: 2.5rem;  /* 40px — large feature panels */
+  --radius-xl: 12px;
+  --radius-2xl: 14px;
+  --radius-3xl: 16px;
+  --radius-4xl: 20px;   /* Cards */
+  --radius-5xl: 24px;   /* Large panels, sheets */
 }
 
 /* Large monitors: the page reads right at the browser's 125% zoom, so that is
@@ -83,7 +96,8 @@ html, body {
   scrollbar-width: none;  /* Firefox */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.037em;
+  letter-spacing: -0.005em;
+  font-synthesis-weight: none;
 }
 
 /* Logo ribbon: hold still while the pointer is over it, so a logo can be read.
@@ -142,7 +156,6 @@ html, body {
 }
 
 /* Interactive Card & Button Hover Classes */
-/* Flat, no-shadow depth per DESIGN.md — elevation comes from radius, rotation and border, not shadow */
 .interactive-card {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -164,4 +177,63 @@ html, body {
 }
 .click-scale:active {
   transform: scale(0.96);
+}
+
+/* Press: a quiet lift on hover for cards, a small shrink on tap. */
+.press {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.2s ease;
+}
+.press:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Home page demos: things that appear rise in, typing carets blink, and a
+   status that just synced pings once. All off under reduced motion. */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.rise-in {
+  animation: rise-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+.caret {
+  animation: caret-blink 1s steps(1) infinite;
+}
+@keyframes ping-soft {
+  from { box-shadow: 0 0 0 0 rgb(232 96 28 / 0.45); }
+  to { box-shadow: 0 0 0 10px rgb(232 96 28 / 0); }
+}
+.ping-soft {
+  animation: ping-soft 0.9s ease-out;
+}
+
+::selection {
+  background: var(--color-marigold-soft);
+  color: var(--color-ink);
+}
+
+/* In the base layer so a component that draws its own focus state (search
+   pills, menus) can drop the outline with `outline-none`; everything else
+   still gets the marigold ring for keyboard focus. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-marigold);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press,
+  .press:active:not(:disabled) {
+    transform: none;
+    transition: none;
+  }
+  .rise-in,
+  .caret,
+  .ping-soft {
+    animation: none;
+  }
 }

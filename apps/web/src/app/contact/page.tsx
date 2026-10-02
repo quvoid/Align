@@ -30,7 +30,7 @@ export default function ContactPage() {
     <div className="bg-background min-h-screen pt-12 pb-16">
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-14">
-          <h1 className="text-4xl font-black text-primary tracking-tight mb-3">
+          <h1 className="text-4xl font-semibold text-primary tracking-tight mb-3">
             Contact the Schbang Team
           </h1>
           <p className="text-text-secondary text-base max-w-xl mx-auto">
@@ -45,7 +45,7 @@ export default function ContactPage() {
               <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-4">
                 <Mail className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-primary text-base mb-1">Email Inquiries</h3>
+              <h3 className="font-semibold text-primary text-base mb-1">Email Inquiries</h3>
               <p className="text-xs text-text-secondary mb-2">Campaign briefs &amp; creator support:</p>
               <a href="mailto:briefs@schbang.com" className="text-sm font-semibold text-accent hover:underline">
                 briefs@schbang.com
@@ -56,7 +56,7 @@ export default function ContactPage() {
               <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
                 <MapPin className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-primary text-base mb-1">Headquarters</h3>
+              <h3 className="font-semibold text-primary text-base mb-1">Headquarters</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Schbang Digital Solutions,<br />
                 Trade World, Kamala Mills Compound,<br />
@@ -68,7 +68,7 @@ export default function ContactPage() {
               <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center mb-4">
                 <Phone className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-primary text-base mb-1">Direct Line</h3>
+              <h3 className="font-semibold text-primary text-base mb-1">Direct Line</h3>
               <p className="text-xs text-text-secondary mb-2">Mon-Fri 10:00 AM - 7:00 PM IST:</p>
               <span className="text-sm font-semibold text-primary">
                 +91 (022) 6288-4000
@@ -83,7 +83,7 @@ export default function ContactPage() {
                 <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h2 className="text-2xl font-bold text-primary mb-2">Inquiry Submitted!</h2>
+                <h2 className="text-2xl font-semibold text-primary mb-2">Inquiry Submitted!</h2>
                 <p className="text-sm text-text-secondary max-w-sm mx-auto mb-6">
                   Thank you for getting in touch. A Schbang influencer manager has received your note and will get back to you shortly.
                 </p>
@@ -93,7 +93,7 @@ export default function ContactPage() {
               </div>
             ) : (
               <>
-                <h2 className="text-xl font-bold text-primary mb-2">Send us a Message</h2>
+                <h2 className="text-xl font-semibold text-primary mb-2">Send us a Message</h2>
                 <p className="text-xs text-text-secondary mb-6">
                   Fill out the form below and an influencer campaign manager will respond within 24 hours.
                 </p>

@@ -54,7 +54,7 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-ink/40"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -65,7 +65,7 @@ export function Modal({
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
         className={cn(
-          "relative z-50 w-full mx-4 bg-surface rounded-2xl shadow-2xl animate-in fade-in zoom-in-95 duration-200",
+          "relative z-50 w-full mx-4 max-h-[calc(100dvh-2rem)] overflow-y-auto bg-surface rounded-4xl shadow-card animate-in fade-in zoom-in-95 duration-200",
           sizeClasses[size],
           className
         )}
@@ -76,7 +76,7 @@ export function Modal({
             {title && (
               <h2
                 id="modal-title"
-                className="text-lg font-bold text-text-primary"
+                className="text-xl font-semibold text-text-primary leading-tight pr-10"
               >
                 {title}
               </h2>
@@ -90,7 +90,7 @@ export function Modal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-muted transition-colors"
+          className="press absolute top-4 right-4 p-2 rounded-full bg-surface text-text-secondary shadow-pill hover:text-text-primary"
           aria-label="Close modal"
         >
           <X className="w-4 h-4" />
