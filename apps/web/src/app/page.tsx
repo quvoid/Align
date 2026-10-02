@@ -8,7 +8,7 @@ import { BriefCard } from '@/components/brands/brief-card';
 import { PAGE_SHELL } from '@/lib/layout';
 import { PLAN_LIST, FREE_PITCHES, formatINR, JOIN_CTA } from '@/lib/plans';
 import { Button } from '@/components/ui/button';
-import { MOCK_BRANDS } from '@/lib/mock-data';
+import { listActiveBriefs } from '@/server/briefs';
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 
 // Brands shown in the hero's tilted image stack, front-to-back.
@@ -93,7 +93,12 @@ const FREE_TIER_INCLUDES = [
   'Pitch status tracking',
 ];
 
-export default function Home() {
+// Static; featured briefs and the open-brief count refresh every minute and
+// immediately when an admin publishes or pauses a brief.
+export const revalidate = 60;
+
+export default async function Home() {
+  const briefs = await listActiveBriefs();
   const faqList = [
     {
       q: "How does Align by Schbang work for creators?",
@@ -290,7 +295,7 @@ export default function Home() {
           </div>
           
           <Reveal targets="children" className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {MOCK_BRANDS.slice(0, 3).map((brand) => (
+            {briefs.slice(0, 3).map((brand) => (
               <BriefCard key={brand.id} brand={brand} href={`/brands/${brand.slug}`} />
             ))}
           </Reveal>
@@ -298,7 +303,7 @@ export default function Home() {
           <div className="flex justify-center mt-12">
             <Link href="/brands">
               <Button size="lg" variant="accent" className="font-bold px-8">
-                See all {MOCK_BRANDS.length} open briefs
+                See all {briefs.length} open briefs
               </Button>
             </Link>
           </div>
@@ -369,7 +374,7 @@ export default function Home() {
             </h2>
             <p className="text-primary/75 text-base md:text-lg leading-relaxed mt-4">
               Every creator gets {FREE_PITCHES} free pitches. When they&apos;re used up, pick a plan to keep
-              pitching. {MOCK_BRANDS.length} briefs are open right now.
+              pitching. {briefs.length} briefs are open right now.
             </p>
           </div>
 

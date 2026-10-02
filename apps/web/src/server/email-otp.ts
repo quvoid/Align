@@ -14,7 +14,13 @@ export const OTP_TTL_MS = 10 * 60 * 1000;
 export const OTP_RESEND_AFTER_MS = 60 * 1000;
 export const OTP_MAX_ATTEMPTS = 5;
 
-const secret = () => process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "dev-only-otp-secret";
+const secret = () => {
+  const key = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+  if (key) return key;
+  // A guessable key would make every stored code hash brute-forceable offline.
+  if (process.env.NODE_ENV === "production") throw new Error("AUTH_SECRET must be set to issue email codes");
+  return "dev-only-otp-secret";
+};
 
 const hashCode = (userId: string, code: string) =>
   createHmac("sha256", secret()).update(`${userId}:${code}`).digest("hex");

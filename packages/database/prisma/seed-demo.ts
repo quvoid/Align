@@ -13,13 +13,13 @@
  *   DATABASE_URL="$DIRECT_URL" pnpm --filter @branddeals/database seed:demo
  *
  * Idempotent: re-running resets both accounts to this exact state (role,
- * password, profile). It touches nothing else.
+ * password, profile, Rohan's all-access plan). It touches nothing else.
  *
  * NOTE: this deliberately gives an ADMIN account a well-known password. It is
- * meant for the demo, and NEXT_PUBLIC_DEMO_MODE stays off in production so the
- * one-click buttons are hidden — but the email/password form is public, so
- * rotate the admin password with seed-admins.ts (ADMIN_INITIAL_PASSWORD)
- * before real creator data lands in this database.
+ * meant for the demo, and the one-click buttons are shown by default
+ * (NEXT_PUBLIC_DEMO_MODE=false hides them) — so before real creator data lands
+ * in this database, hide them and rotate the admin password with
+ * seed-admins.ts (ADMIN_INITIAL_PASSWORD).
  */
 import bcrypt from 'bcryptjs'
 import { prisma } from '../src/index'
@@ -93,9 +93,18 @@ async function main() {
         upsert: { create: ROHAN_PROFILE, update: ROHAN_PROFILE },
       },
     },
-    select: { email: true, role: true },
+    select: { id: true, email: true, role: true },
   })
   console.log(`seeded demo creator: ${rohan.email} (${rohan.role})`)
+
+  // docs/LAUNCH-DAY.md §6 lists Rohan as an all-access member.
+  const membership = { plan: 'ALL_ACCESS', status: 'ACTIVE', source: 'SEED', expiresAt: null, cancelledAt: null } as const
+  await prisma.membership.upsert({
+    where: { userId: rohan.id },
+    create: { userId: rohan.id, ...membership },
+    update: membership,
+  })
+  console.log(`seeded demo membership: ${rohan.email} (all-access)`)
 }
 
 main()

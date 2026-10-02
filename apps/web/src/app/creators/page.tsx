@@ -1,53 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toast";
-import { INITIAL_CREATORS, CreatorItem } from "@/lib/mock-data";
+import type { CreatorItem } from "@/lib/mock-data";
+import { fetchCreators } from "@/lib/admin-client";
+import { errorMessage } from "@/lib/fetch-json";
 import { useSession } from "next-auth/react";
-import { Search, Users, Instagram, Youtube, Star, CheckCircle2, Briefcase, ArrowRight, Filter, Send, MapPin, Lock } from "lucide-react";
+import { Search, Users, Instagram, Youtube, CheckCircle2, Send, MapPin, Lock, Loader2 } from "lucide-react";
 
 export default function CreatorDiscoveryPage() {
   const { toast } = useToast();
   const { data: session } = useSession();
-  const [creators] = useState<CreatorItem[]>(INITIAL_CREATORS);
+  const [creators, setCreators] = useState<CreatorItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [nicheFilter, setNicheFilter] = useState("ALL");
   const [tierFilter, setTierFilter] = useState("ALL");
   const [brandFilter, setBrandFilter] = useState("ALL");
-  const [invitedCreatorId, setInvitedCreatorId] = useState<string | null>(null);
+
+  // Every creator account from the database. Middleware already keeps
+  // creators out; the API re-checks the admin role.
+  const role = session?.user?.role;
+  useEffect(() => {
+    if (!role || role === "CREATOR") return;
+    let cancelled = false;
+    fetchCreators()
+      .then((list) => !cancelled && setCreators(list))
+      .catch((err) => {
+        if (!cancelled) toast({ title: "Couldn't load creators", description: errorMessage(err), type: "error" });
+      })
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
+  }, [role, toast]);
 
   // If user is logged in as a normal CREATOR, block talent directory access
   if (session?.user?.role === "CREATOR") {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center pt-10 pb-16 px-4 bg-background">
-        <div className="max-w-md w-full text-center space-y-5 p-8 bg-surface rounded-3xl border border-border shadow-xl">
-          <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mx-auto border border-accent/20">
-            <Lock className="w-6 h-6" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-black text-primary">Brand &amp; Agency Portal</h2>
-            <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-              The Creator Talent Discovery Directory is reserved for verified Schbang Brand Managers and Agency Leads scouting creators.
-            </p>
-            <p className="text-xs text-text-secondary mt-1">
-              As a creator, you can browse open briefs, view requirements, and submit pitches under <strong>Explore Brands</strong>.
-            </p>
-          </div>
-          <div className="space-y-2 pt-3">
-            <Link href="/brands">
-              <Button variant="accent" className="w-full font-bold shadow-lg shadow-accent/25">
-                Browse Open Brand Briefs <ArrowRight className="w-4 h-4 ml-1.5" />
-              </Button>
-            </Link>
-            <Link href="/dashboard">
-              <Button variant="outline" className="w-full text-xs font-semibold">
-                Go to My Creator Dashboard
-              </Button>
-            </Link>
+      <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+        <div className="max-w-md w-full text-center rounded-5xl bg-surface p-8 shadow-clay">
+          <span className="w-16 h-16 mx-auto rounded-full bg-clay-lilac grid place-items-center shadow-clay-sm">
+            <Lock className="w-7 h-7 text-primary" aria-hidden="true" />
+          </span>
+          <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-primary">For the Schbang team</h1>
+          <p className="mt-2 text-[15px] text-text-secondary">
+            The creator directory is where Schbang finds creators for briefs. As a creator, you&apos;ll find everything you need on the briefs page.
+          </p>
+          <div className="mt-6 grid gap-3">
+            <Link href="/brands"><Button variant="accent" className="w-full">Browse open briefs</Button></Link>
+            <Link href="/dashboard"><Button variant="outline" className="w-full">Go to my pitches</Button></Link>
           </div>
         </div>
       </div>
@@ -77,304 +81,174 @@ export default function CreatorDiscoveryPage() {
     return matchesSearch && matchesNiche && matchesTier && matchesBrand;
   });
 
-  const handleQuickInvite = (creator: CreatorItem) => {
-    setInvitedCreatorId(creator.id);
-    toast({
-      title: `Invite sent to ${creator.name}`,
-      description: `We notified ${creator.handle} regarding an upcoming Schbang brand campaign brief.`,
-      type: "success",
-    });
+  const filtersActive = search || nicheFilter !== "ALL" || tierFilter !== "ALL" || brandFilter !== "ALL";
+  const resetFilters = () => {
+    setSearch("");
+    setNicheFilter("ALL");
+    setTierFilter("ALL");
+    setBrandFilter("ALL");
   };
+  const selectClass =
+    "h-12 w-full px-4 rounded-2xl bg-background text-[15px] font-semibold text-primary shadow-clay-sm cursor-pointer focus:outline-none focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent/45";
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {/* Brand Header Banner */}
-      <div className="bg-ink text-white pt-8 pb-12 border-b border-white/10">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
-              Discover Verified Creators
-            </h1>
-            <p className="text-white/70 text-base leading-relaxed">
-              Explore creator performance scorecards, lifetime brand collaboration track records, and verified engagement metrics. Shortlist or invite talent directly to active campaign briefs.
-            </p>
-          </div>
+    <div className="min-h-screen pb-24">
+      <section className="container mx-auto px-4 pt-8 sm:pt-12">
+        <h1 className="text-[44px] sm:text-6xl font-extrabold tracking-tight leading-[0.95] text-primary">Creators</h1>
+        <p className="mt-2 text-base sm:text-lg text-text-secondary max-w-2xl">
+          Everyone who has joined Align. Numbers are self-reported unless the profile shows the verified badge.
+        </p>
 
-          {/* Search & Filter Bar */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-3 bg-surface/5 p-3 rounded-2xl border border-white/15 backdrop-blur-md">
-            <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
-              <input
-                type="text"
-                placeholder="Search name, handle, or niche..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-surface/10 text-white placeholder:text-white/40 pl-10 pr-4 py-2.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all"
-              />
-            </div>
-
-            <div>
-              <select
-                value={nicheFilter}
-                onChange={(e) => setNicheFilter(e.target.value)}
-                className="w-full bg-surface/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
-              >
-                <option value="ALL" className="bg-ink text-white">All Niches</option>
-                <option value="Food" className="bg-ink text-white">Food &amp; FMCG</option>
-                <option value="Comedy" className="bg-ink text-white">Comedy &amp; Sketches</option>
-                <option value="Beauty" className="bg-ink text-white">Beauty &amp; Skincare</option>
-                <option value="Tech" className="bg-ink text-white">Tech &amp; Gadgets</option>
-                <option value="Fashion" className="bg-ink text-white">Fashion &amp; Apparel</option>
-                <option value="Finance" className="bg-ink text-white">Finance &amp; FinTech</option>
-              </select>
-            </div>
-
-            <div>
-              <select
-                value={tierFilter}
-                onChange={(e) => setTierFilter(e.target.value)}
-                className="w-full bg-surface/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
-              >
-                <option value="ALL" className="bg-ink text-white">All Follower Tiers</option>
-                <option value="Nano" className="bg-ink text-white">Nano (&lt;10k)</option>
-                <option value="Micro" className="bg-ink text-white">Micro (10k-100k)</option>
-                <option value="Mid-Tier" className="bg-ink text-white">Mid-Tier (100k-500k)</option>
-                <option value="Macro" className="bg-ink text-white">Macro (500k+)</option>
-              </select>
-            </div>
-
-            <div>
-              <select
-                value={brandFilter}
-                onChange={(e) => setBrandFilter(e.target.value)}
-                className="w-full bg-surface/10 text-white py-2.5 px-3.5 rounded-xl text-sm border border-white/10 focus:outline-none focus:ring-2 focus:ring-accent transition-all cursor-pointer"
-              >
-                <option value="ALL" className="bg-ink text-white">Past Brand Collabs</option>
-                <option value="Britannia" className="bg-ink text-white">Worked with Britannia</option>
-                <option value="Enamor" className="bg-ink text-white">Worked with Enamor</option>
-                <option value="Swiggy" className="bg-ink text-white">Worked with Swiggy</option>
-                <option value="Fevicol" className="bg-ink text-white">Worked with Fevicol</option>
-                <option value="Kotak811" className="bg-ink text-white">Worked with Kotak811</option>
-                <option value="Myntra" className="bg-ink text-white">Worked with Myntra</option>
-              </select>
-            </div>
-          </div>
+        <div className="mt-7 rounded-4xl bg-surface p-3 sm:p-4 shadow-clay grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_repeat(3,190px)] gap-3">
+          <label className="relative block">
+            <span className="sr-only">Search creators</span>
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" aria-hidden="true" />
+            <input
+              type="search"
+              placeholder="Search name, handle or niche"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full h-12 pl-12 pr-4 pt-1 rounded-2xl bg-background text-[15px] text-primary shadow-clay-well placeholder:text-text-secondary focus:outline-none focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-accent/45"
+            />
+          </label>
+          <label className="block">
+            <span className="sr-only">Niche</span>
+            <select value={nicheFilter} onChange={(e) => setNicheFilter(e.target.value)} className={selectClass}>
+              <option value="ALL">All niches</option>
+              <option value="Food">Food &amp; FMCG</option>
+              <option value="Comedy">Comedy</option>
+              <option value="Beauty">Beauty &amp; Skincare</option>
+              <option value="Tech">Tech</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Finance">Finance</option>
+            </select>
+          </label>
+          <label className="block">
+            <span className="sr-only">Follower tier</span>
+            <select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)} className={selectClass}>
+              <option value="ALL">All tiers</option>
+              <option value="Nano">Nano</option>
+              <option value="Micro">Micro</option>
+              <option value="Mid-Tier">Mid-tier</option>
+              <option value="Macro">Macro</option>
+              <option value="Mega">Mega</option>
+            </select>
+          </label>
+          <label className="block">
+            <span className="sr-only">Approved for brand</span>
+            <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className={selectClass}>
+              <option value="ALL">Any brand</option>
+              <option value="Britannia">Approved for Britannia</option>
+              <option value="Enamor">Approved for Enamor</option>
+              <option value="Swiggy">Approved for Swiggy</option>
+              <option value="Fevicol">Approved for Fevicol</option>
+              <option value="Kotak811">Approved for Kotak811</option>
+              <option value="Myntra">Approved for Myntra</option>
+            </select>
+          </label>
         </div>
-      </div>
+      </section>
 
-      {/* Creators Grid */}
-      <div className="container mx-auto px-4 py-10">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-xl font-bold text-primary">
-              Verified Creator Roster ({filteredCreators.length})
-            </h2>
-            <p className="text-xs text-text-secondary mt-0.5">
-              Profiles with verified engagement analytics &amp; authenticated brand track records.
-            </p>
-          </div>
-
-          {(search || nicheFilter !== "ALL" || tierFilter !== "ALL" || brandFilter !== "ALL") && (
-            <button
-              onClick={() => {
-                setSearch("");
-                setNicheFilter("ALL");
-                setTierFilter("ALL");
-                setBrandFilter("ALL");
-              }}
-              className="text-xs font-semibold text-accent hover:underline"
-            >
-              Reset Filters
+      <section className="container mx-auto px-4 pt-10">
+        <div className="flex items-baseline justify-between gap-4 mb-5">
+          <p className="text-base font-semibold text-text-secondary">
+            <strong className="text-primary text-xl font-extrabold">{filteredCreators.length}</strong>{" "}
+            {filteredCreators.length === 1 ? "creator" : "creators"}
+          </p>
+          {filtersActive && (
+            <button onClick={resetFilters} className="text-sm font-bold text-accent hover:underline underline-offset-4">
+              Clear filters
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCreators.map((creator) => (
-            <div
-              key={creator.id}
-              className="bg-surface rounded-3xl border border-border overflow-hidden hover:shadow-xl hover:border-accent/40 transition-all duration-300 flex flex-col justify-between"
-            >
-              {/* Creator Profile Header */}
-              <div className="p-6 pb-4">
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="relative">
-                      <img
-                        src={creator.avatar}
-                        alt={creator.name}
-                        className="w-14 h-14 rounded-2xl object-cover border border-border shadow-sm"
-                      />
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center border-2 border-surface shadow-xs">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="font-extrabold text-base text-primary">
-                        {creator.name}
-                      </h3>
-                      <p className="text-xs font-semibold text-accent">
-                        {creator.handle}
-                      </p>
-                      <div className="flex items-center gap-1 text-[11px] text-text-secondary mt-0.5">
-                        <MapPin className="w-3 h-3" />
-                        <span>{creator.location}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-primary/5 text-primary border border-border">
-                    {creator.tier}
-                  </span>
-                </div>
-
-                <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed mb-4">
-                  {creator.bio}
-                </p>
-
-                {/* Niches */}
-                <div className="flex flex-wrap gap-1.5 mb-5">
-                  {creator.niche.map((n, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-0.5 rounded-lg bg-muted text-[10px] font-semibold text-text-secondary"
-                    >
-                      {n}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Platform Metrics Strip */}
-                <div className="grid grid-cols-2 gap-2 bg-muted/80 p-3 rounded-2xl border border-border/80 text-center mb-4">
-                  <div className="border-r border-border/60 pr-2">
-                    <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-text-secondary mb-0.5">
-                      <Instagram className="w-3 h-3 text-pink-600" />
-                      <span>Instagram</span>
-                    </div>
-                    <div className="font-black text-sm text-primary">
-                      {(creator.igFollowers / 1000).toFixed(0)}k
-                    </div>
-                    <span className="text-[10px] font-bold text-green-600">
-                      {creator.igEngagementRate}% ER
-                    </span>
-                  </div>
-
-                  <div className="pl-2">
-                    <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-text-secondary mb-0.5">
-                      <Youtube className="w-3 h-3 text-red-600" />
-                      <span>YouTube</span>
-                    </div>
-                    <div className="font-black text-sm text-primary">
-                      {creator.ytSubscribers
-                        ? `${(creator.ytSubscribers / 1000).toFixed(0)}k`
-                        : "—"}
-                    </div>
-                    <span className="text-[10px] font-semibold text-text-secondary">
-                      {creator.ytAvgViews ? `${creator.ytAvgViews} avg` : "N/A"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Lifetime Track Record & Past Brands */}
-                <div className="space-y-2.5 border-t border-border pt-4">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-text-secondary uppercase tracking-wider text-[10px] flex items-center gap-1">
-                      <Briefcase className="w-3 h-3 text-accent" />
-                      Schbang Brand Collabs
-                    </span>
-                    <span className="font-black text-primary text-xs">
-                      {creator.performance.totalCampaigns} Campaigns
-                    </span>
-                  </div>
-
-                  {/* Brand Collaboration Badges */}
-                  <div className="flex flex-wrap gap-1.5">
-                    {creator.brandCollaborations.map((collab, idx) => (
-                      <div
-                        key={idx}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-surface border border-border text-[11px] font-bold text-primary shadow-2xs"
-                        title={`${collab.brandName} (${collab.campaignTitle}) - Delivered ${collab.viewsDelivered} views`}
-                      >
-                        <img
-                          src={collab.brandLogo}
-                          alt={collab.brandName}
-                          className="w-3.5 h-3.5 rounded-full object-cover"
-                        />
-                        <span>{collab.brandName}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Lifetime Impact Stats */}
-                  <div className="flex items-center justify-between text-[11px] text-text-secondary pt-1 font-medium">
-                    <span>Lifetime Reach: <strong className="text-primary">{creator.performance.totalReach}</strong></span>
-                    <span className="flex items-center gap-1 text-amber-600 font-bold">
-                      <Star className="w-3 h-3 fill-amber-500" />
-                      {creator.performance.reliabilityScore} / 5.0
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="p-4 bg-muted border-t border-border flex items-center gap-2">
-                <Link
-                  href={`/creators/${creator.id}`}
-                  className="flex-1"
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-xs font-bold"
-                  >
-                    View Scorecard
-                  </Button>
-                </Link>
-
-                <Button
-                  variant="accent"
-                  size="sm"
-                  onClick={() => handleQuickInvite(creator)}
-                  disabled={invitedCreatorId === creator.id}
-                  className="flex-1 text-xs font-bold shadow-md shadow-accent/20"
-                >
-                  {invitedCreatorId === creator.id ? (
-                    "Invited"
-                  ) : (
-                    <>
-                      <Send className="w-3 h-3 mr-1.5" />
-                      Invite
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredCreators.length === 0 && (
-          <div className="text-center py-20 bg-surface rounded-3xl border border-border p-8 max-w-lg mx-auto">
-            <Users className="w-12 h-12 text-text-secondary mx-auto mb-3 opacity-50" />
-            <h3 className="text-lg font-bold text-primary mb-1">No Creators Found</h3>
-            <p className="text-xs text-text-secondary mb-6">
-              Try resetting your filters or search keywords.
-            </p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setSearch("");
-                setNicheFilter("ALL");
-                setTierFilter("ALL");
-                setBrandFilter("ALL");
-              }}
-            >
-              Clear All Filters
-            </Button>
+        {loading && (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" aria-label="Loading creators" />
           </div>
         )}
-      </div>
+
+        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCreators.map((creator) => (
+            <li key={creator.id} className="rounded-4xl bg-surface p-5 shadow-clay flex flex-col">
+              <div className="flex items-start gap-3.5">
+                <div className="relative shrink-0">
+                  <img src={creator.avatar} alt="" className="w-14 h-14 rounded-full object-cover bg-clay-butter shadow-clay-sm" />
+                  {creator.verified && (
+                    <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-accent text-white grid place-items-center shadow-clay-btn" title="Verified by Schbang">
+                      <CheckCircle2 className="w-3.5 h-3.5" aria-label="Verified by Schbang" />
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl font-extrabold text-primary leading-tight truncate">{creator.name}</h3>
+                  <p className="text-sm font-semibold text-text-secondary truncate">{creator.handle}</p>
+                  {creator.location && (
+                    <p className="flex items-center gap-1 text-sm text-text-secondary mt-0.5">
+                      <MapPin className="w-3.5 h-3.5 -mt-0.5" aria-hidden="true" />
+                      <span className="truncate">{creator.location}</span>
+                    </p>
+                  )}
+                </div>
+                <span className="shrink-0 px-3 pt-1 pb-0.5 rounded-full bg-clay-lilac text-xs font-extrabold text-primary shadow-clay-sm">{creator.tier}</span>
+              </div>
+
+              {creator.bio && <p className="mt-3 text-[15px] text-primary/85 leading-relaxed line-clamp-2">{creator.bio}</p>}
+
+              {creator.niche.length > 0 && (
+                <ul className="mt-3 flex flex-wrap gap-1.5">
+                  {creator.niche.map((n) => (
+                    <li key={n} className="px-2.5 pt-1 pb-0.5 rounded-full bg-background text-xs font-semibold text-primary shadow-clay-well">{n}</li>
+                  ))}
+                </ul>
+              )}
+
+              <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-2xl bg-clay-rose px-2 pt-2 pb-1.5 shadow-clay-sm">
+                  <dt className="flex items-center justify-center gap-1 text-xs font-semibold text-text-secondary"><Instagram className="w-3 h-3" aria-hidden="true" />Followers</dt>
+                  <dd className="font-extrabold text-primary tabular-nums">{creator.igFollowers ? creator.igFollowers.toLocaleString("en-IN") : "—"}</dd>
+                </div>
+                <div className="rounded-2xl bg-clay-mint px-2 pt-2 pb-1.5 shadow-clay-sm">
+                  <dt className="text-xs font-semibold text-text-secondary">Engagement</dt>
+                  <dd className="font-extrabold text-primary tabular-nums">{creator.igEngagementRate ? `${creator.igEngagementRate}%` : "—"}</dd>
+                </div>
+                <div className="rounded-2xl bg-clay-sky px-2 pt-2 pb-1.5 shadow-clay-sm">
+                  <dt className="flex items-center justify-center gap-1 text-xs font-semibold text-text-secondary"><Youtube className="w-3 h-3" aria-hidden="true" />Subs</dt>
+                  <dd className="font-extrabold text-primary tabular-nums">{creator.ytSubscribers ? creator.ytSubscribers.toLocaleString("en-IN") : "—"}</dd>
+                </div>
+              </dl>
+
+              <p className="mt-4 text-sm font-semibold text-text-secondary">
+                {creator.pitchCount ?? 0} pitch{(creator.pitchCount ?? 0) === 1 ? "" : "es"} · {creator.brandCollaborations.length} approved
+                {creator.brandCollaborations.length > 0 && ` (${creator.brandCollaborations.map((c) => c.brandName).join(", ")})`}
+              </p>
+
+              <div className="mt-auto pt-4 flex items-center gap-2">
+                <Link href={`/creators/${creator.id}`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full">View profile</Button>
+                </Link>
+                <a href={`mailto:${creator.email}`} className="flex-1">
+                  <Button variant="accent" size="sm" className="w-full" tabIndex={-1}>
+                    <Send className="w-4 h-4 mr-1.5" aria-hidden="true" />
+                    Email creator
+                  </Button>
+                </a>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {!loading && filteredCreators.length === 0 && (
+          <div className="text-center py-12 px-8 max-w-md mx-auto rounded-4xl bg-surface shadow-clay">
+            <span className="w-14 h-14 mx-auto mb-4 rounded-full bg-clay-lilac grid place-items-center shadow-clay-sm">
+              <Users className="w-6 h-6 text-primary" aria-hidden="true" />
+            </span>
+            <h3 className="text-xl font-extrabold text-primary mb-1">No creators match</h3>
+            <p className="text-[15px] text-text-secondary mb-6">Try another search, or clear the filters.</p>
+            <Button variant="outline" onClick={resetFilters}>Clear filters</Button>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

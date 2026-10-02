@@ -3,6 +3,8 @@ import { z } from "zod";
 import { hash } from "@node-rs/bcrypt";
 import { prisma } from "@/server/db";
 import { normalizeEmail, isSeededAdminEmail } from "@/lib/auth-shared";
+import { clientIp } from "@/lib/rate-limit";
+import { assertSameOrigin, enforceRateLimit, HttpError } from "@/server/http";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,6 +23,16 @@ const RegisterSchema = z.object({
  * discarded in favour of the email's local-part.
  */
 export async function POST(request: Request) {
+  // Signups from one address are capped so the endpoint can't be used to
+  // mass-create accounts or to probe which emails are registered.
+  try {
+    assertSameOrigin(request);
+    enforceRateLimit(`register:${clientIp(request.headers)}`, 10, 60 * 60 * 1000);
+  } catch (err) {
+    if (err instanceof HttpError) return NextResponse.json({ error: err.message }, { status: err.status });
+    throw err;
+  }
+
   let body: unknown;
   try {
     body = await request.json();

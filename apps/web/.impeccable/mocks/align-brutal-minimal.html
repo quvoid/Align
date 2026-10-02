@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Align — Neo-brutalism and Minimalism</title>
+<!-- Fontshare (Indian Type Foundry): one family per request; the API mis-resolves mixed requests. -->
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=tanker@400&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@1&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=panchang@1&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=supreme@1&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=switzer@1,2&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=zodiak@1,2&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=gambetta@1,2&display=swap">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@1&display=swap">
+<!-- Google Fonts: numbers (Martian Mono) and the Devanagari companions. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,400..800&family=Anek+Latin:wdth,wght@75..125,400..800&family=Hind:wght@400;500;600&family=Martian+Mono:wdth,wght@75..112.5,400..800&family=Mukta:wght@400;500;600;700&family=Sarpanch:wght@700;900&family=Teko:wght@500..700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap">
+<style>
+  /* ════════ Comparison chrome (neutral, not part of either direction) ════════ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { margin: 0; background: #E5E3DE; color: #1B1B1A; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; }
+  .ico { width: 18px; height: 18px; flex: none; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .ch-top { max-width: 1480px; margin: 0 auto; padding: 40px 24px 28px; }
+  .ch-top h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: -.02em; }
+  .ch-top p { margin: 0 0 8px; max-width: 78ch; font-size: 15px; line-height: 1.55; color: #45443F; }
+  .ch-jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .ch-jump a { padding: 10px 16px; border-radius: 999px; background: #1B1B1A; color: #fff; text-decoration: none; font-size: 14px; font-weight: 600; }
+  .dir { max-width: 1480px; margin: 0 auto; padding: 44px 24px 32px; border-top: 1px solid #CBC9C2; scroll-margin-top: 8px; }
+  .dir-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px 40px; align-items: end; margin-bottom: 22px; }
+  .dir-head h2 { margin: 0 0 8px; font-size: 26px; letter-spacing: -.015em; }
+  .dir-head p { margin: 0; max-width: 74ch; font-size: 15px; line-height: 1.55; color: #45443F; }
+  .pairs { display: grid; gap: 8px; }
+  .pairs-label { font-size: 13px; font-weight: 600; color: #55544F; }
+  .pairs-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pairs button { padding: 9px 14px; border: 1px solid #BAB8B1; border-radius: 999px; background: #F6F5F1; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+  .pairs button[aria-pressed="true"] { background: #1B1B1A; border-color: #1B1B1A; color: #fff; }
+  .row-cap { margin: 34px 0 14px; font-size: 13px; font-weight: 600; color: #55544F; }
+  .phones { display: grid; grid-template-columns: repeat(auto-fill, 376px); gap: 34px 28px; justify-content: start; }
+  .ph { margin: 0; }
+  .ph figcaption { margin: 0 0 10px; font-size: 13.5px; font-weight: 600; color: #3F3E3A; }
+  .ph figcaption code { margin-left: 6px; font-size: 12px; font-weight: 500; color: #6A6964; }
+  .frame { width: 376px; padding: 8px; border-radius: 42px; background: #121212; box-shadow: 0 30px 60px -34px rgba(0,0,0,.6); }
+  .screen { position: relative; height: 760px; border-radius: 34px; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; }
+  .desk-scroll { overflow-x: auto; padding: 4px 4px 16px; }
+  .desk { min-width: 1180px; border-radius: 14px; overflow: hidden; box-shadow: 0 26px 50px -30px rgba(0,0,0,.5); }
+  .ch-foot { max-width: 1480px; margin: 0 auto; padding: 36px 24px 64px; border-top: 1px solid #CBC9C2; font-size: 14.5px; line-height: 1.6; color: #45443F; }
+  .ch-foot h2 { margin: 0 0 8px; font-size: 18px; color: #1B1B1A; }
+  .ch-foot ul { margin: 0 0 18px; padding-left: 20px; }
+  .ch-foot a { color: #1B1B1A; }
+  @media (max-width: 860px) { .dir-head { grid-template-columns: 1fr; } }
+  @media (max-width: 420px) {
+    .phones { grid-template-columns: 1fr; }
+    .frame { width: 100%; }
+  }
+
+  /* ════════════════ NEO-BRUTALISM · "Bombay Poster" ════════════════ */
+  .nb {
+    --paper: #FFF3DC; --ink: #121212; --white: #FFFFFF; --muted: #3D3A36;
+    --peeli: #FFD000; --peeli-soft: #FFE680;
+    --rani: #FF8EC3; --neela: #8AC9FF; --hara: #72DDA6; --narangi: #FFA764; --jamuni: #C1ADFF; --khaki: #DAD3C6;
+    --edge: 3px solid var(--ink); --drop: 5px 5px 0 var(--ink); --drop-sm: 3px 3px 0 var(--ink); --r: 6px;
+    --f-display: "Tanker", "Cabinet Grotesk", sans-serif; --dw: 400; --dstretch: 100%; --dtrack: .01em; --dlh: .86; --ds: 1;
+    --f-ui: "Cabinet Grotesk", system-ui, sans-serif;
+    --f-data: "Martian Mono", ui-monospace, monospace;
+    --f-hi-d: "Teko", sans-serif; --hi-dw: 600; --f-hi: "Hind", sans-serif;
+    background: var(--paper); color: var(--ink); font-family: var(--f-ui); font-weight: 500;
+  }
+  [data-pair="signboard"] .nb { --f-display: "Panchang", sans-serif; --dw: 800; --dtrack: 0em; --dlh: .98; --ds: .52; --f-ui: "Supreme", system-ui, sans-serif; --f-hi-d: "Sarpanch", sans-serif; --hi-dw: 900; }
+  [data-pair="bharat"] .nb { --f-display: "Anek Latin", sans-serif; --dw: 800; --dstretch: 125%; --dtrack: -.015em; --dlh: .9; --ds: .64; --f-ui: "Anek Latin", system-ui, sans-serif; --f-hi-d: "Anek Devanagari", sans-serif; --hi-dw: 800; --f-hi: "Anek Devanagari", sans-serif; }
+  .nb-disp, .nb-h1, .nb-h2, .nb-brand, .nb-hero-brand, .nb-ticket-brand, .nb-word-box, .nb-demo strong, .nb-tbrand, .nb-insp-brand, .nb-spec-display {
+    font-family: var(--f-display); font-weight: var(--dw); font-stretch: var(--dstretch); letter-spacing: var(--dtrack); line-height: var(--dlh); text-transform: uppercase;
+  }
+  .nb-data { font-family: var(--f-data); font-stretch: 87.5%; font-weight: 600; font-size: .9em; letter-spacing: -.01em; }
+  .nb :focus-visible { outline: 3px dashed var(--ink); outline-offset: 4px; }
+  .nb ::selection { background: var(--peeli); color: var(--ink); }
+  .screen.nb { scrollbar-color: var(--ink) var(--paper); }
+  .nb a { color: var(--ink); }
+  .f-rani { background: var(--rani); } .f-neela { background: var(--neela); } .f-hara { background: var(--hara); }
+  .f-narangi { background: var(--narangi); } .f-jamuni { background: var(--jamuni); } .f-khaki { background: var(--khaki); } .f-white { background: var(--white); }
+
+  /* press: the hard shadow is the depth; tapping pushes the block into the page */
+  .nb-press, .nb-press-sm { cursor: pointer; transition: transform .14s cubic-bezier(.2,.9,.3,1), box-shadow .14s cubic-bezier(.2,.9,.3,1); }
+  .nb-press { box-shadow: var(--drop); }
+  .nb-press-sm { box-shadow: var(--drop-sm); }
+  @media (hover: hover) {
+    .nb-press:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+    .nb-press-sm:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+  }
+  .nb-press:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--ink); }
+  .nb-press-sm:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+  @media (prefers-reduced-motion: reduce) {
+    .nb-press, .nb-press-sm { transition: none; }
+    .nb-press:hover, .nb-press-sm:hover { transform: none; }
+  }
+
+  .nb-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 16px 12px; }
+  .nb-word { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
+  .nb-word-box { display: inline-block; padding: 6px 9px 3px; border-radius: 4px; background: var(--ink); color: var(--peeli); font-size: calc(var(--ds) * 30px); line-height: 1; transform: rotate(-2deg); }
+  .nb-by { font-weight: 800; font-size: 13px; }
+  .nb-sq { display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: var(--edge); border-radius: var(--r); background: var(--white); }
+  .nb-avatar { display: grid; place-items: center; width: 46px; height: 46px; border: var(--edge); border-radius: 50%; background: var(--rani); font-weight: 900; font-size: 15px; box-shadow: var(--drop-sm); }
+  .nb-avatar.sm { width: 38px; height: 38px; font-size: 13px; box-shadow: none; }
+  .nb-back { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 14px; border: var(--edge); border-radius: var(--r); background: var(--white); font-weight: 800; font-size: 15px; text-decoration: none; }
+
+  .nb-pad { padding: 8px 16px 20px; }
+  .nb-padx { padding: 0 16px; }
+  .nb-h1 { margin: 6px 0 12px; font-size: calc(var(--ds) * 58px); }
+  .nb-h1.sm { font-size: calc(var(--ds) * 46px); }
+  .nb-lede { margin: 0 0 16px; max-width: 34ch; font-size: 16px; line-height: 1.45; }
+  .nb-count { display: inline-block; margin-right: 6px; padding: 4px 8px 2px; border: var(--edge); border-radius: 4px; background: var(--rani); font-weight: 900; font-size: 13px; transform: rotate(-4deg); }
+  .nb-search { display: flex; align-items: center; gap: 10px; height: 54px; padding: 0 14px; border: var(--edge); border-radius: var(--r); background: var(--white); box-shadow: var(--drop-sm); }
+  .nb-search:focus-within { outline: 3px dashed var(--ink); outline-offset: 4px; }
+  .nb-search input { flex: 1; min-width: 0; border: 0; background: none; font: inherit; font-size: 16px; font-weight: 700; color: var(--ink); outline: none; }
+  .nb-search input::placeholder { color: #5A564F; }
+  .nb-chips { display: flex; gap: 10px; margin-top: 18px; padding: 2px 6px 8px 2px; overflow-x: auto; scrollbar-width: none; }
+  .nb-chip { flex: none; min-height: 44px; padding: 0 16px; border: var(--edge); border-radius: 999px; background: var(--white); font-weight: 800; font-size: 15px; }
+  .nb-chip[aria-pressed="true"] { background: var(--ink); color: var(--white); }
+  .nb-chip .nb-data { margin-left: 4px; }
+
+  .nb-list { display: grid; gap: 24px; padding: 4px 16px 28px; }
+  .nb-card { border: var(--edge); border-radius: var(--r); background: var(--white); box-shadow: var(--drop); overflow: hidden; }
+  .nb-card-top { padding: 12px 14px 16px; border-bottom: var(--edge); }
+  .nb-card-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .nb-ind { font-weight: 800; font-size: 13.5px; }
+  .nb-like { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 11px; border: var(--edge); border-radius: var(--r); background: var(--white); font-weight: 800; }
+  .nb-like[aria-pressed="true"] { background: var(--ink); color: var(--white); }
+  .nb-like[aria-pressed="true"] .ico { fill: var(--rani); stroke: var(--rani); }
+  .nb-brand { margin: 0; font-size: calc(var(--ds) * 64px); }
+  .nb-card-line { margin: 8px 0 0; font-weight: 700; font-size: 15px; line-height: 1.3; }
+  .nb-card-body { padding: 14px; }
+  .nb-desc { margin: 0 0 12px; font-size: 15.5px; line-height: 1.45; }
+  .nb-formats { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; }
+  .nb-formats li { padding: 4px 9px 3px; border: 2px solid var(--ink); border-radius: 4px; background: var(--paper); font-weight: 700; font-size: 13px; }
+  .nb-view { display: flex; align-items: center; justify-content: space-between; min-height: 50px; padding: 0 16px; border: var(--edge); border-radius: var(--r); background: var(--white); font-weight: 800; font-size: 16px; text-decoration: none; }
+  .nb-empty { margin: 0; padding: 18px; border: 3px dashed var(--ink); border-radius: var(--r); font-weight: 700; font-size: 15px; line-height: 1.45; }
+  .nb-empty button { margin-top: 10px; }
+
+  /* rubber stamp: Schbang's decision, pressed onto the poster */
+  .nb-stamp { display: inline-block; margin-top: 14px; padding: 6px 10px 4px; border: 3px solid var(--ink); border-radius: 4px; outline: 2px solid var(--ink); outline-offset: 3px; font-weight: 900; font-size: 12.5px; letter-spacing: .07em; text-transform: uppercase; transform: rotate(-4deg); }
+  .nb-stamp.big { margin: 2px 0 6px 4px; font-size: 15px; padding: 7px 12px 5px; }
+  .s-white { background: var(--white); } .s-neela { background: var(--neela); } .s-jamuni { background: var(--jamuni); }
+  .s-hara { background: var(--hara); } .s-rani { background: var(--rani); } .s-khaki { background: var(--khaki); }
+
+  .nb-hero { margin: 6px 16px 0; padding: 18px 16px 16px; border: var(--edge); border-radius: var(--r); box-shadow: var(--drop); }
+  .nb-hero-brand { margin: 0; font-size: calc(var(--ds) * 80px); }
+  .nb-hero-line { margin: 10px 0 0; font-weight: 800; font-size: 16.5px; line-height: 1.3; }
+  .nb-hero-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+  .nb-hero-tags .nb-like { margin-left: auto; }
+  .nb-tag { display: inline-block; padding: 4px 9px 3px; border: 2px solid var(--ink); border-radius: 4px; background: var(--white); font-weight: 800; font-size: 13px; }
+  .nb-sec { padding: 26px 16px 0; }
+  .nb-h2 { margin: 0 0 12px; font-size: calc(var(--ds) * 34px); }
+  .nb-body { margin: 0; font-size: 16.5px; line-height: 1.5; }
+  .nb-make { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .nb-make li { display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 0 12px; border: var(--edge); border-radius: var(--r); background: var(--white); font-weight: 800; font-size: 16px; }
+  .nb-tick { display: grid; place-items: center; width: 28px; height: 28px; border: 2px solid var(--ink); border-radius: 4px; background: var(--hara); }
+  .nb-tick .ico { width: 16px; height: 16px; }
+  .nb-box { margin: 0; padding: 14px; border: var(--edge); border-radius: var(--r); background: var(--white); font-size: 16px; font-weight: 600; line-height: 1.45; }
+  .nb-how { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .nb-how li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 12px; font-size: 15.5px; line-height: 1.4; }
+  .nb-how li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border: var(--edge); border-radius: 50%; background: var(--white); font-family: var(--f-data); font-weight: 700; font-size: 15px; }
+  .nb-how b { display: block; font-weight: 900; }
+  .nb-sticky { position: sticky; bottom: 0; z-index: 2; margin-top: 28px; padding: 12px 16px 16px; border-top: var(--edge); background: var(--paper); }
+  .nb-sticky.two { display: grid; grid-template-columns: auto 1fr; gap: 12px; }
+  .nb-sticky-note { margin: 10px 0 0; font-size: 13.5px; font-weight: 700; text-align: center; }
+  .nb-cta { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 56px; padding: 0 18px; border: var(--edge); border-radius: var(--r); background: var(--peeli); color: var(--ink); font-weight: 900; font-size: 17px; text-decoration: none; text-align: left; }
+  .nb-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 56px; padding: 0 18px; border: var(--edge); border-radius: var(--r); background: var(--white); font-weight: 800; font-size: 16px; }
+
+  .nb-plan { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 14px; font-weight: 700; font-size: 15px; }
+  .nb-tally { margin: 0; padding: 11px 12px; border: var(--edge); border-radius: var(--r); background: var(--white); font-weight: 700; font-size: 15px; }
+  .nb-tickets { display: grid; gap: 26px; padding: 4px 16px 10px; }
+  .nb-ticket { border: var(--edge); border-radius: var(--r); background: var(--white); box-shadow: var(--drop); }
+  .nb-ticket-head { position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 14px 14px 12px; border-radius: 3px 3px 0 0; border-bottom: 3px dashed var(--ink); }
+  .nb-ticket-head::before, .nb-ticket-head::after { content: ""; position: absolute; bottom: -12px; width: 20px; height: 20px; border: var(--edge); border-radius: 50%; background: var(--paper); }
+  .nb-ticket-head::before { left: -12px; } .nb-ticket-head::after { right: -12px; }
+  .nb-ticket-brand { margin: 0; font-size: calc(var(--ds) * 44px); }
+  .nb-rate { font-size: 14px; }
+  .nb-ticket-body { padding: 18px 14px 14px; }
+  .nb-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 14px 0 14px; padding: 0; list-style: none; }
+  .nb-track li { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 52px; padding: 4px 2px; border: 2.5px solid var(--ink); border-radius: 4px; background: var(--paper); font-weight: 800; font-size: 11.5px; line-height: 1.1; text-align: center; }
+  .nb-track li .ico { width: 14px; height: 14px; }
+  .nb-track li.done { background: var(--ink); color: var(--white); }
+  .nb-note { position: relative; margin: 6px 0 14px; padding: 12px 13px 11px; border: var(--edge); border-radius: var(--r); background: var(--paper); font-size: 15px; font-weight: 600; line-height: 1.4; }
+  .nb-note::before { content: ""; position: absolute; top: -11px; left: 20px; width: 16px; height: 16px; border-top: var(--edge); border-left: var(--edge); background: var(--paper); transform: rotate(45deg); }
+  .nb-note b { display: block; margin-bottom: 3px; font-weight: 900; font-size: 13px; }
+  .nb-ticket-meta { margin: 0; font-weight: 700; font-size: 13.5px; color: var(--muted); }
+
+  .nb-steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin: 4px 0 24px; padding: 0; list-style: none; }
+  .nb-steps li { display: grid; justify-items: center; gap: 6px; font-weight: 800; font-size: 10.5px; }
+  .nb-steps i { display: grid; place-items: center; width: 100%; height: 36px; border: 2.5px solid var(--ink); border-radius: 4px; background: var(--white); font-style: normal; font-family: var(--f-data); font-weight: 700; font-size: 13px; }
+  .nb-steps i .ico { width: 16px; height: 16px; }
+  .nb-steps .done i { background: var(--ink); color: var(--white); }
+  .nb-steps .now i { background: var(--peeli); box-shadow: var(--drop-sm); }
+  .nb-field { display: grid; gap: 8px; min-width: 0; margin: 0 0 22px; padding: 0; border: 0; }
+  .nb-label, .nb-field legend { padding: 0; font-weight: 900; font-size: 16px; }
+  .nb-field textarea, .nb-field input { width: 100%; padding: 12px 14px; border: var(--edge); border-radius: var(--r); background: var(--white); font: inherit; font-size: 16px; font-weight: 600; line-height: 1.45; color: var(--ink); resize: vertical; }
+  .nb-field input { height: 54px; }
+  .nb-field textarea:focus-visible, .nb-field input:focus-visible { outline: 3px dashed var(--ink); outline-offset: 4px; }
+  .nb-field input::placeholder, .nb-field textarea::placeholder { color: #5A564F; }
+  .nb-field small { font-weight: 600; font-size: 13.5px; line-height: 1.4; color: var(--muted); }
+  .nb-counter { display: flex; justify-content: space-between; gap: 10px; font-weight: 600; font-size: 13.5px; color: var(--muted); }
+  .nb-toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .nb-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: var(--edge); border-radius: 999px; background: var(--white); font-weight: 800; font-size: 14.5px; }
+  .nb-toggle .ico { display: none; width: 16px; height: 16px; }
+  .nb-toggle[aria-pressed="true"] { background: var(--ink); color: var(--white); }
+  .nb-toggle[aria-pressed="true"] .ico { display: block; }
+  .nb-rupee { display: flex; border: var(--edge); border-radius: var(--r); background: var(--white); overflow: hidden; }
+  .nb-rupee:focus-within { outline: 3px dashed var(--ink); outline-offset: 4px; }
+  .nb-rupee b { display: grid; place-items: center; width: 52px; border-right: var(--edge); background: var(--hara); font-weight: 900; font-size: 20px; }
+  .nb-field .nb-rupee input { border: 0; border-radius: 0; font-family: var(--f-data); font-stretch: 87.5%; outline: none; }
+  .nb-honest { margin: 0 0 4px; padding: 12px 13px; border: 2.5px dashed var(--ink); border-radius: var(--r); font-weight: 700; font-size: 14px; line-height: 1.45; }
+
+  .nb-h3 { margin: 24px 0 12px; font-weight: 900; font-size: 17px; }
+  .nb-demo { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; margin-bottom: 16px; padding: 14px 16px; border: var(--edge); border-radius: var(--r); text-align: left; }
+  .nb-demo small { display: block; font-weight: 800; font-size: 13px; }
+  .nb-demo strong { display: block; margin-top: 6px; font-size: calc(var(--ds) * 36px); }
+  .nb-demo .ico { width: 24px; height: 24px; }
+  .nb-or { display: flex; align-items: center; gap: 10px; margin: 26px 0 20px; font-weight: 800; font-size: 14px; }
+  .nb-or::before, .nb-or::after { content: ""; flex: 1; height: 3px; background: var(--ink); }
+  .nb-small { margin: 18px 0 0; font-weight: 600; font-size: 15px; line-height: 1.5; text-align: center; }
+  .nb-small a, .nb-link { font-weight: 900; text-decoration: underline; text-decoration-thickness: 3px; text-decoration-color: var(--rani); text-underline-offset: 4px; }
+
+  /* admin desk */
+  .nb-dtop { display: flex; align-items: center; gap: 28px; padding: 14px 24px; border-bottom: var(--edge); background: var(--white); }
+  .nb-tabs { display: flex; gap: 10px; }
+  .nb-tabs a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: var(--edge); border-radius: var(--r); background: var(--white); font-weight: 800; font-size: 15px; text-decoration: none; }
+  .nb-tabs a[aria-current="page"] { background: var(--ink); color: var(--white); }
+  .nb-me { display: flex; align-items: center; gap: 10px; margin-left: auto; font-weight: 800; font-size: 15px; }
+  .nb-dmain { display: grid; grid-template-columns: minmax(0, 1fr) 410px; gap: 28px; align-items: start; padding: 26px 24px 32px; }
+  .nb-qhead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 20px; margin-bottom: 16px; }
+  .nb-qhead .nb-h1 { margin: 0; }
+  .nb-qhead .nb-chips { margin: 0; }
+  .nb-table { width: 100%; border: var(--edge); border-radius: var(--r); border-collapse: separate; border-spacing: 0; background: var(--white); box-shadow: var(--drop); overflow: hidden; font-size: 15px; }
+  .nb-table th { padding: 11px 12px; border-bottom: var(--edge); background: var(--paper); font-weight: 900; font-size: 12px; letter-spacing: .05em; text-align: left; text-transform: uppercase; }
+  .nb-table td { padding: 12px; border-bottom: 2px solid var(--ink); vertical-align: middle; }
+  .nb-table tbody tr:last-child td { border-bottom: 0; }
+  .nb-table tbody tr { cursor: pointer; }
+  .nb-table tbody tr:hover td { background: #FFF6CC; }
+  .nb-table tbody tr[aria-current="true"] td { background: var(--peeli-soft); }
+  .nb-table .num { text-align: right; }
+  .nb-table .who b { display: block; font-weight: 900; }
+  .nb-table .who span { font-weight: 600; font-size: 13px; color: var(--muted); }
+  .nb-tbrand { font-size: calc(var(--ds) * 26px); }
+  .nb-pill { display: inline-block; padding: 4px 10px 3px; border: 2.5px solid var(--ink); border-radius: 999px; font-weight: 900; font-size: 12.5px; white-space: nowrap; }
+  .nb-fine { margin: 12px 0 0; font-weight: 700; font-size: 13px; color: var(--muted); }
+  .nb-insp { position: sticky; top: 16px; border: var(--edge); border-radius: var(--r); background: var(--white); box-shadow: var(--drop); overflow: hidden; }
+  .nb-insp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; padding: 14px 16px 12px; border-bottom: var(--edge); }
+  .nb-insp-brand { font-size: calc(var(--ds) * 42px); }
+  .nb-insp-body { padding: 16px 16px 18px; }
+  .nb-insp-name { margin: 0; font-weight: 900; font-size: 24px; line-height: 1.1; }
+  .nb-insp-handle { margin: 4px 0 14px; font-weight: 600; color: var(--muted); }
+  .nb-facts { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border: var(--edge); border-radius: var(--r); overflow: hidden; }
+  .nb-facts div { padding: 8px 10px; border-right: 2.5px solid var(--ink); }
+  .nb-facts div:last-child { border-right: 0; }
+  .nb-facts dt { font-weight: 900; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; }
+  .nb-facts dd { margin: 3px 0 0; font-family: var(--f-data); font-stretch: 87.5%; font-weight: 700; font-size: 15px; }
+  .nb-insp .nb-h3 { margin: 18px 0 8px; font-size: 15px; }
+  .nb-insp .nb-body { font-size: 15.5px; }
+  .nb-insp .nb-field { margin: 16px 0 0; }
+  .nb-insp .nb-label { font-size: 15px; }
+  .nb-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .nb-actions > :first-child { grid-column: 1 / -1; }
+  .nb-actions .nb-cta, .nb-actions .nb-btn { min-height: 50px; font-size: 15.5px; }
+  .nb kbd { margin-left: auto; padding: 1px 6px; border: 2px solid currentColor; border-radius: 4px; font-family: var(--f-data); font-size: 11px; font-weight: 700; }
+  .nb-btn kbd { margin-left: 4px; }
+  .nb-receipt { margin: 12px 0 0; font-weight: 700; font-size: 14px; }
+  .nb-receipt:empty { display: none; }
+
+  /* specimen */
+  .nb-spec { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); border: var(--edge); border-radius: var(--r); background: var(--white); box-shadow: var(--drop); overflow: hidden; }
+  .nb-spec-show { padding: 24px 26px 26px; border-right: var(--edge); background: var(--paper); }
+  .nb-spec-display { margin: 0 0 16px; font-size: calc(var(--ds) * 104px); }
+  .nb-spec-ui { margin: 0 0 12px; max-width: 36ch; font-weight: 700; font-size: 20px; line-height: 1.35; }
+  .nb-spec-data { margin: 0 0 18px; font-family: var(--f-data); font-stretch: 87.5%; font-weight: 600; font-size: 15px; }
+  .nb-spec-hi { margin: 0; padding-top: 16px; border-top: var(--edge); }
+  .nb-spec-hi .hi-d { display: block; font-family: var(--f-hi-d); font-weight: var(--hi-dw); font-size: 42px; line-height: 1.05; }
+  .nb-spec-hi .hi-b { display: block; margin-top: 8px; font-family: var(--f-hi); font-size: 17px; line-height: 1.6; }
+  .spec-meta { width: 100%; border-collapse: collapse; }
+  .spec-meta th, .spec-meta td { padding: 14px 18px; text-align: left; vertical-align: top; }
+  .spec-meta th { width: 120px; font-size: 12.5px; line-height: 1.35; }
+  .spec-meta .fname { display: block; font-size: 24px; line-height: 1.1; }
+  .spec-meta .src { display: block; margin-top: 4px; font-size: 13px; }
+  .spec-meta .why { display: block; margin-top: 6px; font-size: 14.5px; line-height: 1.45; }
+  .nb .spec-meta th, .nb .spec-meta td { border-bottom: 2.5px solid var(--ink); }
+  .nb .spec-meta tr:last-child th, .nb .spec-meta tr:last-child td { border-bottom: 0; }
+  .nb .spec-meta th { font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+  .nb .spec-meta .src { font-weight: 700; color: var(--muted); }
+  .nb .spec-meta .why { font-weight: 600; }
+  @media (max-width: 1000px) {
+    .nb-spec { grid-template-columns: 1fr; }
+    .nb-spec-show { border-right: 0; border-bottom: var(--edge); }
+  }
+
+  /* ════════════════ MINIMALISM · "Quiet Register" ════════════════ */
+  .mn {
+    --paper: #FBFAF7; --white: #FFFFFF; --ink: #171716; --ink-2: #5E5D58; --rule: #E2E0D9; --rule-2: #C9C7BF; --wash: #F2F0EA;
+    --accent: #B8341B; --accent-2: #9C2B15; --ok: #1E6A46;
+    --f-display: "Zodiak", Georgia, serif; --dw: 330;
+    --f-ui: "Switzer", system-ui, sans-serif;
+    --f-hi-d: "Tiro Devanagari Hindi", serif; --f-hi: "Mukta", sans-serif;
+    background: var(--paper); color: var(--ink); font-family: var(--f-ui); font-weight: 400;
+  }
+  [data-pair="editorial"] .mn { --f-display: "Gambetta", Georgia, serif; --dw: 380; --f-ui: "General Sans", system-ui, sans-serif; }
+  [data-pair="hindi"] .mn { --f-display: "Tiro Devanagari Hindi", Georgia, serif; --dw: 400; --f-ui: "Mukta", system-ui, sans-serif; }
+  .mn-word, .mn-h1, .mn-brand, .mn-hero, .mn-demo strong, .mn-tbrand, .mn-insp-name, .mn-spec-display, .mn-note p {
+    font-family: var(--f-display); font-weight: var(--dw); letter-spacing: -.02em;
+  }
+  .mn-num { font-variant-numeric: tabular-nums lining-nums; }
+  .mn :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .mn ::selection { background: var(--ink); color: var(--paper); }
+  .screen.mn { scrollbar-color: var(--rule-2) transparent; }
+  .mn a { color: var(--ink); }
+
+  .mn-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 6px 20px; border-bottom: 1px solid var(--rule); }
+  .mn-word { display: inline-flex; align-items: baseline; gap: 8px; font-size: 26px; line-height: 1; text-decoration: none; }
+  .mn-word span { font-family: var(--f-ui); font-weight: 400; font-size: 12.5px; letter-spacing: 0; color: var(--ink-2); }
+  .mn-textbtn { min-height: 44px; padding: 0 2px; border: 0; background: none; font-weight: 500; font-size: 15px; text-decoration: underline; text-decoration-color: var(--rule-2); text-decoration-thickness: 1px; text-underline-offset: 5px; cursor: pointer; }
+  .mn-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 500; font-size: 15px; text-decoration: none; }
+  .mn-initials { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--rule-2); border-radius: 50%; font-weight: 500; font-size: 14px; }
+  .mn-pad { padding: 30px 20px 8px; }
+  .mn-h1 { margin: 0 0 12px; font-size: 46px; line-height: 1.02; }
+  .mn-h1.sm { font-size: 36px; }
+  .mn-lede { margin: 0 0 26px; max-width: 36ch; font-size: 16px; line-height: 1.5; color: var(--ink-2); }
+  .mn-search { display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 14px; border: 1px solid var(--rule-2); border-radius: 10px; background: var(--white); color: var(--ink-2); }
+  .mn-search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  .mn-search input { flex: 1; min-width: 0; border: 0; background: none; font: inherit; font-size: 16px; color: var(--ink); outline: none; }
+  .mn-search input::placeholder { color: var(--ink-2); }
+  .mn-tabs { display: flex; gap: 22px; margin-top: 20px; border-bottom: 1px solid var(--rule); overflow-x: auto; scrollbar-width: none; }
+  .mn-tabs button { flex: none; min-height: 44px; margin-bottom: -1px; padding: 0; border: 0; border-bottom: 2px solid transparent; background: none; font-weight: 500; font-size: 15px; color: var(--ink-2); cursor: pointer; }
+  .mn-tabs button[aria-pressed="true"] { border-bottom-color: var(--ink); color: var(--ink); }
+  .mn-tabs .mn-num { margin-left: 3px; font-weight: 400; color: var(--ink-2); }
+
+  .mn-index { margin: 0; padding: 0 20px 24px; list-style: none; }
+  .mn-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; padding: 24px 0 22px; border-bottom: 1px solid var(--rule); }
+  .mn-row-link { display: grid; gap: 7px; text-decoration: none; }
+  .mn-row-top { display: flex; align-items: center; gap: 10px; }
+  .mn-brand { font-size: 38px; line-height: 1; }
+  .mn-brand.sm { font-size: 30px; }
+  .mn-arrow { width: 20px; height: 20px; transition: transform .3s cubic-bezier(.16,1,.3,1); }
+  .mn-row-link:hover .mn-arrow, .mn-demo button:hover .mn-arrow { transform: translateX(5px); }
+  .mn-meta { font-size: 13.5px; line-height: 1.4; color: var(--ink-2); }
+  .mn-desc { font-size: 15px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .mn-like { align-self: start; display: inline-flex; align-items: center; gap: 6px; min-width: 44px; min-height: 44px; padding: 0 2px; border: 0; background: none; font-size: 14px; color: var(--ink-2); cursor: pointer; }
+  .mn-like[aria-pressed="true"] { color: var(--accent); }
+  .mn-like[aria-pressed="true"] .ico { fill: currentColor; }
+  .mn-st { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; font-size: 14px; white-space: nowrap; }
+  .mn-dot { display: inline-block; flex: none; width: 9px; height: 9px; border-radius: 50%; }
+  .d-PENDING { box-shadow: inset 0 0 0 1.5px var(--ink-2); }
+  .d-UNDER_REVIEW { background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); box-shadow: inset 0 0 0 1.5px var(--ink); }
+  .d-SHORTLISTED { background: var(--ink); }
+  .d-APPROVED { background: var(--ok); }
+  .d-REJECTED { background: var(--rule-2); }
+  .mn-empty { margin: 0; padding: 28px 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .mn-linkbtn { padding: 0; border: 0; background: none; font-weight: 500; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; min-height: 44px; }
+
+  .mn-hero { margin: 0; font-size: 70px; line-height: .95; letter-spacing: -.03em; }
+  .mn-hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 16px 0 0; font-size: 14.5px; color: var(--ink-2); }
+  .mn-lead { margin: 24px 0 0; max-width: 34ch; font-size: 18px; line-height: 1.55; }
+  .mn-dl { margin: 32px 0 0; border-top: 1px solid var(--ink); }
+  .mn-dl > div { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  .mn-dl dt { padding-top: 2px; font-size: 13.5px; color: var(--ink-2); }
+  .mn-dl dd { margin: 0; font-size: 15.5px; line-height: 1.5; }
+  .mn-dl ul { margin: 0; padding: 0; list-style: none; }
+  .mn-sticky { position: sticky; bottom: 0; z-index: 2; margin-top: 30px; padding: 14px 20px 16px; border-top: 1px solid var(--rule); background: var(--paper); }
+  .mn-sticky.two { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
+  .mn-sticky p { margin: 10px 0 0; font-size: 13.5px; text-align: center; color: var(--ink-2); }
+  .mn-cta { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 54px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--accent); color: var(--white); font-weight: 500; font-size: 16.5px; text-decoration: none; cursor: pointer; transition: background-color .2s ease, transform .25s cubic-bezier(.16,1,.3,1); }
+  .mn a.mn-cta { color: var(--white); }
+  .mn-cta:hover { background: var(--accent-2); }
+  .mn-cta:active { transform: scale(.98); }
+  .mn-ghost, .mn-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 22px; border: 1px solid var(--rule-2); border-radius: 999px; background: var(--white); font-weight: 500; font-size: 16px; cursor: pointer; transition: border-color .2s ease; }
+  .mn-ghost:hover, .mn-btn:hover { border-color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) { .mn-arrow, .mn-cta { transition: none; } }
+
+  .mn-sec { padding: 20px 20px 0; }
+  .mn-h2 { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-bottom: 12px; border-bottom: 1px solid var(--ink); font-weight: 600; font-size: 15px; }
+  .mn-h2 .mn-num { font-weight: 400; color: var(--ink-2); }
+  .mn-pitches { margin: 0; padding: 0; list-style: none; }
+  .mn-pitch { padding: 22px 0 24px; border-bottom: 1px solid var(--rule); }
+  .mn-p-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .mn-p-top .mn-num { font-size: 15px; }
+  .mn-line { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 18px 0 0; padding: 0; list-style: none; }
+  .mn-line li { padding-top: 9px; border-top: 2px solid var(--rule); font-size: 12.5px; color: var(--ink-2); }
+  .mn-line li.done { border-top-color: var(--ink); }
+  .mn-line li.now { border-top-color: var(--ink); color: var(--ink); font-weight: 600; }
+  .mn-line.ok li.now { border-top-color: var(--ok); color: var(--ok); }
+  .mn-note { margin: 20px 0 0; }
+  .mn-note p { margin: 0; font-style: italic; font-size: 20px; line-height: 1.4; letter-spacing: -.01em; }
+  .mn-note footer { margin-top: 8px; font-size: 13px; color: var(--ink-2); }
+
+  .mn-step { font-size: 14px; color: var(--ink-2); }
+  .mn-prog { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 6px 0 0; padding: 0; list-style: none; }
+  .mn-prog li { padding-top: 8px; border-top: 2px solid var(--rule); font-size: 11.5px; color: var(--ink-2); }
+  .mn-prog li.done { border-top-color: var(--ink); }
+  .mn-prog li.now { border-top-color: var(--ink); color: var(--ink); font-weight: 600; }
+  .mn-form { margin-top: 30px; }
+  .mn-field { display: grid; gap: 8px; min-width: 0; margin: 0 0 28px; padding: 0; border: 0; }
+  .mn-label, .mn-field legend { padding: 0; font-weight: 600; font-size: 14.5px; }
+  .mn-field textarea, .mn-field input { width: 100%; padding: 12px 14px; border: 1px solid var(--rule-2); border-radius: 10px; background: var(--white); font: inherit; font-size: 16px; line-height: 1.55; color: var(--ink); resize: vertical; }
+  .mn-field input { height: 50px; }
+  .mn-field textarea:focus, .mn-field input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  .mn-field input::placeholder { color: var(--ink-2); }
+  .mn-hint { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2); }
+  .mn-checks { margin: 4px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+  .mn-check { display: flex; align-items: center; gap: 12px; min-height: 52px; border-bottom: 1px solid var(--rule); font-size: 15.5px; cursor: pointer; }
+  .mn-check input { appearance: none; flex: none; width: 22px; height: 22px; margin: 0; border: 1.5px solid var(--ink); border-radius: 5px; background: var(--white) center / 14px no-repeat; cursor: pointer; }
+  .mn-check input:checked { background-color: var(--ink); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E"); }
+  .mn-rupee { display: flex; align-items: center; border: 1px solid var(--rule-2); border-radius: 10px; background: var(--white); }
+  .mn-rupee:focus-within { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  .mn-rupee b { padding: 0 2px 0 14px; font-weight: 400; color: var(--ink-2); }
+  .mn-field .mn-rupee input { border: 0; box-shadow: none; }
+  .mn-honest { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+
+  .mn-demo { margin: 14px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+  .mn-demo button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 76px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--rule); background: none; text-align: left; cursor: pointer; }
+  .mn-demo strong { display: block; font-size: 27px; line-height: 1.05; }
+  .mn-demo small { display: block; margin-top: 5px; font-size: 13.5px; color: var(--ink-2); }
+  .mn-or { display: flex; align-items: center; gap: 12px; margin: 28px 0 22px; font-size: 13.5px; color: var(--ink-2); }
+  .mn-or::before, .mn-or::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+  .mn-small { margin: 18px 0 0; font-size: 14.5px; line-height: 1.5; text-align: center; color: var(--ink-2); }
+  .mn-small a { font-weight: 500; text-underline-offset: 4px; }
+
+  .mn-dtop { display: flex; align-items: stretch; gap: 44px; height: 64px; padding: 0 32px; border-bottom: 1px solid var(--rule); background: var(--paper); }
+  .mn-dtop .mn-word { align-self: center; }
+  .mn-dtabs { display: flex; gap: 28px; }
+  .mn-dtabs a { display: flex; align-items: center; gap: 8px; margin-bottom: -1px; border-bottom: 2px solid transparent; font-weight: 500; font-size: 15px; color: var(--ink-2); text-decoration: none; cursor: pointer; }
+  .mn-dtabs a[aria-current="page"] { border-bottom-color: var(--ink); color: var(--ink); }
+  .mn-me { align-self: center; margin-left: auto; font-size: 14.5px; color: var(--ink-2); }
+  .mn-dmain { display: grid; grid-template-columns: minmax(0, 1fr) 430px; min-height: 660px; }
+  .mn-queue { padding: 34px 32px; }
+  .mn-qhead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; margin-bottom: 10px; }
+  .mn-qhead .mn-h1 { margin: 0; }
+  .mn-qhead .mn-tabs { margin: 0; border: 0; }
+  .mn-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .mn-table th { padding: 12px 10px; border-bottom: 1px solid var(--ink); font-weight: 500; font-size: 13px; text-align: left; color: var(--ink-2); }
+  .mn-table td { padding: 14px 10px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+  .mn-table tbody tr { cursor: pointer; }
+  .mn-table tbody tr:hover td, .mn-table tbody tr[aria-current="true"] td { background: var(--wash); }
+  .mn-table tbody tr[aria-current="true"] .who b { text-decoration: underline; text-underline-offset: 4px; }
+  .mn-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .mn-table .who b { display: block; font-weight: 600; }
+  .mn-table .who span { font-size: 13px; color: var(--ink-2); }
+  .mn-tbrand { font-size: 22px; }
+  .mn-fine { margin: 14px 0 0; font-size: 13px; color: var(--ink-2); }
+  .mn-insp { padding: 34px 32px; border-left: 1px solid var(--rule); background: var(--white); }
+  .mn-insp-to { margin: 0; font-size: 14px; color: var(--ink-2); }
+  .mn-insp-name { margin: 6px 0 6px; font-size: 40px; line-height: 1; }
+  .mn-insp-handle { margin: 0 0 22px; font-size: 14.5px; color: var(--ink-2); }
+  .mn-facts { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .mn-facts div { padding: 12px 0; }
+  .mn-facts dt { font-size: 12.5px; color: var(--ink-2); }
+  .mn-facts dd { margin: 4px 0 0; font-weight: 500; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .mn-h3 { margin: 24px 0 8px; font-weight: 600; font-size: 13.5px; }
+  .mn-insp .mn-body { margin: 0; font-size: 15.5px; line-height: 1.6; }
+  .mn-insp ul.mn-plain { margin: 0; padding: 0; list-style: none; font-size: 15px; line-height: 1.7; }
+  .mn-insp .mn-field { margin: 22px 0 0; }
+  .mn-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+  .mn-actions .mn-cta, .mn-actions .mn-btn { width: auto; min-height: 48px; padding: 0 18px; font-size: 15px; }
+  .mn kbd { padding: 1px 6px; border: 1px solid currentColor; border-radius: 4px; font-family: var(--f-ui); font-size: 11.5px; opacity: .8; }
+  .mn-receipt { margin: 14px 0 0; font-size: 14px; color: var(--ink-2); }
+  .mn-receipt:empty { display: none; }
+
+  .mn-spec { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); border: 1px solid var(--rule-2); background: var(--paper); }
+  .mn-spec-show { padding: 30px 34px; border-right: 1px solid var(--rule); }
+  .mn-spec-display { margin: 0 0 20px; font-size: 88px; line-height: .95; letter-spacing: -.03em; }
+  .mn-spec-ui { margin: 0 0 12px; max-width: 38ch; font-size: 19px; line-height: 1.45; }
+  .mn-spec-data { margin: 0 0 22px; font-size: 15px; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .mn-spec-hi { margin: 0; padding-top: 18px; border-top: 1px solid var(--rule); }
+  .mn-spec-hi .hi-d { display: block; font-family: var(--f-hi-d); font-size: 40px; line-height: 1.15; }
+  .mn-spec-hi .hi-b { display: block; margin-top: 6px; font-family: var(--f-hi); font-size: 17px; line-height: 1.6; }
+  .mn .spec-meta th, .mn .spec-meta td { border-bottom: 1px solid var(--rule); }
+  .mn .spec-meta tr:last-child th, .mn .spec-meta tr:last-child td { border-bottom: 0; }
+  .mn .spec-meta th { font-weight: 500; color: var(--ink-2); }
+  .mn .spec-meta .src { color: var(--ink-2); }
+  @media (max-width: 1000px) {
+    .mn-spec { grid-template-columns: 1fr; }
+    .mn-spec-show { border-right: 0; border-bottom: 1px solid var(--rule); }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.3 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+</svg>
+
+<header class="ch-top">
+  <h1>Align: Neo-brutalism and Minimalism</h1>
+  <p>Two complete directions, each on the real Align content: the six live briefs, Rohan's pitches and the admin pitch queue. Each direction shows five phone screens (briefs, brief page, dashboard, pitch form, log in) and the desktop admin queue. Everything is clickable: filters, likes, pitch formats, and Shortlist / Approve / Not selected in the admin queue (keys S, A, N).</p>
+  <p>Fonts were picked for Align, not from the usual lists. Most come from Indian Type Foundry's free Fontshare library (free for commercial use). The Devanagari partners are there because Hindi screens are planned. Use the font buttons on each direction to swap pairings.</p>
+  <nav class="ch-jump" aria-label="Directions"><a href="#neo">Neo-brutalism · Bombay Poster</a><a href="#minimal">Minimalism · Quiet Register</a></nav>
+</header>
+
+<section class="dir" id="neo" data-world="nb" data-pair="poster" aria-labelledby="neo-t">
+  <div class="dir-head">
+    <div>
+      <h2 id="neo-t">Neo-brutalism · "Bombay Poster"</h2>
+      <p>Mumbai's hand-painted hoardings and shop boards. Every brief is a poster with the brand name as the headline, flat signage colours, thick ink outlines and hard block shadows. Buttons press into the page when you tap them. Taxi yellow (peeli) is only for the one action you came to take. A pitch's status is a rubber stamp on a perforated ticket.</p>
+    </div>
+    <div class="pairs" role="group" aria-label="Neo-brutalism font pairing">
+      <span class="pairs-label">Font pairing</span>
+      <div class="pairs-row" data-pairs="nb"></div>
+    </div>
+  </div>
+  <div class="nb nb-spec" data-spec="nb"></div>
+  <p class="row-cap">Creator · phone (360px)</p>
+  <div class="phones" data-phones="nb"></div>
+  <p class="row-cap">Schbang admin · desktop</p>
+  <div class="desk-scroll"><div class="desk nb" data-desk="nb"></div></div>
+</section>
+
+<section class="dir" id="minimal" data-world="mn" data-pair="register" aria-labelledby="mn-t">
+  <div class="dir-head">
+    <div>
+      <h2 id="mn-t">Minimalism · "Quiet Register"</h2>
+      <p>A calm register on warm paper. Briefs are entries in an index, not cards: the brand name set in a serif, details in a quiet sans, separated by hairlines. There are no shadows, boxes or decoration. One vermilion (sindoor) colour marks the action. A pitch's progress is one thin line with four ticks, and the Schbang team's note reads like a quotation.</p>
+    </div>
+    <div class="pairs" role="group" aria-label="Minimalism font pairing">
+      <span class="pairs-label">Font pairing</span>
+      <div class="pairs-row" data-pairs="mn"></div>
+    </div>
+  </div>
+  <div class="mn mn-spec" data-spec="mn"></div>
+  <p class="row-cap">Creator · phone (360px)</p>
+  <div class="phones" data-phones="mn"></div>
+  <p class="row-cap">Schbang admin · desktop</p>
+  <div class="desk-scroll"><div class="desk mn" data-desk="mn"></div></div>
+</section>
+
+<footer class="ch-foot">
+  <h2>Where the fonts came from</h2>
+  <ul>
+    <li><a href="https://www.fontshare.com/">Fontshare</a>: Indian Type Foundry's free library (Tanker, Cabinet Grotesk, Panchang, Supreme, Switzer, Zodiak, Gambetta, General Sans). See also <a href="https://madegooddesigns.com/fontshare/">this review of Fontshare's licence</a>.</li>
+    <li><a href="https://fonts.google.com/">Google Fonts</a> (open licence): Martian Mono (Evil Martians), Anek Latin and Anek Devanagari, Mukta (Ek Type), Teko, Hind and Sarpanch (Indian Type Foundry), Tiro Devanagari Hindi (Tiro Typeworks).</li>
+    <li>Lists we checked and passed over because their picks are now everywhere (Space Grotesk, Archivo Black, Syne, Bricolage, Inter, Space Mono): <a href="https://neobrutalism.com/blog/14-best-fonts-neobrutalism-design">neobrutalism.com</a>, <a href="https://blog.kristi.digital/p/my-favourite-fonts-for-neobrutalist-web-design">Kristi Digital</a>, <a href="https://www.typewolf.com/top-10-brutalist-fonts">Typewolf</a>, <a href="https://fontalternatives.com/blog/neo-grotesk-fatigue-2026/">Font Alternatives on neo-grotesk fatigue</a>.</li>
+  </ul>
+  <h2>Picking one</h2>
+  <p>Say which direction and pairing, e.g. "Neo-brutalism, Poster" or "Minimalism, Register". It gets built on its own branch, like the clay one, and nothing goes to main.</p>
+</footer>
+
+<script>
+/* ───────── Real Align content (apps/web/src/lib/mock-data.ts) ───────── */
+const BRIEFS = [
+  { slug: 'britannia', name: 'Britannia', ind: 'Food & FMCG', tier: 'Macro', line: 'Good Day & Jim Jam social remix', desc: 'Looking for food, lifestyle, and comedy creators for the Good Day & Jim Jam social remix campaign.', formats: ['Instagram Reel', 'YouTube Short', 'Family Challenge'], who: 'Min 100k followers, >4.5% engagement rate, family/comedy niche.', likes: 38, nb: 'narangi' },
+  { slug: 'fevicol', name: 'Fevicol', ind: 'Lifestyle & DIY', tier: 'Mega', line: '#FevicolKaJod conversation series', desc: 'The iconic adhesive brand is seeking quirky creators for the #FevicolKaJod cultural conversation series.', formats: ['Witty Reel', 'DIY Craft Post', 'Memetic Content'], who: 'High creativity score, humor/DIY creators with strong audience retention.', likes: 54, nb: 'rani', pitched: 'SHORTLISTED', liked: true },
+  { slug: 'enamor', name: 'Enamor', ind: 'Fashion & Activewear', tier: 'Mid-Tier', line: 'A real workout-to-weekend day', desc: 'Fitness and lifestyle creators needed to show Enamor activewear through a real workout-to-weekend day.', formats: ['Workout Reel', 'Try-On Haul', 'Product Review'], who: 'Fitness or lifestyle niche, 25k+ followers, active women 18–35 audience.', likes: 29, nb: 'jamuni' },
+  { slug: 'swiggy', name: 'Swiggy', ind: 'Food Delivery & Tech', tier: 'Mega', line: 'Late-night cravings & IPL match days', desc: 'Food vloggers and city explorers needed for the late-night cravings and IPL match day feasts.', formats: ['Food Hunt Reel', 'Story Swipe-Up', 'Matchday Snack Review'], who: 'Food lovers with hyper-local Tier 1/2 metro audience.', likes: 67, nb: 'neela', pitched: 'PENDING' },
+  { slug: 'kotak811', name: 'Kotak811', ind: 'Finance & FinTech', tier: 'Macro', line: 'Zero-balance savings, smart investing', desc: 'Finance educators and young adult lifestyle creators to promote digital zero-balance savings and smart investing.', formats: ['Explainer Reel', 'Money Management Post', 'App Feature Tour'], who: 'Credible voice, 18-35 age group skew, transparent disclaimers.', likes: 21, nb: 'hara' },
+  { slug: 'myntra', name: 'Myntra', ind: 'Fashion & E-Commerce', tier: 'Macro', line: 'End of Reason Sale street style', desc: 'End of Reason Sale (EORS) creators across Gen-Z street style, festive wear, and everyday drip.', formats: ['OOTD Reel', 'Styling Lookbook', 'Try-On Haul'], who: 'Trend-forward, high visual aesthetics, active fashion community.', likes: 45, nb: 'narangi' },
+];
+const B = Object.fromEntries(BRIEFS.map((b) => [b.slug, b]));
+
+/* One label per status on both sides (lib/status.ts). */
+const STATUS = {
+  PENDING:      { label: 'Pending',      step: 0, nb: 'white' },
+  UNDER_REVIEW: { label: 'In review',    step: 1, nb: 'neela' },
+  SHORTLISTED:  { label: 'Shortlisted',  step: 2, nb: 'jamuni' },
+  APPROVED:     { label: 'Approved',     step: 3, nb: 'hara' },
+  REJECTED:     { label: 'Not selected', step: 3, nb: 'rani' },
+};
+const STEPS = ['Sent', 'In review', 'Shortlist', 'Decision'];
+const stepLabel = (status, i) => (i === 3 && STATUS[status].step === 3 ? STATUS[status].label : STEPS[i]);
+
+const MY_PITCHES = [
+  { slug: 'fevicol', status: 'SHORTLISTED', rate: 40000, sent: '28 Sep', make: '1 Witty Reel + 2 Stories', note: { who: 'Schbang team', when: '1 Oct', text: 'Love the cricket-bat idea. Send a rough script by Friday.' } },
+  { slug: 'britannia', status: 'UNDER_REVIEW', rate: 45000, sent: '30 Sep', make: '1 Reel + 2 Story slides' },
+  { slug: 'swiggy', status: 'PENDING', rate: 25000, sent: '2 Oct', make: '1 Food Hunt Reel' },
+];
+
+/* Demo pitch queue: the app's fixtures plus two sample rows (Kabir, Natasha). */
+const QUEUE = [
+  { id: 'q1', name: 'Rohan Joshi', handle: '@rohan_joshicomics', city: 'Mumbai', brief: 'britannia', rate: 45000, ig: 145000, er: '6.8%', status: 'UNDER_REVIEW', recv: '30 Sep', pitch: 'A 60-second Reel where three generations of my family fight over the last Jim Jam during a cricket match.', make: ['1× Instagram Reel', '2× Story slides'] },
+  { id: 'q2', name: 'Kabir Seth', handle: '@kabir_explores', city: 'Delhi', brief: 'swiggy', rate: 60000, ig: 285000, er: '5.4%', status: 'PENDING', recv: '2 Oct', pitch: 'A midnight food walk through Old Delhi, racing my brother: whoever’s Swiggy order lands first picks the IPL team we cheer for.', make: ['1× Food Hunt Reel', '3× Story frames'] },
+  { id: 'q3', name: 'Natasha Rao', handle: '@natasharao_fits', city: 'Mumbai', brief: 'enamor', rate: 30000, ig: 112000, er: '6.1%', status: 'PENDING', recv: '1 Oct', pitch: 'A 5am Marine Drive run straight to a Bandra brunch in one Enamor set. No outfit change, a real sweat test.', make: ['1× Workout Reel', '1× Try-On Haul'] },
+  { id: 'q4', name: 'Aanya Sen', handle: '@aanya.beauty', city: 'Bangalore', brief: 'enamor', rate: 35000, ig: 68000, er: '7.9%', status: 'SHORTLISTED', recv: '29 Sep', pitch: 'A 4K “Workout to Weekend” reel: one Enamor activewear set from a morning gym session straight into weekend errands, with a try-on close-up.', make: ['1× Workout Reel (4K)', '1× Try-On Carousel'] },
+  { id: 'q5', name: 'Siddharth Verma', handle: '@siddharth_tech', city: 'Gurgaon', brief: 'kotak811', rate: 80000, ig: 320000, er: '5.2%', status: 'APPROVED', recv: '27 Sep', pitch: 'A tech-desk explainer of the zero-balance account setup in under 3 minutes, with screen recordings and a cashback breakdown.', make: ['1× YouTube video', '1× Repurposed IG Reel'] },
+];
+const QUEUE_FILTERS = [
+  ['All', () => true],
+  ['Pending', (s) => s === 'PENDING'],
+  ['In review', (s) => s === 'UNDER_REVIEW'],
+  ['Shortlisted', (s) => s === 'SHORTLISTED'],
+  ['Decided', (s) => s === 'APPROVED' || s === 'REJECTED'],
+];
+
+const TIERS = [['All', 'All'], ['Micro', 'Micro'], ['Mid-Tier', 'Mid-tier'], ['Macro', 'Macro'], ['Mega', 'Mega']];
+const PITCH_TEXT = 'A 60-second late-night food hunt through Indore’s Sarafa Bazaar on an IPL night: I order the match-day snack box on Swiggy, then rate every stall against it, with the score on screen.';
+
+/* ───────── Font pairings ───────── */
+const PAIRS = {
+  nb: {
+    poster: { label: 'Poster', sub: 'Tanker + Cabinet Grotesk', rows: [
+      ['Brand names, titles', 'Tanker', "font-family:'Tanker';text-transform:uppercase", 'Indian Type Foundry · Fontshare', 'A heavy condensed poster face. Brand names stay huge on a 360px phone, like a hand-painted hoarding, and still fit.'],
+      ['Interface, reading', 'Cabinet Grotesk', "font-family:'Cabinet Grotesk';font-weight:800", 'Indian Type Foundry · Fontshare', 'A grotesk with odd, lively details and nine weights: calm at 15px for brief text, loud at 800 for buttons.'],
+      ['Numbers only', 'Martian Mono', "font-family:'Martian Mono';font-stretch:87.5%;font-weight:600;font-size:20px", 'Evil Martians · Google Fonts', 'Rupees, follower counts and dates line up in columns. Never used for words, so it reads as data, not decoration.'],
+      ['Hindi', 'Teko + Hind', "font-family:'Teko';font-weight:600", 'Indian Type Foundry · Google Fonts', 'Condensed Devanagari for titles that matches Tanker’s shape, and Hind for reading Hindi.'],
+    ] },
+    signboard: { label: 'Signboard', sub: 'Panchang + Supreme', rows: [
+      ['Brand names, titles', 'Panchang', "font-family:'Panchang';font-weight:800;text-transform:uppercase;font-size:20px", 'Indian Type Foundry · Fontshare', 'Extra-wide and square-shouldered, like a shop signboard. Set smaller, it still reads loud from across a room.'],
+      ['Interface, reading', 'Supreme', "font-family:'Supreme';font-weight:700", 'Indian Type Foundry · Fontshare', 'A geometric-leaning grotesk with open shapes; clear at small sizes on low-end screens.'],
+      ['Numbers only', 'Martian Mono', "font-family:'Martian Mono';font-stretch:87.5%;font-weight:600;font-size:20px", 'Evil Martians · Google Fonts', 'Same job as in Poster: figures only.'],
+      ['Hindi', 'Sarpanch + Hind', "font-family:'Sarpanch';font-weight:900", 'Indian Type Foundry · Google Fonts', 'A wide, square Devanagari that matches Panchang, made by the same foundry.'],
+    ] },
+    bharat: { label: 'Bharat', sub: 'Anek, one family', rows: [
+      ['Brand names, titles', 'Anek Latin Expanded', "font-family:'Anek Latin';font-stretch:125%;font-weight:800;text-transform:uppercase;font-size:21px", 'Ek Type · Google Fonts', 'One variable family with a width axis: stretched wide and heavy for posters, normal width for reading.'],
+      ['Interface, reading', 'Anek Latin', "font-family:'Anek Latin';font-weight:600", 'Ek Type · Google Fonts', 'The same family at normal width, so every screen has one voice.'],
+      ['Numbers only', 'Martian Mono', "font-family:'Martian Mono';font-stretch:87.5%;font-weight:600;font-size:20px", 'Evil Martians · Google Fonts', 'Figures only.'],
+      ['Hindi and regional', 'Anek Devanagari', "font-family:'Anek Devanagari';font-weight:700", 'Ek Type · Google Fonts', 'Anek is drawn for ten Indian scripts (Devanagari, Bangla, Tamil, Telugu, Kannada, Malayalam, Gujarati, Gurmukhi, Odia, Latin), ready for the planned regional UI.'],
+    ] },
+  },
+  mn: {
+    register: { label: 'Register', sub: 'Zodiak + Switzer', rows: [
+      ['Brand names, titles', 'Zodiak', "font-family:'Zodiak';font-weight:330;font-size:26px", 'Indian Type Foundry · Fontshare', 'A sharp, high-contrast serif. At light weights brand names read like entries in a well-kept register, so the name is the logo.'],
+      ['Interface, reading', 'Switzer', "font-family:'Switzer';font-weight:500", 'Indian Type Foundry · Fontshare', 'A quiet neo-grotesk with soft curves. It sits behind the content and stays clear at 13px.'],
+      ['Numbers', 'Switzer, tabular', "font-family:'Switzer';font-variant-numeric:tabular-nums", 'Same family', 'Rates and follower counts line up without bringing in a second voice.'],
+      ['Hindi', 'Tiro Devanagari Hindi + Mukta', "font-family:'Tiro Devanagari Hindi'", 'Tiro Typeworks · Ek Type · Google Fonts', 'A literary Devanagari serif for titles to match Zodiak, and Mukta for reading.'],
+    ] },
+    editorial: { label: 'Editorial', sub: 'Gambetta + General Sans', rows: [
+      ['Brand names, titles', 'Gambetta', "font-family:'Gambetta';font-weight:400;font-size:26px", 'Indian Type Foundry · Fontshare', 'A warmer, rounder serif than Zodiak. It feels more like a magazine than a ledger.'],
+      ['Interface, reading', 'General Sans', "font-family:'General Sans';font-weight:500", 'Indian Type Foundry · Fontshare', 'A friendly grotesk, a touch rounder than Switzer at small sizes.'],
+      ['Numbers', 'General Sans, tabular', "font-family:'General Sans';font-variant-numeric:tabular-nums", 'Same family', 'One voice for words and figures.'],
+      ['Hindi', 'Tiro Devanagari Hindi + Mukta', "font-family:'Tiro Devanagari Hindi'", 'Tiro Typeworks · Ek Type · Google Fonts', 'Same Hindi partners as Register.'],
+    ] },
+    hindi: { label: 'Hindi-first', sub: 'Tiro + Mukta', rows: [
+      ['Brand names, titles', 'Tiro Devanagari Hindi', "font-family:'Tiro Devanagari Hindi';font-size:26px", 'Tiro Typeworks · Google Fonts', 'Latin and Devanagari drawn together, so a Hindi screen uses exactly the same serif as the English one.'],
+      ['Interface, reading', 'Mukta', "font-family:'Mukta';font-weight:500", 'Ek Type · Google Fonts', 'An Indian-made sans with Latin and Devanagari in one family; sturdy on cheap screens.'],
+      ['Numbers', 'Mukta, tabular', "font-family:'Mukta';font-variant-numeric:tabular-nums", 'Same family', 'One voice for words and figures.'],
+      ['Hindi', 'Built in', "font-family:'Mukta';font-weight:600", 'No extra fonts', 'Nothing extra to load when Hindi ships.'],
+    ] },
+  },
+};
+
+/* ───────── Helpers ───────── */
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const rupee = (n) => '₹' + n.toLocaleString('en-IN');
+const lakh = (n) => (n >= 100000 ? `${+(n / 100000).toFixed(2)} L` : `${Math.round(n / 1000)}K`);
+const icon = (id, cls = 'ico') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+const tierName = (t) => (t === 'Mid-Tier' ? 'Mid-tier' : t);
+
+/* ════════════ NEO-BRUTAL screens ════════════ */
+const nbTop = (right = 'menu') => `
+<header class="nb-top">
+  <a class="nb-word" href="#" aria-label="Align by Schbang"><span class="nb-word-box">Align</span><span class="nb-by">by Schbang</span></a>
+  ${right === 'menu' ? `<button class="nb-sq nb-press-sm" aria-label="Open menu">${icon('menu')}</button>` : `<span class="nb-avatar" aria-label="Rohan Joshi">RJ</span>`}
+</header>`;
+
+const nbStamp = (status, extra = '', prefix = '') => `<span class="nb-stamp ${extra} s-${STATUS[status].nb}">${prefix}${STATUS[status].label}</span>`;
+
+const nbCard = (b) => `
+<article class="nb-card" data-tier="${b.tier}" data-text="${esc((b.name + ' ' + b.ind + ' ' + b.desc).toLowerCase())}">
+  <div class="nb-card-top f-${b.nb}">
+    <div class="nb-card-row">
+      <span class="nb-ind">${esc(b.ind)} · ${tierName(b.tier)}</span>
+      <button class="nb-like nb-press-sm" data-like aria-pressed="${!!b.liked}" aria-label="Like the ${b.name} brief">${icon('heart')}<span class="nb-data">${b.likes}</span></button>
+    </div>
+    <h2 class="nb-brand">${b.name}</h2>
+    <p class="nb-card-line">${esc(b.line)}</p>
+    ${b.pitched ? nbStamp(b.pitched, '', 'You pitched · ') : ''}
+  </div>
+  <div class="nb-card-body">
+    <p class="nb-desc">${esc(b.desc)}</p>
+    <ul class="nb-formats" aria-label="Formats">${b.formats.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+    <a class="nb-view nb-press" href="#">View brief ${icon('arrow')}</a>
+  </div>
+</article>`;
+
+const nbBriefs = () => `
+${nbTop()}
+<div class="nb-pad">
+  <h1 class="nb-h1">Open brand briefs</h1>
+  <p class="nb-lede"><span class="nb-count">6 live</span> Real Schbang client work. Pick a brief and pitch your idea.</p>
+  <label class="nb-search">${icon('search')}<span class="sr">Search briefs</span><input type="search" data-search placeholder="Search brands or niches"></label>
+  <div class="nb-chips" role="group" aria-label="Filter by creator tier">
+    ${TIERS.map(([v, l], i) => `<button class="nb-chip nb-press-sm" data-tier-btn="${v}" aria-pressed="${i === 0}">${l}</button>`).join('')}
+  </div>
+</div>
+<div class="nb-list" data-list>
+  ${BRIEFS.map(nbCard).join('')}
+  <div class="nb-empty" data-empty hidden>No briefs match that right now.<br><button class="nb-btn nb-press-sm" data-reset>Show all briefs</button></div>
+</div>`;
+
+const nbBrief = () => {
+  const b = B.fevicol;
+  return `
+<header class="nb-top"><a class="nb-back nb-press-sm" href="#">${icon('back')}All briefs</a><span class="nb-word-box">Align</span></header>
+<section class="nb-hero f-${b.nb}">
+  <h1 class="nb-hero-brand">${b.name}</h1>
+  <p class="nb-hero-line">${esc(b.line)}</p>
+  <div class="nb-hero-tags"><span class="nb-tag">${esc(b.ind)}</span><span class="nb-tag">${b.tier} tier</span>
+    <button class="nb-like nb-press-sm" data-like aria-pressed="false" aria-label="Like the ${b.name} brief">${icon('heart')}<span class="nb-data">${b.likes}</span></button></div>
+</section>
+<section class="nb-sec"><h2 class="nb-h2">The brief</h2><p class="nb-body">${esc(b.desc)}</p></section>
+<section class="nb-sec"><h2 class="nb-h2">What to make</h2><ul class="nb-make">${b.formats.map((f) => `<li><span class="nb-tick">${icon('check')}</span>${esc(f)}</li>`).join('')}</ul></section>
+<section class="nb-sec"><h2 class="nb-h2">Who it’s for</h2><p class="nb-box">${esc(b.who)}</p></section>
+<section class="nb-sec"><h2 class="nb-h2">How it works</h2>
+  <ol class="nb-how">
+    <li><span><b>Send your pitch.</b>Your idea, formats, rate and numbers.</span></li>
+    <li><span><b>A person reads it.</b>Someone on the Schbang team reviews every pitch. No algorithm.</span></li>
+    <li><span><b>Follow the decision.</b>Shortlist, approval or a note, right on your dashboard.</span></li>
+  </ol>
+</section>
+<div class="nb-sticky">
+  <a class="nb-cta nb-press" href="#">Pitch to this brief — free ${icon('arrow')}</a>
+  <p class="nb-sticky-note">3 free pitches, then <span class="nb-data">₹200</span> once for every brief</p>
+</div>`;
+};
+
+const nbTrack = (status) => `
+<ol class="nb-track" aria-label="Status: ${STATUS[status].label}">${STEPS.map((_, i) => {
+  const st = STATUS[status].step;
+  const cls = i < st ? 'done' : i === st ? 'now' : '';
+  return `<li class="${cls}"${i === st ? ` style="background:var(--${STATUS[status].nb})"` : ''}>${i <= st ? icon('check') : ''}${stepLabel(status, i)}</li>`;
+}).join('')}</ol>`;
+
+const nbTicket = (p) => {
+  const b = B[p.slug];
+  return `
+<article class="nb-ticket">
+  <div class="nb-ticket-head f-${b.nb}"><h3 class="nb-ticket-brand">${b.name}</h3><span class="nb-data nb-rate">${rupee(p.rate)}</span></div>
+  <div class="nb-ticket-body">
+    ${nbStamp(p.status, 'big')}
+    ${nbTrack(p.status)}
+    ${p.note ? `<div class="nb-note"><b>${p.note.who} · <span class="nb-data">${p.note.when}</span></b>${esc(p.note.text)}</div>` : ''}
+    <p class="nb-ticket-meta"><span class="nb-data">Sent ${p.sent}</span> · ${esc(p.make)}</p>
+  </div>
+</article>`;
+};
+
+const nbDash = () => `
+${nbTop('avatar')}
+<div class="nb-pad">
+  <h1 class="nb-h1">Hi, Rohan</h1>
+  <p class="nb-plan"><span class="nb-tag f-hara">All-access</span>Every current and future brief</p>
+  <p class="nb-tally"><span class="nb-data">3</span> pitches · <span class="nb-data">1</span> shortlisted · <span class="nb-data">0</span> decided</p>
+</div>
+<div class="nb-padx"><h2 class="nb-h2">Your pitches</h2></div>
+<div class="nb-tickets">${MY_PITCHES.map(nbTicket).join('')}</div>
+<div class="nb-pad" style="padding-top:18px"><a class="nb-cta nb-press" href="#">Browse open briefs ${icon('arrow')}</a></div>`;
+
+const APPLY_STEPS = ['You', 'Insta', 'YouTube', 'Others', 'Pitch', 'Review'];
+const nbApply = () => `
+<header class="nb-top"><a class="nb-back nb-press-sm" href="#">${icon('back')}Swiggy brief</a><span class="nb-data">Step 5/6</span></header>
+<div class="nb-pad">
+  <h1 class="nb-h1 sm">Pitch to Swiggy</h1>
+  <ol class="nb-steps" aria-label="Step 5 of 6: Pitch">${APPLY_STEPS.map((s, i) => `<li class="${i < 4 ? 'done' : i === 4 ? 'now' : ''}"><i>${i < 4 ? icon('check') : i + 1}</i>${s}</li>`).join('')}</ol>
+  <label class="nb-field"><span class="nb-label">Your idea for Swiggy</span>
+    <textarea rows="6" data-count>${PITCH_TEXT}</textarea>
+    <span class="nb-counter"><span>Say what you’d make and why it fits.</span><span class="nb-data" data-counter>${PITCH_TEXT.length} / 1500</span></span></label>
+  <fieldset class="nb-field"><legend>What you’ll make</legend>
+    <div class="nb-toggles">${B.swiggy.formats.map((f, i) => `<button type="button" class="nb-toggle nb-press-sm" data-toggle aria-pressed="${i !== 1}">${icon('check')}${f}</button>`).join('')}</div></fieldset>
+  <label class="nb-field"><span class="nb-label">Expected rate</span>
+    <span class="nb-rupee"><b>₹</b><input inputmode="numeric" value="25,000" aria-label="Expected rate in rupees"></span>
+    <small>For everything above. The brand team sees this number.</small></label>
+  <p class="nb-honest">Your follower numbers are self-reported. The Schbang team checks them before a shortlist.</p>
+</div>
+<div class="nb-sticky two"><button class="nb-btn nb-press" type="button">Back</button><button class="nb-cta nb-press" type="button">Review pitch ${icon('arrow')}</button></div>`;
+
+const nbSignin = () => `
+${nbTop()}
+<div class="nb-pad">
+  <h1 class="nb-h1">Log in</h1>
+  <p class="nb-lede">Pitch to brand briefs and follow every decision.</p>
+  <h2 class="nb-h3">Demo logins</h2>
+  <button class="nb-demo f-rani nb-press" type="button"><span><small>Creator demo</small><strong>Rohan Joshi</strong></span>${icon('arrow')}</button>
+  <button class="nb-demo f-neela nb-press" type="button"><span><small>Admin demo</small><strong>Schbang Admin</strong></span>${icon('arrow')}</button>
+  <div class="nb-or">or with email</div>
+  <label class="nb-field"><span class="nb-label">Email</span><input type="email" placeholder="you@example.com" autocomplete="off"></label>
+  <label class="nb-field"><span class="nb-label">Password</span><input type="password" placeholder="Your password" autocomplete="off"></label>
+  <button class="nb-cta nb-press" type="button">Log in ${icon('arrow')}</button>
+  <p class="nb-small">New here? <a href="#">Create an account</a><br>Your first 3 pitches are free.</p>
+</div>`;
+
+const nbRow = (q, sel) => `
+<tr tabindex="0" data-id="${q.id}" ${sel ? 'aria-current="true"' : ''}>
+  <td class="who"><b>${q.name}</b><span>${q.handle}</span></td>
+  <td><span class="nb-tbrand">${B[q.brief].name}</span></td>
+  <td class="num"><span class="nb-data">${rupee(q.rate)}</span></td>
+  <td class="num"><span class="nb-data">${lakh(q.ig)}</span></td>
+  <td><span class="nb-pill s-${STATUS[q.status].nb}">${STATUS[q.status].label}</span></td>
+  <td class="num"><span class="nb-data">${q.recv}</span></td>
+</tr>`;
+
+const nextAction = (status) => (status === 'SHORTLISTED' ? 'APPROVED' : status === 'PENDING' || status === 'UNDER_REVIEW' ? 'SHORTLISTED' : null);
+const ACTIONS = [['SHORTLISTED', 'Shortlist', 'S'], ['APPROVED', 'Approve', 'A'], ['REJECTED', 'Not selected', 'N']];
+
+const nbInsp = (q, receipt = '') => {
+  const b = B[q.brief], first = q.name.split(' ')[0], primary = nextAction(q.status);
+  const acts = [...ACTIONS].sort((a, c) => (c[0] === primary) - (a[0] === primary));
+  return `
+<div class="nb-insp-head f-${b.nb}"><span class="nb-ind">Pitch to</span><span class="nb-insp-brand">${b.name}</span></div>
+<div class="nb-insp-body">
+  <h2 class="nb-insp-name">${q.name}</h2>
+  <p class="nb-insp-handle">${q.handle} · ${q.city}</p>
+  <dl class="nb-facts"><div><dt>Instagram</dt><dd>${lakh(q.ig)}</dd></div><div><dt>Eng. rate</dt><dd>${q.er}</dd></div><div><dt>Asks</dt><dd>${rupee(q.rate)}</dd></div></dl>
+  <p class="nb-fine">Numbers are self-reported.</p>
+  <h3 class="nb-h3">Pitch</h3><p class="nb-body">${esc(q.pitch)}</p>
+  <h3 class="nb-h3">Will make</h3><ul class="nb-formats">${q.make.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>
+  <h3 class="nb-h3">Status</h3>${nbStamp(q.status)}${nbTrack(q.status)}
+  <label class="nb-field"><span class="nb-label">Note to ${first}</span><textarea rows="2" placeholder="e.g. Send a rough script by Friday"></textarea><small>${first} sees this on their dashboard.</small></label>
+  <div class="nb-actions">${acts.map(([s, l, k]) => `<button type="button" class="${s === primary ? 'nb-cta' : 'nb-btn'} nb-press" data-act="${s}" ${q.status === s ? 'disabled aria-disabled="true" style="opacity:.45;cursor:not-allowed"' : ''}>${l}<kbd>${k}</kbd></button>`).join('')}</div>
+  <p class="nb-receipt" role="status">${receipt}</p>
+</div>`;
+};
+
+const nbAdmin = () => `
+<header class="nb-dtop">
+  <a class="nb-word" href="#"><span class="nb-word-box">Align</span><span class="nb-by">Admin</span></a>
+  <nav class="nb-tabs" aria-label="Admin sections"><a aria-current="page">Pitches <span class="nb-data">5</span></a><a>Briefs <span class="nb-data">6</span></a><a>Creators <span class="nb-data">5</span></a></nav>
+  <span class="nb-me"><span class="nb-avatar sm">SA</span>Schbang Admin Lead</span>
+</header>
+<div class="nb-dmain">
+  <section aria-labelledby="nbq">
+    <div class="nb-qhead"><h1 class="nb-h1 sm" id="nbq">Pitch queue</h1>
+      <div class="nb-chips" role="group" aria-label="Filter by status" data-qfilters></div></div>
+    <table class="nb-table"><thead><tr><th>Creator</th><th>Brief</th><th class="num">Asks</th><th class="num">Followers*</th><th>Status</th><th class="num">Received</th></tr></thead><tbody data-rows></tbody></table>
+    <p class="nb-fine">* Instagram followers, self-reported by the creator.</p>
+  </section>
+  <aside class="nb-insp" data-insp aria-label="Selected pitch"></aside>
+</div>`;
+
+/* ════════════ MINIMAL screens ════════════ */
+const mnTop = (right = 'menu') => `
+<header class="mn-top">
+  <a class="mn-word" href="#">Align<span>by Schbang</span></a>
+  ${right === 'menu' ? '<button class="mn-textbtn" type="button">Menu</button>' : '<span class="mn-initials" aria-label="Rohan Joshi">RJ</span>'}
+</header>`;
+
+const mnSt = (status) => `<span class="mn-st"><i class="mn-dot d-${status}"></i>${STATUS[status].label}</span>`;
+
+const mnRow = (b) => `
+<li class="mn-row" data-tier="${b.tier}" data-text="${esc((b.name + ' ' + b.ind + ' ' + b.desc).toLowerCase())}">
+  <a class="mn-row-link" href="#">
+    <span class="mn-row-top"><span class="mn-brand">${b.name}</span>${icon('arrow', 'mn-arrow')}</span>
+    <span class="mn-meta">${esc(b.ind)} · ${tierName(b.tier)}</span>
+    <span class="mn-desc">${esc(b.desc)}</span>
+    <span class="mn-meta">${b.formats.map(esc).join(' / ')}</span>
+    ${b.pitched ? `<span class="mn-meta" style="color:var(--ink)">You pitched · ${mnSt(b.pitched)}</span>` : ''}
+  </a>
+  <button class="mn-like" data-like aria-pressed="${!!b.liked}" aria-label="Like the ${b.name} brief">${icon('heart')}<span class="mn-num">${b.likes}</span></button>
+</li>`;
+
+const mnBriefs = () => `
+${mnTop()}
+<div class="mn-pad">
+  <h1 class="mn-h1">Open brand briefs</h1>
+  <p class="mn-lede">Six live briefs from Schbang clients. Pick one and pitch your idea.</p>
+  <label class="mn-search">${icon('search')}<span class="sr">Search briefs</span><input type="search" data-search placeholder="Search brands or niches"></label>
+  <div class="mn-tabs" role="group" aria-label="Filter by creator tier">
+    ${TIERS.map(([v, l], i) => `<button type="button" data-tier-btn="${v}" aria-pressed="${i === 0}">${l}</button>`).join('')}
+  </div>
+</div>
+<ol class="mn-index" data-list>
+  ${BRIEFS.map(mnRow).join('')}
+  <li class="mn-empty" data-empty hidden>No briefs match that right now. <button class="mn-linkbtn" data-reset>Show all briefs</button></li>
+</ol>`;
+
+const mnBrief = () => {
+  const b = B.fevicol;
+  return `
+<header class="mn-top"><a class="mn-back" href="#">${icon('back')}All briefs</a>
+  <button class="mn-like" data-like aria-pressed="false" aria-label="Like the ${b.name} brief">${icon('heart')}<span class="mn-num">${b.likes}</span></button></header>
+<div class="mn-pad">
+  <h1 class="mn-hero">${b.name}</h1>
+  <p class="mn-hero-meta"><span>${esc(b.ind)}</span><span>${b.tier} tier</span></p>
+  <p class="mn-lead">${esc(b.desc)}</p>
+  <dl class="mn-dl">
+    <div><dt>Make</dt><dd><ul>${b.formats.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></dd></div>
+    <div><dt>Who it’s for</dt><dd>${esc(b.who)}</dd></div>
+    <div><dt>How it works</dt><dd>Send your idea, formats, rate and numbers. A person on the Schbang team reads every pitch and answers on your dashboard.</dd></div>
+  </dl>
+</div>
+<div class="mn-sticky">
+  <a class="mn-cta" href="#">Pitch to this brief — free</a>
+  <p>3 free pitches, then <span class="mn-num">₹200</span> once for every brief</p>
+</div>`;
+};
+
+const mnLine = (status) => `
+<ol class="mn-line ${status === 'APPROVED' ? 'ok' : ''}" aria-label="Status: ${STATUS[status].label}">${STEPS.map((_, i) => {
+  const st = STATUS[status].step;
+  return `<li class="${i < st ? 'done' : i === st ? 'now' : ''}">${stepLabel(status, i)}</li>`;
+}).join('')}</ol>`;
+
+const mnPitch = (p) => `
+<li class="mn-pitch">
+  <div class="mn-p-top"><span class="mn-brand sm">${B[p.slug].name}</span><span class="mn-num">${rupee(p.rate)}</span></div>
+  <p class="mn-meta" style="margin:8px 0 0">${mnSt(p.status)} · Sent ${p.sent} · ${esc(p.make)}</p>
+  ${mnLine(p.status)}
+  ${p.note ? `<blockquote class="mn-note"><p>“${esc(p.note.text)}”</p><footer>${p.note.who}, ${p.note.when}</footer></blockquote>` : ''}
+</li>`;
+
+const mnDash = () => `
+${mnTop('avatar')}
+<div class="mn-pad">
+  <h1 class="mn-h1">Hi, Rohan</h1>
+  <p class="mn-lede" style="margin-bottom:12px">All-access member: every current and future brief.</p>
+</div>
+<section class="mn-sec">
+  <h2 class="mn-h2">Your pitches <span class="mn-num">3</span></h2>
+  <ol class="mn-pitches">${MY_PITCHES.map(mnPitch).join('')}</ol>
+</section>
+<div class="mn-pad" style="padding-top:24px;padding-bottom:28px"><a class="mn-cta" href="#">Browse open briefs</a></div>`;
+
+const MN_STEPS = ['You', 'Insta', 'YouTube', 'Others', 'Pitch', 'Review'];
+const mnApply = () => `
+<header class="mn-top"><a class="mn-back" href="#">${icon('back')}Swiggy brief</a><span class="mn-step mn-num">5 of 6</span></header>
+<div class="mn-pad">
+  <h1 class="mn-h1 sm">Pitch to Swiggy</h1>
+  <ol class="mn-prog" aria-label="Step 5 of 6: Pitch">${MN_STEPS.map((s, i) => `<li class="${i < 4 ? 'done' : i === 4 ? 'now' : ''}">${s}</li>`).join('')}</ol>
+  <form class="mn-form" onsubmit="return false">
+    <label class="mn-field"><span class="mn-label">Your idea for Swiggy</span>
+      <textarea rows="6" data-count>${PITCH_TEXT}</textarea>
+      <span class="mn-hint"><span>Say what you’d make and why it fits.</span><span class="mn-num" data-counter>${PITCH_TEXT.length} / 1500</span></span></label>
+    <fieldset class="mn-field"><legend>What you’ll make</legend>
+      <ul class="mn-checks">${B.swiggy.formats.map((f, i) => `<li><label class="mn-check"><input type="checkbox" ${i !== 1 ? 'checked' : ''}>${f}</label></li>`).join('')}</ul></fieldset>
+    <label class="mn-field"><span class="mn-label">Expected rate</span>
+      <span class="mn-rupee"><b>₹</b><input inputmode="numeric" value="25,000" class="mn-num" aria-label="Expected rate in rupees"></span>
+      <span class="mn-hint">For everything above. The brand team sees this number.</span></label>
+    <p class="mn-honest">Your follower numbers are self-reported. The Schbang team checks them before a shortlist.</p>
+  </form>
+</div>
+<div class="mn-sticky two"><button class="mn-ghost" type="button">Back</button><button class="mn-cta" type="button">Review pitch</button></div>`;
+
+const mnSignin = () => `
+${mnTop()}
+<div class="mn-pad">
+  <h1 class="mn-h1">Log in</h1>
+  <p class="mn-lede">Pitch to brand briefs and follow every decision.</p>
+  <h2 class="mn-h2" style="border-bottom:0;padding-bottom:0">Demo logins</h2>
+  <ul class="mn-demo">
+    <li><button type="button"><span><strong>Rohan Joshi</strong><small>Creator demo</small></span>${icon('arrow', 'mn-arrow')}</button></li>
+    <li><button type="button"><span><strong>Schbang Admin Lead</strong><small>Admin demo</small></span>${icon('arrow', 'mn-arrow')}</button></li>
+  </ul>
+  <div class="mn-or">or with email</div>
+  <form onsubmit="return false">
+    <label class="mn-field" style="margin-bottom:18px"><span class="mn-label">Email</span><input type="email" placeholder="you@example.com" autocomplete="off"></label>
+    <label class="mn-field" style="margin-bottom:24px"><span class="mn-label">Password</span><input type="password" placeholder="Your password" autocomplete="off"></label>
+    <button class="mn-cta" type="button">Log in</button>
+  </form>
+  <p class="mn-small">New here? <a href="#">Create an account</a>. Your first 3 pitches are free.</p>
+</div>`;
+
+const mnTRow = (q, sel) => `
+<tr tabindex="0" data-id="${q.id}" ${sel ? 'aria-current="true"' : ''}>
+  <td class="who"><b>${q.name}</b><span>${q.handle}</span></td>
+  <td><span class="mn-tbrand">${B[q.brief].name}</span></td>
+  <td class="num">${rupee(q.rate)}</td>
+  <td class="num">${lakh(q.ig)}</td>
+  <td>${mnSt(q.status)}</td>
+  <td class="num">${q.recv}</td>
+</tr>`;
+
+const mnInsp = (q, receipt = '') => {
+  const first = q.name.split(' ')[0], primary = nextAction(q.status);
+  const acts = [...ACTIONS].sort((a, c) => (c[0] === primary) - (a[0] === primary));
+  return `
+<p class="mn-insp-to">Pitch to ${B[q.brief].name} · received ${q.recv}</p>
+<h2 class="mn-insp-name">${q.name}</h2>
+<p class="mn-insp-handle">${q.handle} · ${q.city}</p>
+<dl class="mn-facts"><div><dt>Instagram*</dt><dd>${lakh(q.ig)}</dd></div><div><dt>Eng. rate*</dt><dd>${q.er}</dd></div><div><dt>Asks</dt><dd>${rupee(q.rate)}</dd></div></dl>
+<h3 class="mn-h3">Pitch</h3><p class="mn-body">${esc(q.pitch)}</p>
+<h3 class="mn-h3">Will make</h3><ul class="mn-plain">${q.make.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>
+<h3 class="mn-h3">Status</h3>${mnSt(q.status)}${mnLine(q.status)}
+<label class="mn-field"><span class="mn-label">Note to ${first}</span><textarea rows="2" placeholder="e.g. Send a rough script by Friday"></textarea><span class="mn-hint">${first} sees this on their dashboard.</span></label>
+<div class="mn-actions">${acts.map(([s, l, k]) => `<button type="button" class="${s === primary ? 'mn-cta' : 'mn-btn'}" data-act="${s}" ${q.status === s ? 'disabled style="opacity:.45;cursor:not-allowed"' : ''}>${l} <kbd>${k}</kbd></button>`).join('')}</div>
+<p class="mn-receipt" role="status">${receipt}</p>`;
+};
+
+const mnAdmin = () => `
+<header class="mn-dtop">
+  <a class="mn-word" href="#">Align<span>Admin</span></a>
+  <nav class="mn-dtabs" aria-label="Admin sections"><a aria-current="page">Pitches <span class="mn-num">5</span></a><a>Briefs <span class="mn-num">6</span></a><a>Creators <span class="mn-num">5</span></a></nav>
+  <span class="mn-me">Schbang Admin Lead</span>
+</header>
+<div class="mn-dmain">
+  <section class="mn-queue" aria-labelledby="mnq">
+    <div class="mn-qhead"><h1 class="mn-h1 sm" id="mnq">Pitch queue</h1><div class="mn-tabs" role="group" aria-label="Filter by status" data-qfilters></div></div>
+    <table class="mn-table"><thead><tr><th>Creator</th><th>Brief</th><th class="num">Asks</th><th class="num">Followers*</th><th>Status</th><th class="num">Received</th></tr></thead><tbody data-rows></tbody></table>
+    <p class="mn-fine">* Instagram numbers, self-reported by the creator.</p>
+  </section>
+  <aside class="mn-insp" data-insp aria-label="Selected pitch"></aside>
+</div>`;
+
+/* ════════════ Mount ════════════ */
+const WORLDS = {
+  nb: { screens: [['Briefs', '/brands', nbBriefs], ['Brief page', '/brands/fevicol', nbBrief], ['Dashboard', '/dashboard', nbDash], ['Pitch form, step 5', '/apply/swiggy', nbApply], ['Log in', '/auth/signin', nbSignin]],
+        admin: nbAdmin, row: nbRow, insp: nbInsp, chip: (on, l, n) => `<button class="nb-chip nb-press-sm" data-qf="${l}" aria-pressed="${on}">${l}<span class="nb-data">${n}</span></button>` },
+  mn: { screens: [['Briefs', '/brands', mnBriefs], ['Brief page', '/brands/fevicol', mnBrief], ['Dashboard', '/dashboard', mnDash], ['Pitch form, step 5', '/apply/swiggy', mnApply], ['Log in', '/auth/signin', mnSignin]],
+        admin: mnAdmin, row: mnTRow, insp: mnInsp, chip: (on, l, n) => `<button type="button" data-qf="${l}" aria-pressed="${on}">${l}<span class="mn-num">${n}</span></button>` },
+};
+
+function renderSpec(w) {
+  const section = document.querySelector(`[data-world="${w}"]`);
+  const pair = PAIRS[w][section.dataset.pair];
+  const show = w === 'nb'
+    ? `<div class="nb-spec-show">
+        <p class="nb-spec-display">Fevicol<br>Kotak811</p>
+        <p class="nb-spec-ui">Pitch your idea with your real numbers. A person on the Schbang team reads every pitch.</p>
+        <p class="nb-spec-data">₹200 once · 1.45 L followers · 6.8% · 02 Oct</p>
+        <p class="nb-spec-hi" lang="hi"><span class="hi-d">खुले ब्रांड ब्रीफ़</span><span class="hi-b">इस ब्रीफ़ पर अपना आइडिया भेजें। Schbang की टीम हर पिच पढ़ती है।</span></p>
+      </div>`
+    : `<div class="mn-spec-show">
+        <p class="mn-spec-display">Britannia</p>
+        <p class="mn-spec-ui">Pitch your idea with your real numbers. A person on the Schbang team reads every pitch.</p>
+        <p class="mn-spec-data">₹200 once · 1.45 L followers · 6.8% · 2 Oct</p>
+        <p class="mn-spec-hi" lang="hi"><span class="hi-d">खुले ब्रांड ब्रीफ़</span><span class="hi-b">इस ब्रीफ़ पर अपना आइडिया भेजें। Schbang की टीम हर पिच पढ़ती है।</span></p>
+      </div>`;
+  const rows = pair.rows.map(([role, font, style, src, why]) => `
+    <tr><th scope="row">${role}</th><td><span class="fname" style="${style}">${font}</span><span class="src">${src}</span><span class="why">${why}</span></td></tr>`).join('');
+  section.querySelector('[data-spec]').innerHTML = `${show}<table class="spec-meta"><caption class="sr">Fonts in the ${pair.label} pairing</caption>${rows}</table>`;
+  section.querySelector('[data-pairs]').innerHTML = Object.entries(PAIRS[w]).map(([k, p]) =>
+    `<button type="button" data-pair-btn="${k}" aria-pressed="${k === section.dataset.pair}">${p.label} · ${p.sub}</button>`).join('');
+}
+
+const deskState = {};
+function renderDesk(w, receipt = '') {
+  const st = deskState[w], el = document.querySelector(`[data-desk="${w}"]`);
+  const [, test] = QUEUE_FILTERS.find(([l]) => l === st.filter);
+  const rows = st.queue.filter((q) => test(q.status));
+  if (!rows.some((q) => q.id === st.sel) && rows[0]) st.sel = rows[0].id;
+  el.querySelector('[data-qfilters]').innerHTML = QUEUE_FILTERS.map(([l, t]) => WORLDS[w].chip(l === st.filter, l, st.queue.filter((q) => t(q.status)).length)).join('');
+  el.querySelector('[data-rows]').innerHTML = rows.map((q) => WORLDS[w].row(q, q.id === st.sel)).join('');
+  const cur = st.queue.find((q) => q.id === st.sel);
+  el.querySelector('[data-insp]').innerHTML = cur ? WORLDS[w].insp(cur, receipt) : '';
+}
+
+for (const [w, def] of Object.entries(WORLDS)) {
+  document.querySelector(`[data-phones="${w}"]`).innerHTML = def.screens.map(([t, u, fn]) =>
+    `<figure class="ph"><figcaption>${t}<code>${u}</code></figcaption><div class="frame"><div class="screen ${w}">${fn()}</div></div></figure>`).join('');
+  document.querySelector(`[data-desk="${w}"]`).innerHTML = def.admin();
+  deskState[w] = { queue: QUEUE.map((q) => ({ ...q })), sel: 'q1', filter: 'All' };
+  renderDesk(w);
+  renderSpec(w);
+}
+
+/* ════════════ Interactions ════════════ */
+function filterList(screen) {
+  const tier = screen.querySelector('[data-tier-btn][aria-pressed="true"]')?.dataset.tierBtn ?? 'All';
+  const text = (screen.querySelector('[data-search]')?.value ?? '').trim().toLowerCase();
+  let shown = 0;
+  screen.querySelectorAll('[data-list] > [data-tier]').forEach((item) => {
+    const ok = (tier === 'All' || item.dataset.tier === tier) && (!text || item.dataset.text.includes(text));
+    item.hidden = !ok;
+    shown += ok;
+  });
+  const empty = screen.querySelector('[data-empty]');
+  if (empty) empty.hidden = shown > 0;
+}
+
+function act(w, status) {
+  const st = deskState[w], q = st.queue.find((x) => x.id === st.sel);
+  if (!q || q.status === status) return;
+  q.status = status;
+  renderDesk(w, `${q.name} moved to ${STATUS[status].label}. They see this on their dashboard.`);
+}
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('button, a, tr[data-id]');
+  if (!t) return;
+  if (t.tagName === 'A' && t.getAttribute('href') === '#') e.preventDefault();
+  const screen = t.closest('.screen');
+  const desk = t.closest('[data-desk]');
+  if (t.dataset.pairBtn) {
+    const section = t.closest('[data-world]');
+    section.dataset.pair = t.dataset.pairBtn;
+    renderSpec(section.dataset.world);
+  } else if (t.hasAttribute('data-like')) {
+    const on = t.getAttribute('aria-pressed') !== 'true';
+    t.setAttribute('aria-pressed', on);
+    const n = t.querySelector('span');
+    n.textContent = +n.textContent + (on ? 1 : -1);
+  } else if (t.hasAttribute('data-toggle')) {
+    t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true');
+  } else if (t.dataset.tierBtn && screen) {
+    t.parentElement.querySelectorAll('[data-tier-btn]').forEach((b) => b.setAttribute('aria-pressed', b === t));
+    filterList(screen);
+  } else if (t.hasAttribute('data-reset') && screen) {
+    screen.querySelectorAll('[data-tier-btn]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.tierBtn === 'All'));
+    const s = screen.querySelector('[data-search]'); if (s) s.value = '';
+    filterList(screen);
+  } else if (desk && t.dataset.qf) {
+    deskState[desk.dataset.desk].filter = t.dataset.qf;
+    renderDesk(desk.dataset.desk);
+  } else if (desk && t.dataset.id) {
+    deskState[desk.dataset.desk].sel = t.dataset.id;
+    renderDesk(desk.dataset.desk);
+  } else if (desk && t.dataset.act && !t.disabled) {
+    act(desk.dataset.desk, t.dataset.act);
+  }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.matches('[data-search]')) filterList(e.target.closest('.screen'));
+  if (e.target.matches('[data-count]')) {
+    e.target.closest('label').querySelector('[data-counter]').textContent = `${e.target.value.length} / 1500`;
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  const desk = e.target.closest?.('[data-desk]');
+  if (!desk || e.target.matches('input, textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
+  const w = desk.dataset.desk, st = deskState[w];
+  const key = e.key.toLowerCase();
+  const map = { s: 'SHORTLISTED', a: 'APPROVED', n: 'REJECTED' };
+  if (map[key]) { e.preventDefault(); act(w, map[key]); desk.querySelector(`tr[data-id="${st.sel}"]`)?.focus(); return; }
+  if (e.key === 'Enter' && e.target.dataset.id) { st.sel = e.target.dataset.id; renderDesk(w); desk.querySelector(`tr[data-id="${st.sel}"]`)?.focus(); return; }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    const ids = [...desk.querySelectorAll('tr[data-id]')].map((r) => r.dataset.id);
+    const i = Math.max(0, Math.min(ids.length - 1, ids.indexOf(st.sel) + (e.key === 'ArrowDown' ? 1 : -1)));
+    st.sel = ids[i]; e.preventDefault(); renderDesk(w);
+    desk.querySelector(`tr[data-id="${st.sel}"]`)?.focus();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,15 +1,17 @@
 import { MetadataRoute } from 'next';
-import { INITIAL_BRANDS } from '@/lib/mock-data';
+import { listActiveBriefs } from '@/server/briefs';
 
 /**
  * Public, indexable URLs only. Anything behind sign-in (dashboard, admin,
  * apply, join) or role-gated (creators directory is admin-only) stays out.
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 60;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://align.schbang.com';
   const now = new Date();
 
-  const brandUrls = INITIAL_BRANDS.map((brand) => ({
+  const brandUrls = (await listActiveBriefs()).map((brand) => ({
     url: `${baseUrl}/brands/${brand.slug}`,
     lastModified: now,
     changeFrequency: 'weekly' as const,

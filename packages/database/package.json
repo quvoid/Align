@@ -13,7 +13,8 @@
     "studio": "prisma studio",
     "seed": "tsx prisma/seed.ts",
     "seed:admins": "tsx prisma/seed-admins.ts",
-    "seed:demo": "tsx prisma/seed-demo.ts"
+    "seed:demo": "tsx prisma/seed-demo.ts",
+    "seed:briefs": "tsx prisma/seed-briefs.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",

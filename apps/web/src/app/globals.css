@@ -1,46 +1,57 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette: raspberry plum #AF4D98 · sweet peony #D66BA0 · powder blush
-     #E5A9A9 · pearl beige #F4E4BA · soft cyan #9DF7E5. Light theme on a
-     pearl-tinted canvas. `primary` is the text/outline ink (deep plum, derived
-     from raspberry plum); `ink` is the dark band behind white text; `muted` is
-     the soft fill for inputs, chips and quiet panels; `highlight` (soft cyan,
-     dark text) is the default filled button; `accent` (raspberry plum) is the
-     sole charging CTA. */
-  --color-background: #FDF8EC;    /* Pearl beige, lightened for canvas */
-  --color-surface: #FFFFFF;       /* Cards */
-  --color-muted: #F4E4BA;         /* Pearl beige */
-  --color-ink: #3A1932;           /* Deep plum — hero bands, stat strips */
-  --color-border: #E8D3B0;
-  --color-primary: #3A1932;       /* Text, outline buttons */
-  --color-text-primary: #3A1932;
-  --color-text-secondary: #7A5470;
-  --color-accent: #AF4D98;        /* Raspberry plum — CTA */
-  --color-accent-hover: #8E3C7B;
-  --color-highlight: #9DF7E5;     /* Soft cyan */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-error: #DC2626;
+  /* Claymorphism (user-pinned; direction contract in
+     apps/web/.impeccable/surfaces/src-app-brands.md). Peach ground, clay
+     surfaces lit from the top-left, grape as the only filled action.
+     `primary` is the text/outline ink; `ink` is the deep-grape band behind
+     white text (home/pricing stat strips); `muted` is the soft fill for
+     chips and quiet panels; `accent` (grape) is the sole filled CTA. */
+  --color-background: #FFE8DC;    /* Peach ground */
+  --color-surface: #FFF7F1;       /* Cream clay — cards, inputs, chips */
+  --color-muted: #FCE3D5;         /* Quiet panels */
+  --color-ink: #2B2146;           /* Deep grape — dark bands */
+  --color-border: #F2D4C4;
+  --color-primary: #2B2146;       /* Text, outline controls */
+  --color-text-primary: #2B2146;
+  --color-text-secondary: #574A78;
+  --color-accent: #6E4BF5;        /* Grape — the one filled action */
+  --color-accent-hover: #5B39E6;
+  --color-highlight: #FFEFA3;     /* Butter */
+  --color-success: #1F7A4A;
+  --color-warning: #8A5A00;
+  --color-error: #B42346;
 
-  /* Decorative accents — illustrated/highlight moments, never chrome */
-  --color-raspberry-plum: #AF4D98;
-  --color-sweet-peony: #D66BA0;
-  --color-powder-blush: #E5A9A9;
-  --color-pearl-beige: #F4E4BA;
-  --color-soft-cyan: #9DF7E5;
-  --color-coral: #E5A9A9;
-  --color-pink: #D66BA0;
-  --color-lavender: #AF4D98;
-  --color-linen: #E8D3B0;
-  --color-stone: #8c8c8c;
-  --color-halo: #9DF7E5;
-  --color-wine: #D66BA0;          /* Hero highlight word — sweet peony */
-  --color-link: #AF4D98;
+  /* Clay fills — cards, status pills, beads. Text on all of them is ink. */
+  --color-clay-peach: #FFC7AA;
+  --color-clay-lilac: #DCD1FF;
+  --color-clay-mint: #BDEFD6;
+  --color-clay-butter: #FFEFA3;
+  --color-clay-sky: #CDE6FF;
+  --color-clay-rose: #FFD2DD;
+  --color-clay-cloud: #EDE7F3;
 
-  --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Legacy names still used by home/pricing, re-pointed into the clay set. */
+  --color-pink: #FFD2DD;
+  --color-lavender: #DCD1FF;
+  --color-linen: #F2D4C4;
+  --color-stone: #8F84A8;
+  --color-halo: #FFEFA3;          /* Highlight word on the dark band */
+  --color-wine: #6E4BF5;          /* Hero highlight word */
 
-  /* Radius — 16px (2xl) for buttons/inputs/nav is already Tailwind's default; add the two larger card sizes DESIGN.md calls for */
+  --font-sans: var(--font-baloo), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Clay depth: a soft drop below plus inner light (top-left) and inner
+     shade (bottom-right). `well` is pressed in — inputs, fact tiles. */
+  --shadow-clay: 0 18px 30px -18px rgb(84 58 200 / 0.45), inset -7px -9px 16px rgb(43 33 70 / 0.12), inset 7px 9px 16px rgb(255 255 255 / 0.7);
+  --shadow-clay-sm: 0 9px 14px -9px rgb(84 58 200 / 0.4), inset -3px -4px 8px rgb(43 33 70 / 0.1), inset 3px 4px 8px rgb(255 255 255 / 0.9);
+  --shadow-clay-btn: 0 14px 22px -12px rgb(84 58 200 / 0.75), inset -5px -7px 12px rgb(0 0 0 / 0.24), inset 5px 7px 12px rgb(255 255 255 / 0.35);
+  --shadow-clay-btn-press: 0 5px 9px -6px rgb(84 58 200 / 0.75), inset -3px -4px 8px rgb(0 0 0 / 0.24), inset 3px 4px 8px rgb(255 255 255 / 0.35);
+  --shadow-clay-well: inset 3px 4px 8px rgb(43 33 70 / 0.12), inset -3px -4px 8px rgb(255 255 255 / 0.85);
+
+  /* Overshoot curve: the bounce on hover and the squish on tap. */
+  --ease-squish: cubic-bezier(0.3, 1.7, 0.45, 1);
+
   /* Logo ribbon. The track holds two copies of the strip, so -50% is exactly
      one strip's width and the loop is seamless. Duration is per-strip pace. */
   --animate-marquee: marquee 48s linear infinite;
@@ -49,8 +60,8 @@
     to   { transform: translateX(-50%); }
   }
 
-  --radius-4xl: 2rem;    /* 32px — image cards, tilted stack */
-  --radius-5xl: 2.5rem;  /* 40px — large feature panels */
+  --radius-4xl: 2rem;    /* 32px — clay cards */
+  --radius-5xl: 2.5rem;  /* 40px — large panels */
 }
 
 /* Large monitors: the page reads right at the browser's 125% zoom, so that is
@@ -83,7 +94,7 @@ html, body {
   scrollbar-width: none;  /* Firefox */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.037em;
+  letter-spacing: -0.005em;
 }
 
 /* Logo ribbon: hold still while the pointer is over it, so a logo can be read.
@@ -164,4 +175,35 @@ html, body {
 }
 .click-scale:active {
   transform: scale(0.96);
+}
+
+/* Clay controls: bounce up on hover, squish on tap. Applied to buttons,
+   chips and pressable cards. */
+.clay-press {
+  transition: transform 0.35s var(--ease-squish), box-shadow 0.25s ease, background-color 0.2s ease;
+}
+.clay-press:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.clay-press:active:not(:disabled) {
+  transform: translateY(1px) scale(0.96);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clay-press,
+  .clay-press:hover:not(:disabled),
+  .clay-press:active:not(:disabled) {
+    transform: none;
+    transition: none;
+  }
 }

@@ -18,8 +18,9 @@ describe('Domain Consistency & Business Rules', () => {
     for (const creator of INITIAL_CREATORS) {
       expect(creator.igFollowers).toBeGreaterThanOrEqual(0);
       expect(creator.igEngagementRate).toBeGreaterThan(0);
-      expect(creator.performance.reliabilityScore).toBeLessThanOrEqual(5.0);
-      expect(creator.performance.reliabilityScore).toBeGreaterThanOrEqual(1.0);
+      expect(creator.performance).toBeDefined();
+      expect(creator.performance!.reliabilityScore).toBeLessThanOrEqual(5.0);
+      expect(creator.performance!.reliabilityScore).toBeGreaterThanOrEqual(1.0);
     }
   });
 

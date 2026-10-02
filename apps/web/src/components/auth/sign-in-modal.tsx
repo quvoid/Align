@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { postAuthUrl } from "@/lib/auth-shared";
+import { isDemoModeEnabled, postAuthUrl } from "@/lib/auth-shared";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Modal } from "@/components/ui/modal";
@@ -12,8 +12,9 @@ import { useToast } from "@/components/ui/toast";
 import { ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true";
-// Demo personas must not be reachable in production — see auth-shared.ts.
-const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+// Seeded admin + creator passkeys; on unless NEXT_PUBLIC_DEMO_MODE=false.
+// See isDemoModeEnabled in auth-shared.ts before leaving them on.
+const DEMO_MODE = isDemoModeEnabled();
 
 // Routes that need a signed-in user. Anything else is browsable anonymously.
 const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/apply", "/creators", "/join"];
@@ -34,7 +35,7 @@ const SignInModalContext = createContext<SignInModalContextValue>({
 export const useSignInModal = () => useContext(SignInModalContext);
 
 const GoogleIcon = () => (
-  <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+  <svg className="mr-2.5 h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
@@ -178,50 +179,54 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
     <SignInModalContext.Provider value={ctx}>
       {children}
 
-      <Modal isOpen={isOpen} onClose={handleClose} size="md" className="rounded-3xl">
+      <Modal isOpen={isOpen} onClose={handleClose} size="md">
         <div className="space-y-5">
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold text-primary">Sign in to Align</h2>
-            <p className="text-xs text-text-secondary leading-relaxed max-w-xs mx-auto">
-              {reason || (GOOGLE_ENABLED ? "Pick a demo profile to jump straight in, or use Google." : "Pick a demo profile to jump straight in.")}
+          <div className="text-center space-y-1.5 pt-1">
+            <h2 className="text-3xl font-extrabold tracking-tight text-primary">Sign in to Align</h2>
+            <p className="text-[15px] text-text-secondary leading-snug max-w-xs mx-auto">
+              {reason || "Pitch live briefs from brands Schbang manages."}
             </p>
           </div>
 
-          {/* One-click demo profiles — local/staging only */}
+          {/* One-click demo profiles — see isDemoModeEnabled */}
           {DEMO_MODE && (
-          <div className="bg-muted rounded-2xl p-3 space-y-2">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary px-1">Demo profiles</p>
-            <Button
-              variant="outline"
-              className="group w-full justify-start rounded-xl text-left bg-surface border-border h-auto py-2.5"
-              onClick={() => loginWithEmail("admin@schbang.com", "admin123", "/admin")}
-              disabled={isLoading}
-            >
-              <ShieldCheck className="mr-3 h-4 w-4 text-accent shrink-0 group-hover:text-white" />
-              <div>
-                <div className="font-semibold text-primary text-sm group-hover:text-white">Schbang Admin Lead</div>
-                <div className="text-[11px] text-text-secondary font-normal group-hover:text-white/70">Brand portfolio, reviews &amp; competitor intel</div>
-              </div>
-            </Button>
-            <Button
-              variant="outline"
-              className="group w-full justify-start rounded-xl text-left bg-surface border-border h-auto py-2.5"
-              onClick={() => loginWithEmail("rohan.creates@gmail.com", "creator123", "/dashboard")}
-              disabled={isLoading}
-            >
-              <Sparkles className="mr-3 h-4 w-4 text-accent shrink-0 group-hover:text-white" />
-              <div>
-                <div className="font-semibold text-primary text-sm group-hover:text-white">Creator: Rohan Joshi</div>
-                <div className="text-[11px] text-text-secondary font-normal group-hover:text-white/70">Browse briefs, pitch &amp; track campaigns</div>
-              </div>
-            </Button>
-          </div>
+            <div className="grid grid-cols-1 gap-3">
+              <button
+                type="button"
+                className="clay-press flex items-center gap-3.5 w-full rounded-4xl bg-clay-butter p-3.5 text-left shadow-clay disabled:opacity-55"
+                onClick={() => loginWithEmail("rohan.creates@gmail.com", "creator123", "/dashboard")}
+                disabled={isLoading}
+              >
+                <span className="shrink-0 w-11 h-11 rounded-full bg-surface grid place-items-center shadow-clay-sm">
+                  <Sparkles className="h-5 w-5 text-accent" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-base font-extrabold text-primary leading-tight">Demo creator · Rohan Joshi</span>
+                  <span className="block text-sm text-text-secondary">Browse briefs, pitch and track status</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                className="clay-press flex items-center gap-3.5 w-full rounded-4xl bg-clay-lilac p-3.5 text-left shadow-clay disabled:opacity-55"
+                onClick={() => loginWithEmail("admin@schbang.com", "admin123", "/admin")}
+                disabled={isLoading}
+              >
+                <span className="shrink-0 w-11 h-11 rounded-full bg-surface grid place-items-center shadow-clay-sm">
+                  <ShieldCheck className="h-5 w-5 text-accent" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-base font-extrabold text-primary leading-tight">Demo admin · Schbang team</span>
+                  <span className="block text-sm text-text-secondary">Review pitches and publish briefs</span>
+                </span>
+              </button>
+            </div>
           )}
 
           {GOOGLE_ENABLED ? (
             <Button
               variant="outline"
-              className="w-full h-11 rounded-xl text-primary font-medium"
+              size="lg"
+              className="w-full"
               onClick={() => signIn("google", { callbackUrl: postAuthUrl(callbackUrl) })}
               disabled={isLoading}
             >
@@ -229,8 +234,8 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
               Continue with Google
             </Button>
           ) : (
-            <p className="text-xs text-text-secondary text-center rounded-xl border border-dashed border-border py-3 px-4">
-              Google sign-in is off in this environment — use a demo profile or email.
+            <p className="text-sm text-text-secondary text-center rounded-3xl bg-background px-4 py-3 shadow-clay-well">
+              Google sign-in is off in this environment — use a demo account or email.
             </p>
           )}
 
@@ -238,45 +243,47 @@ export function SignInModalProvider({ children }: { children: React.ReactNode })
             <form onSubmit={handleSubmit} className="space-y-3 animate-in fade-in duration-200">
               <Input
                 type="email"
+                label="Email"
                 placeholder="name@example.com"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="rounded-xl border-border bg-surface"
                 autoFocus
                 required
               />
               <Input
                 type="password"
-                placeholder="Password"
+                label="Password"
+                placeholder="Your password"
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="rounded-xl border-border bg-surface"
                 required
               />
-              <Button type="submit" className="w-full h-11 rounded-xl bg-accent hover:bg-accent/90 text-white" disabled={isLoading}>
-                {isLoading ? "Signing in…" : (<>Sign in with email <ArrowRight className="ml-2 h-4 w-4" /></>)}
+              <Button type="submit" variant="accent" size="lg" className="w-full" disabled={isLoading}>
+                {isLoading ? "Signing in…" : (<>Sign in with email <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" /></>)}
               </Button>
             </form>
           ) : (
             <button
               type="button"
               onClick={() => setShowEmailForm(true)}
-              className="w-full text-center text-xs font-semibold text-text-secondary hover:text-primary transition-colors"
+              className="w-full text-center text-[15px] font-bold text-text-secondary hover:text-primary transition-colors"
             >
-              Use email &amp; password instead
+              Use email and password instead
             </button>
           )}
 
-          <p className="text-center text-[11px] text-text-secondary">
+          <p className="text-center text-sm text-text-secondary">
             New here?{" "}
-            <Link href="/auth/register" onClick={closeSignIn} className="font-semibold text-accent hover:underline">
+            <Link href="/auth/register" onClick={closeSignIn} className="font-bold text-accent hover:underline underline-offset-4">
               Create a creator account
             </Link>
             {gated && (
               <>
                 {" · "}
-                <button type="button" onClick={handleClose} className="font-semibold hover:text-primary hover:underline">
-                  Just browse brands
+                <button type="button" onClick={handleClose} className="font-bold hover:text-primary hover:underline underline-offset-4">
+                  Just browse briefs
                 </button>
               </>
             )}

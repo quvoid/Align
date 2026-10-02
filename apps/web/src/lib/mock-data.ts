@@ -42,8 +42,14 @@ export interface CreatorItem {
   ytSubscribers?: number;
   ytAvgViews?: string;
   fbFollowers?: number;
-  // Performance Analytics & Track Record
-  performance: {
+  mediaKitUrl?: string;
+  /** Schbang has reviewed and verified this profile (CreatorProfile.verificationStatus). */
+  verified?: boolean;
+  /** Pitches sent on Align, withdrawn ones excluded. */
+  pitchCount?: number;
+  // Performance Analytics & Track Record. Absent for real creators until
+  // Align has delivery data to compute it from.
+  performance?: {
     totalCampaigns: number;
     totalReach: string; // e.g. "2.4M Views"
     avgEngagementRate: string; // e.g. "5.8%"
@@ -52,8 +58,8 @@ export interface CreatorItem {
   };
   // Past Brand Collaborations
   brandCollaborations: CreatorCollaboration[];
-  // Audience Demographics
-  audienceDemographics: {
+  // Audience Demographics. Not collected from creators yet.
+  audienceDemographics?: {
     topCity: string;
     topAgeBracket: string;
     genderRatio: string; // e.g. "45% Male / 55% Female"
@@ -61,13 +67,25 @@ export interface CreatorItem {
   likedBrandIds: string[];
 }
 
+/** Mirrors the Prisma `ApplicationStatus` enum. */
+export type ApplicationStatus =
+  | 'PENDING'
+  | 'UNDER_REVIEW'
+  | 'SHORTLISTED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'WITHDRAWN';
+
 export interface ApplicationItem {
   id: string;
+  creatorId?: string;
   creatorName: string;
   creatorEmail: string;
   brandName: string;
   brandId: string;
-  status: 'PENDING' | 'UNDER_REVIEW' | 'SHORTLISTED' | 'APPROVED' | 'REJECTED';
+  brandSlug?: string;
+  brandLogo?: string;
+  status: ApplicationStatus;
   date: string;
   proposal: string;
   expectedRate: number;
@@ -76,11 +94,28 @@ export interface ApplicationItem {
     instagramHandle?: string;
     instagramFollowers?: number;
     instagramER?: string;
+    instagramAvgLikes?: number;
+    instagramAvgComments?: number;
     youtubeChannel?: string;
     youtubeSubscribers?: number;
+    youtubeAvgViews?: number;
+    youtubeER?: string;
+    facebookPage?: string;
     facebookFollowers?: number;
+    facebookER?: string;
+    xHandle?: string;
+    xFollowers?: number;
+    xER?: string;
+  };
+  /** What the creator typed in the pitch form's contact step. */
+  applicant?: {
+    phone?: string;
+    location?: string;
+    niche?: string;
+    website?: string;
   };
   adminNotes?: string;
+  reviewedAt?: string;
 }
 
 export const INITIAL_BRANDS: BrandItem[] = [

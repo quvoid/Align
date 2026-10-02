@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { verifyOtp } from "@/server/email-otp";
+import { assertSameOrigin, HttpError } from "@/server/http";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,6 +15,12 @@ const Body = z.object({ code: z.string().trim().regex(/^\d{6}$/, "Enter the 6-di
  * database in the jwt callback — the client never asserts verification itself.
  */
 export async function POST(request: Request) {
+  try {
+    assertSameOrigin(request);
+  } catch (err) {
+    if (err instanceof HttpError) return NextResponse.json({ error: err.message }, { status: err.status });
+    throw err;
+  }
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
 

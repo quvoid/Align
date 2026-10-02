@@ -2,16 +2,16 @@ import Link from 'next/link';
 
 export const Footer = () => {
   return (
-    <footer className="bg-surface border-t border-border mt-auto">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="mt-auto px-3 sm:px-4 pb-4 pt-10">
+      <div className="max-w-6xl mx-auto rounded-5xl bg-surface shadow-clay">
+      <div className="px-6 sm:px-10 py-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <Link href="/" className="flex items-center">
-                <span className="font-extrabold text-2xl tracking-tight text-primary">Align</span>
-                <span className="text-accent text-3xl leading-none font-black">.</span>
+                <span className="font-extrabold text-[28px] leading-none tracking-tight text-primary">Align</span>
               </Link>
-              <span className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full bg-primary/5 text-text-secondary border border-border">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-clay-lilac text-primary shadow-clay-sm">
                 by Schbang
               </span>
             </div>
@@ -73,7 +73,7 @@ export const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row items-center justify-between text-sm text-text-secondary">
+        <div className="border-t-2 border-muted mt-10 pt-6 flex flex-col md:flex-row items-center justify-between text-sm text-text-secondary">
           <p>&copy; {new Date().getFullYear()} Align. All rights reserved.</p>
           <div className="flex items-center gap-4 mt-2 md:mt-0 text-xs">
             <Link href="/privacy" className="hover:text-accent transition-colors">Privacy</Link>
@@ -83,6 +83,7 @@ export const Footer = () => {
             <p className="font-medium">A <span className="text-primary font-bold">Schbang</span> Technology Product</p>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

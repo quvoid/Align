@@ -1,128 +1,184 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
-import { INITIAL_BRANDS, INITIAL_APPLICATIONS, INITIAL_CREATORS, BrandItem, ApplicationItem, CreatorItem } from "@/lib/mock-data";
+import type { BrandItem, ApplicationItem } from "@/lib/mock-data";
+import type { InterestItem } from "@/lib/db-records";
+import {
+  createBrief,
+  fetchAdminDashboard,
+  reviewApplication,
+  setBriefActive,
+  type NewBrief,
+} from "@/lib/admin-client";
+import { errorMessage } from "@/lib/fetch-json";
+import { Badge } from "@/components/ui/badge";
+import { STATUS_BADGE, STATUS_LABEL } from "@/lib/status";
+import { clayFillFor } from "@/lib/clay";
 import { addCompetitorToBrand } from "@/lib/instagram-engine";
-import { CheckCircle2, Plus, Search, Filter, Instagram, Youtube, Facebook, ExternalLink, Check, X, Heart, Users, Send } from "lucide-react";
+import { CheckCircle2, Plus, Search, Filter, Instagram, Youtube, Facebook, ExternalLink, Check, X, Heart, Users, Send, Loader2 } from "lucide-react";
+
+type ReviewStatus = Exclude<ApplicationItem["status"], "WITHDRAWN">;
+
+const EMPTY_BRIEF: NewBrief & { competitors: string[] } = {
+  name: "",
+  industry: "Fashion & Apparel",
+  budgetTier: "Mid-Tier",
+  description: "",
+  logo: "",
+  coverImage: "",
+  requirements: "",
+  campaignTypes: "Instagram Reel, YouTube Short",
+  contactEmail: "",
+  website: "",
+  competitors: ["", "", "", ""], // up to 4 competitor IG handles
+};
 
 export default function AdminDashboard() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"overview" | "brands" | "applications" | "interests">("overview");
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
+  const [loadError, setLoadError] = useState("");
 
   // Brands State
-  const [brands, setBrands] = useState<BrandItem[]>(INITIAL_BRANDS);
+  const [brands, setBrands] = useState<BrandItem[]>([]);
   const [brandSearch, setBrandSearch] = useState("");
   const [brandIndustryFilter, setBrandIndustryFilter] = useState("ALL");
   const [isAddBrandOpen, setIsAddBrandOpen] = useState(false);
+  const [publishing, setPublishing] = useState(false);
 
   // New Brand Form State
-  const [newBrand, setNewBrand] = useState({
-    name: "",
-    industry: "Fashion",
-    budgetTier: "Mid-Tier" as BrandItem["budgetTier"],
-    description: "",
-    logo: "",
-    coverImage: "",
-    requirements: "",
-    campaignTypes: "Instagram Reel, YouTube Short",
-    contactEmail: "",
-    website: "",
-    competitors: ["", "", "", ""], // up to 4 competitor IG handles
-  });
+  const [newBrand, setNewBrand] = useState(EMPTY_BRIEF);
 
   // Applications State
-  const [applications, setApplications] = useState<ApplicationItem[]>(INITIAL_APPLICATIONS);
+  const [applications, setApplications] = useState<ApplicationItem[]>([]);
   const [appFilter, setAppFilter] = useState<string>("ALL");
   const [selectedApp, setSelectedApp] = useState<ApplicationItem | null>(null);
+  const [noteDraft, setNoteDraft] = useState("");
+  const [savingReview, setSavingReview] = useState(false);
+
+  // Creators who liked a brief
+  const [interests, setInterests] = useState<InterestItem[]>([]);
+
+  const load = useCallback(async () => {
+    try {
+      const data = await fetchAdminDashboard();
+      setBrands(data.briefs);
+      setApplications(data.applications);
+      setInterests(data.interests);
+      setSelectedApp((prev) => (prev ? data.applications.find((a) => a.id === prev.id) ?? null : null));
+      setLoadState("ready");
+    } catch (err) {
+      setLoadError(errorMessage(err));
+      setLoadState("error");
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  // The note box follows whichever pitch is open in the inspector.
+  useEffect(() => {
+    setNoteDraft(selectedApp?.adminNotes ?? "");
+  }, [selectedApp?.id, selectedApp?.adminNotes]);
 
   // Handle Add Brand
-  const handleCreateBrand = (e: React.FormEvent) => {
+  const handleCreateBrand = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBrand.name || !newBrand.description) {
       toast({ title: "Please fill required fields", type: "error" });
       return;
     }
 
-    const slug = newBrand.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    const created: BrandItem = {
-      id: `brand-${Date.now()}`,
-      name: newBrand.name,
-      slug,
-      industry: newBrand.industry,
-      budgetTier: newBrand.budgetTier,
-      description: newBrand.description,
-      logo: newBrand.logo || "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=120&h=120&fit=crop",
-      coverImage: newBrand.coverImage || "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=300&fit=crop",
-      campaignTypes: newBrand.campaignTypes.split(",").map((s) => s.trim()),
-      requirements: newBrand.requirements || "Creator collaboration brief",
-      isActive: true,
-      contactEmail: newBrand.contactEmail,
-      website: newBrand.website,
-      likesCount: 0,
-    };
-
+    const { competitors, ...brief } = newBrand;
+    setPublishing(true);
+    let created: BrandItem;
+    try {
+      created = await createBrief(brief);
+    } catch (err) {
+      toast({ title: "Brief not published", description: errorMessage(err), type: "error" });
+      setPublishing(false);
+      return;
+    }
+    setPublishing(false);
     setBrands((prev) => [created, ...prev]);
 
     // Register competitors for the new brand
-    const competitorHandles = newBrand.competitors.filter((h) => h.trim() !== "");
-    if (competitorHandles.length > 0) {
-      for (const handle of competitorHandles) {
-        addCompetitorToBrand(slug, handle);
-      }
+    const competitorHandles = competitors.filter((h) => h.trim() !== "");
+    for (const handle of competitorHandles) {
+      addCompetitorToBrand(created.slug, handle);
     }
 
     setIsAddBrandOpen(false);
-    setNewBrand({
-      name: "",
-      industry: "Fashion",
-      budgetTier: "Mid-Tier",
-      description: "",
-      logo: "",
-      coverImage: "",
-      requirements: "",
-      campaignTypes: "Instagram Reel, YouTube Short",
-      contactEmail: "",
-      website: "",
-      competitors: ["", "", "", ""],
-    });
+    setNewBrand(EMPTY_BRIEF);
 
     const compCount = competitorHandles.length;
     toast({
-      title: "Brand Added Successfully!",
-      description: `${created.name} is now active on Align${compCount > 0 ? ` with ${compCount} competitor${compCount > 1 ? 's' : ''} tracked.` : '.'}`,
+      title: `${created.name} brief published`,
+      description: `It is live on /brands/${created.slug}${compCount > 0 ? ` with ${compCount} competitor${compCount > 1 ? "s" : ""} tracked.` : "."}`,
       type: "success",
     });
   };
 
   // Toggle Brand Status
-  const toggleBrandStatus = (id: string) => {
-    setBrands((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, isActive: !b.isActive } : b))
-    );
-    toast({ title: "Brand status updated", type: "success" });
+  const toggleBrandStatus = async (brand: BrandItem) => {
+    try {
+      const updated = await setBriefActive(brand.id, !brand.isActive);
+      setBrands((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
+      toast({
+        title: updated.isActive ? `${updated.name} brief re-opened` : `${updated.name} brief paused`,
+        description: updated.isActive ? "Creators can see and pitch to it again." : "It no longer shows on the public site.",
+        type: "success",
+      });
+    } catch (err) {
+      toast({ title: "Brief status not changed", description: errorMessage(err), type: "error" });
+    }
+  };
+
+  const applyReview = async (appId: string, patch: { status?: ReviewStatus; adminNotes?: string }) => {
+    setSavingReview(true);
+    try {
+      const updated = await reviewApplication(appId, patch);
+      setApplications((prev) => prev.map((a) => (a.id === appId ? updated : a)));
+      setSelectedApp((prev) => (prev && prev.id === appId ? updated : prev));
+      return updated;
+    } catch (err) {
+      toast({ title: "Change not saved", description: errorMessage(err), type: "error" });
+      return null;
+    } finally {
+      setSavingReview(false);
+    }
   };
 
   // Update Application Status
-  const handleUpdateAppStatus = (appId: string, status: ApplicationItem["status"]) => {
-    setApplications((prev) =>
-      prev.map((a) => (a.id === appId ? { ...a, status } : a))
-    );
-    if (selectedApp && selectedApp.id === appId) {
-      setSelectedApp((prev) => (prev ? { ...prev, status } : null));
+  const handleUpdateAppStatus = async (appId: string, status: ReviewStatus) => {
+    const updated = await applyReview(appId, { status });
+    if (updated) {
+      toast({
+        title: `Pitch marked ${status.replace("_", " ").toLowerCase()}`,
+        description: `${updated.creatorName} sees this on their dashboard now.`,
+        type: "success",
+      });
     }
-    toast({
-      title: `Application ${status.replace("_", " ")}`,
-      description: `Creator proposal has been marked as ${status}.`,
-      type: "success",
-    });
+  };
+
+  const handleSaveNote = async () => {
+    if (!selectedApp) return;
+    const updated = await applyReview(selectedApp.id, { adminNotes: noteDraft });
+    if (updated) {
+      toast({
+        title: "Note saved",
+        description: `${updated.creatorName} sees it with this pitch on their dashboard.`,
+        type: "success",
+      });
+    }
   };
 
   // Filtered Brands
@@ -144,176 +200,148 @@ export default function AdminDashboard() {
   const pendingCount = applications.filter((a) => a.status === "PENDING").length;
   const shortlistedCount = applications.filter((a) => a.status === "SHORTLISTED").length;
   const approvedCount = applications.filter((a) => a.status === "APPROVED").length;
+  const withdrawnCount = applications.filter((a) => a.status === "WITHDRAWN").length;
+  const activeBrands = brands.filter((b) => b.isActive);
+  const industryCount = new Set(activeBrands.map((b) => b.industry)).size;
+
+  if (loadState !== "ready") {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 px-4 text-center">
+        {loadState === "loading" ? (
+          <Loader2 className="w-8 h-8 text-primary animate-spin" aria-label="Loading admin data" />
+        ) : (
+          <>
+            <p className="text-sm text-text-secondary max-w-sm">Couldn&apos;t load the admin panel: {loadError}</p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setLoadState("loading");
+                load();
+              }}
+            >
+              Try again
+            </Button>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Admin Top Header */}
-      <div className="bg-ink text-white pt-8 pb-8 border-b border-white/10">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">Admin</h1>
-              <p className="text-white/70 text-sm mt-1">
-                Brand briefs, creator applications and competitor intelligence.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Button
-                variant="accent"
-                onClick={() => setIsAddBrandOpen(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New brand brief
-              </Button>
-            </div>
+    <div className="min-h-screen pb-20">
+      <div className="container mx-auto px-4 pt-8 sm:pt-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
+          <div>
+            <h1 className="text-[44px] sm:text-6xl font-extrabold tracking-tight leading-[0.95] text-primary">Admin</h1>
+            <p className="mt-2 text-base sm:text-lg text-text-secondary">
+              Briefs, the pitch queue and who&apos;s interested.
+            </p>
           </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex items-center gap-2 mt-8 border-b border-white/15">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-all ${
-                activeTab === "overview"
-                  ? "border-accent text-accent"
-                  : "border-transparent text-white/70 hover:text-white"
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab("brands")}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "brands"
-                  ? "border-accent text-accent"
-                  : "border-transparent text-white/70 hover:text-white"
-              }`}
-            >
-              Brands ({brands.length})
-            </button>
-            <button
-              onClick={() => setActiveTab("applications")}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "applications"
-                  ? "border-accent text-accent"
-                  : "border-transparent text-white/70 hover:text-white"
-              }`}
-            >
-              Applications
-              {pendingCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-accent text-white font-bold">
-                  {pendingCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab("interests")}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "interests"
-                  ? "border-accent text-accent"
-                  : "border-transparent text-white/70 hover:text-white"
-              }`}
-            >
-              Creator interest
-              <span className="px-2 py-0.5 rounded-full text-xs bg-red-500 text-white font-bold">
-                {INITIAL_CREATORS.reduce((acc, c) => acc + c.likedBrandIds.length, 0)}
-              </span>
-            </button>
-            <Link
-              href="/admin/competitor-intelligence"
-              className="px-4 py-2.5 text-sm font-semibold border-b-2 border-transparent text-white/70 hover:text-white flex items-center gap-1.5 transition-all"
-            >
-              Competitor intel
-            </Link>
-          </div>
+          <Button variant="accent" onClick={() => setIsAddBrandOpen(true)}>
+            <Plus className="w-5 h-5 mr-1.5" aria-hidden="true" />
+            New brief
+          </Button>
         </div>
+
+        {/* Tabs: one clay track, the open tab is the grape pill. */}
+        <nav className="mt-7 flex gap-1.5 overflow-x-auto rounded-full bg-surface p-1.5 shadow-clay [scrollbar-width:none]" aria-label="Admin sections">
+          <button onClick={() => setActiveTab("overview")} aria-current={activeTab === "overview" ? "page" : undefined}
+            className={`clay-press shrink-0 flex items-center gap-2 px-4 pt-2.5 pb-2 rounded-full text-[15px] font-bold ${
+                  activeTab === "overview" ? "bg-accent text-white shadow-clay-btn" : "text-primary hover:bg-background"
+                }`}>
+            Overview
+          </button>
+          <button onClick={() => setActiveTab("applications")} aria-current={activeTab === "applications" ? "page" : undefined}
+            className={`clay-press shrink-0 flex items-center gap-2 px-4 pt-2.5 pb-2 rounded-full text-[15px] font-bold ${
+                  activeTab === "applications" ? "bg-accent text-white shadow-clay-btn" : "text-primary hover:bg-background"
+                }`}>
+            Pitches
+            {pendingCount > 0 && (
+              <span className="min-w-6 h-6 px-1.5 grid place-items-center rounded-full bg-clay-butter text-primary text-xs font-extrabold shadow-clay-sm">
+                {pendingCount}
+              </span>
+            )}
+          </button>
+          <button onClick={() => setActiveTab("brands")} aria-current={activeTab === "brands" ? "page" : undefined}
+            className={`clay-press shrink-0 flex items-center gap-2 px-4 pt-2.5 pb-2 rounded-full text-[15px] font-bold ${
+                  activeTab === "brands" ? "bg-accent text-white shadow-clay-btn" : "text-primary hover:bg-background"
+                }`}>
+            Briefs
+            <span className="min-w-6 h-6 px-1.5 grid place-items-center rounded-full bg-clay-lilac text-primary text-xs font-extrabold shadow-clay-sm">{brands.length}</span>
+          </button>
+          <button onClick={() => setActiveTab("interests")} aria-current={activeTab === "interests" ? "page" : undefined}
+            className={`clay-press shrink-0 flex items-center gap-2 px-4 pt-2.5 pb-2 rounded-full text-[15px] font-bold ${
+                  activeTab === "interests" ? "bg-accent text-white shadow-clay-btn" : "text-primary hover:bg-background"
+                }`}>
+            Interest
+            <span className="min-w-6 h-6 px-1.5 grid place-items-center rounded-full bg-clay-rose text-primary text-xs font-extrabold shadow-clay-sm">{interests.length}</span>
+          </button>
+          <Link href="/admin/competitor-intelligence" className="clay-press shrink-0 flex items-center px-4 pt-2.5 pb-2 rounded-full text-[15px] font-bold text-text-secondary hover:text-primary hover:bg-background">
+            Competitor intel
+          </Link>
+        </nav>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pt-8">
         {/* TAB 1: OVERVIEW */}
         {activeTab === "overview" && (
           <div className="space-y-8">
-            {/* KPI Cards */}
-            <dl className="grid grid-cols-2 lg:grid-cols-4 gap-y-6 lg:divide-x divide-border bg-surface border border-border rounded-2xl px-2 py-5">
-              <div className="px-5">
-                <dt className="text-sm text-text-secondary">Active brands</dt>
-                <dd className="text-3xl font-extrabold text-primary tabular-nums mt-1">
-                  {brands.filter((b) => b.isActive).length}
-                </dd>
-                <p className="text-xs text-text-secondary mt-1">across 6 industries</p>
-              </div>
-              <div className="px-5">
-                <dt className="text-sm text-text-secondary">Awaiting review</dt>
-                <dd className="text-3xl font-extrabold text-primary tabular-nums mt-1">{pendingCount}</dd>
-                <p className="text-xs text-text-secondary mt-1">need a manager decision</p>
-              </div>
-              <div className="px-5">
-                <dt className="text-sm text-text-secondary">Shortlisted</dt>
-                <dd className="text-3xl font-extrabold text-primary tabular-nums mt-1">{shortlistedCount}</dd>
-                <p className="text-xs text-text-secondary mt-1">ready for contract</p>
-              </div>
-              <div className="px-5">
-                <dt className="text-sm text-text-secondary">Approved</dt>
-                <dd className="text-3xl font-extrabold text-accent tabular-nums mt-1">{approvedCount}</dd>
-                <p className="text-xs text-text-secondary mt-1">in production</p>
-              </div>
+            <dl className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {[
+                { label: "Open briefs", value: activeBrands.length, note: `across ${industryCount} industr${industryCount === 1 ? "y" : "ies"}`, fill: "bg-clay-lilac" },
+                { label: "Waiting on you", value: pendingCount, note: "pending a decision", fill: "bg-clay-butter" },
+                { label: "Shortlisted", value: shortlistedCount, note: "ready for contract", fill: "bg-clay-sky" },
+                { label: "Approved", value: approvedCount, note: "in production", fill: "bg-clay-mint" },
+              ].map((k) => (
+                <div key={k.label} className={`rounded-4xl px-5 pt-5 pb-4 shadow-clay ${k.fill}`}>
+                  <dt className="text-sm font-semibold text-text-secondary">{k.label}</dt>
+                  <dd className="mt-1 text-4xl font-extrabold text-primary tabular-nums leading-none">{k.value}</dd>
+                  <p className="mt-1.5 text-sm text-text-secondary">{k.note}</p>
+                </div>
+              ))}
             </dl>
 
-            {/* Recent Incoming Submissions Preview */}
-            <Card className="border-border shadow-sm">
-              <div className="p-6 border-b border-border flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-primary">Recent proposals</h2>
-                  <p className="text-xs text-text-secondary mt-0.5">
-                    Latest creator submissions across all briefs
-                  </p>
-                </div>
+            <section className="rounded-4xl bg-surface p-5 sm:p-6 shadow-clay">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <h2 className="text-2xl font-extrabold text-primary">Latest pitches</h2>
                 <Button variant="outline" size="sm" onClick={() => setActiveTab("applications")}>
-                  View All Submissions &rarr;
+                  All pitches
                 </Button>
               </div>
-              <div className="divide-y divide-border">
-                {applications.slice(0, 3).map((app) => (
-                  <div key={app.id} className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-muted transition-colors">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-primary">{app.creatorName}</span>
-                        <span className="text-xs text-text-secondary">({app.creatorEmail})</span>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 font-medium text-primary">
-                          {app.brandName}
-                        </span>
+              {applications.every((a) => a.status === "WITHDRAWN") && (
+                <p className="rounded-3xl bg-background px-5 py-4 text-[15px] text-text-secondary shadow-clay-well">
+                  No pitches yet. They appear here as soon as a creator sends one.
+                </p>
+              )}
+              <ul className="space-y-3">
+                {applications.filter((a) => a.status !== "WITHDRAWN").slice(0, 4).map((app) => (
+                  <li key={app.id} className="rounded-3xl bg-background p-4 shadow-clay-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-extrabold text-primary">{app.creatorName}</span>
+                        <span className="text-sm text-text-secondary">→ {app.brandName}</span>
+                        <Badge variant={STATUS_BADGE[app.status]}>{STATUS_LABEL[app.status]}</Badge>
                       </div>
-                      <p className="text-xs text-text-secondary line-clamp-1">{app.proposal}</p>
-                      <div className="flex items-center gap-3 text-xs text-text-secondary">
-                        <span>IG: {app.metrics.instagramHandle || "N/A"} ({app.metrics.instagramFollowers?.toLocaleString()} followers)</span>
-                        <span>•</span>
-                        <span>Fee: ₹{app.expectedRate.toLocaleString()}</span>
-                      </div>
+                      <p className="text-sm text-text-secondary line-clamp-1">{app.proposal}</p>
+                      <p className="text-sm font-semibold text-primary">
+                        {app.metrics.instagramFollowers ? `${app.metrics.instagramFollowers.toLocaleString("en-IN")} IG followers · ` : ""}
+                        {app.expectedRate ? `₹${app.expectedRate.toLocaleString("en-IN")}` : "Fee not set"}
+                      </p>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedApp(app);
-                          setActiveTab("applications");
-                        }}
-                      >
-                        Inspect Metrics
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button size="sm" variant="outline" onClick={() => { setSelectedApp(app); setActiveTab("applications"); }}>
+                        Review
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => handleUpdateAppStatus(app.id, "SHORTLISTED")}
-                      >
-                        Shortlist
-                      </Button>
+                      {app.status === "PENDING" || app.status === "UNDER_REVIEW" ? (
+                        <Button size="sm" variant="accent" onClick={() => handleUpdateAppStatus(app.id, "SHORTLISTED")}>
+                          Shortlist
+                        </Button>
+                      ) : null}
                     </div>
-                  </div>
+                  </li>
                 ))}
-              </div>
-            </Card>
+              </ul>
+            </section>
           </div>
         )}
 
@@ -322,19 +350,20 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary z-10" aria-hidden="true" />
                 <Input
-                  placeholder="Search brands by name or description..."
+                  placeholder="Search briefs"
+                  aria-label="Search briefs"
                   value={brandSearch}
                   onChange={(e) => setBrandSearch(e.target.value)}
-                  className="pl-10"
+                  className="pl-12"
                 />
               </div>
 
               <div className="flex items-center gap-3">
                 <Select
                   options={[
-                    { value: "ALL", label: "All Industries" },
+                    { value: "ALL", label: "All industries" },
                     { value: "Food", label: "Food & FMCG" },
                     { value: "Lifestyle", label: "Lifestyle" },
                     { value: "Beauty", label: "Beauty & Skincare" },
@@ -344,463 +373,336 @@ export default function AdminDashboard() {
                   value={brandIndustryFilter}
                   onChange={(e) => setBrandIndustryFilter(e.target.value)}
                 />
-                <Button variant="accent" onClick={() => setIsAddBrandOpen(true)}>
-                  <Plus className="w-4 h-4 mr-1.5" />
-                  Add Brand
+                <Button variant="accent" onClick={() => setIsAddBrandOpen(true)} className="shrink-0">
+                  <Plus className="w-4 h-4 mr-1.5" aria-hidden="true" />
+                  New brief
                 </Button>
               </div>
             </div>
 
-            {/* Brands Grid / List */}
+            {/* Briefs grid: the same pastel fill each brief wears on the public site. */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredBrands.map((brand) => (
-                <Card key={brand.id} className="border-border hover:shadow-md transition-all flex flex-col">
-                  <div className="h-32 relative bg-muted overflow-hidden">
-                    <img
-                      src={brand.coverImage}
-                      alt={brand.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 right-3 flex gap-2">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                          brand.isActive
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-500 text-white"
-                        }`}
-                      >
-                        {brand.isActive ? "Active" : "Paused"}
-                      </span>
+                <article key={brand.id} className={`rounded-4xl p-5 shadow-clay flex flex-col ${brand.isActive ? clayFillFor(brand.slug) : "bg-clay-cloud"}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="text-[28px] font-extrabold tracking-tight leading-none text-primary truncate">{brand.name}</h3>
+                      <p className="mt-1 text-sm font-semibold text-text-secondary">{brand.industry} · {brand.budgetTier}</p>
                     </div>
+                    <span className={`shrink-0 px-3 pt-1 pb-0.5 rounded-full text-xs font-extrabold shadow-clay-sm ${brand.isActive ? "bg-clay-mint text-primary" : "bg-surface text-text-secondary"}`}>
+                      {brand.isActive ? "Open" : "Paused"}
+                    </span>
                   </div>
 
-                  <CardContent className="p-5 flex-1 flex flex-col">
-                    <div className="flex items-center gap-3 mb-3">
-                      <img
-                        src={brand.logo}
-                        alt={brand.name}
-                        className="w-10 h-10 rounded-xl border border-border object-cover bg-surface"
-                      />
-                      <div>
-                        <h3 className="font-bold text-base text-primary">{brand.name}</h3>
-                        <span className="text-xs text-text-secondary">{brand.industry}</span>
-                      </div>
-                    </div>
+                  <p className="mt-3 text-[15px] leading-relaxed text-primary/85 line-clamp-3 flex-1">{brand.description}</p>
 
-                    <p className="text-xs text-text-secondary line-clamp-2 mb-4 leading-relaxed flex-1">
-                      {brand.description}
-                    </p>
+                  <ul className="mt-4 flex flex-wrap gap-1.5">
+                    {brand.campaignTypes.slice(0, 3).map((t) => (
+                      <li key={t} className="px-2.5 pt-1 pb-0.5 rounded-full bg-white/60 shadow-clay-well text-xs font-semibold text-primary">{t}</li>
+                    ))}
+                  </ul>
 
-                    <div className="text-xs space-y-1.5 border-t border-border pt-3 mb-4 text-text-secondary">
-                      <div>
-                        <strong className="text-primary font-medium">Budget Tier:</strong>{" "}
-                        {brand.budgetTier}
-                      </div>
-                      <div>
-                        <strong className="text-primary font-medium">Deliverables:</strong>{" "}
-                        {brand.campaignTypes.join(", ")}
-                      </div>
-                    </div>
+                  <p className="mt-3 text-sm font-semibold text-text-secondary">{brand.likesCount} creators interested</p>
 
-                    <div className="flex items-center justify-between gap-2 mt-auto pt-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => toggleBrandStatus(brand.id)}
-                        className="flex-1 text-xs"
-                      >
-                        {brand.isActive ? "Pause Brief" : "Activate Brief"}
+                  <div className="mt-4 flex items-center gap-2">
+                    <Button size="sm" variant="outline" onClick={() => toggleBrandStatus(brand)} className="flex-1">
+                      {brand.isActive ? "Pause brief" : "Re-open brief"}
+                    </Button>
+                    <a href={`/brands/${brand.slug}`} target="_blank" rel="noreferrer" aria-label={`Open the public ${brand.name} brief`}>
+                      <Button size="sm" variant="outline" className="px-3" tabIndex={-1}>
+                        <ExternalLink className="w-4 h-4" aria-hidden="true" />
                       </Button>
-                      <a href={`/brands/${brand.slug}`} target="_blank" rel="noreferrer">
-                        <Button size="sm" variant="ghost" className="px-2.5">
-                          <ExternalLink className="w-4 h-4" />
-                        </Button>
-                      </a>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </a>
+                  </div>
+                </article>
               ))}
             </div>
           </div>
         )}
 
-        {/* TAB 3: APPLICATIONS REVIEW PORTAL */}
+        {/* TAB 3: PITCH QUEUE */}
         {activeTab === "applications" && (
           <div className="space-y-6">
-            {/* Filter Pill Buttons */}
-            <div className="flex flex-wrap gap-2 items-center justify-between border-b border-border pb-4">
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { key: "ALL", label: "All Proposals" },
-                  { key: "PENDING", label: `Pending Review (${pendingCount})` },
-                  { key: "SHORTLISTED", label: `Shortlisted (${shortlistedCount})` },
-                  { key: "APPROVED", label: `Approved (${approvedCount})` },
-                  { key: "REJECTED", label: "Rejected" },
-                ].map((pill) => (
-                  <button
-                    key={pill.key}
-                    onClick={() => setAppFilter(pill.key)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                      appFilter === pill.key
-                        ? "bg-ink text-white shadow-sm"
-                        : "bg-surface text-text-secondary border border-border hover:bg-muted"
-                    }`}
-                  >
-                    {pill.label}
-                  </button>
-                ))}
-              </div>
+            <div className="-mx-1 px-1 py-1 flex gap-2 overflow-x-auto [scrollbar-width:none]" role="group" aria-label="Filter pitches by status">
+              {[
+                { key: "ALL", label: `All (${applications.length})` },
+                { key: "PENDING", label: `Pending (${pendingCount})` },
+                { key: "UNDER_REVIEW", label: "In review" },
+                { key: "SHORTLISTED", label: `Shortlisted (${shortlistedCount})` },
+                { key: "APPROVED", label: `Approved (${approvedCount})` },
+                { key: "REJECTED", label: "Not selected" },
+                { key: "WITHDRAWN", label: `Withdrawn (${withdrawnCount})` },
+              ].map((pill) => (
+                <button
+                  key={pill.key}
+                  onClick={() => setAppFilter(pill.key)}
+                  aria-pressed={appFilter === pill.key}
+                  className={`clay-press shrink-0 px-4 pt-2.5 pb-2 rounded-full text-sm font-bold ${
+                    appFilter === pill.key ? "bg-accent text-white shadow-clay-btn" : "bg-surface text-primary shadow-clay-sm"
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              ))}
             </div>
 
-            {/* Applications List */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left 2 Cols: List */}
-              <div className="lg:col-span-2 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_400px] gap-6 items-start">
+              <ul className="space-y-4">
                 {filteredApps.length === 0 ? (
-                  <div className="p-12 text-center bg-surface rounded-2xl border border-border text-text-secondary">
-                    No applications found matching this status.
-                  </div>
+                  <li className="rounded-4xl bg-surface p-10 text-center text-[15px] text-text-secondary shadow-clay">
+                    No pitches with this status.
+                  </li>
                 ) : (
-                  filteredApps.map((app) => (
-                    <Card
-                      key={app.id}
-                      className={`cursor-pointer transition-all border ${
-                        selectedApp?.id === app.id
-                          ? "border-accent ring-2 ring-accent/20 shadow-md"
-                          : "border-border hover:border-gray-400"
-                      }`}
-                      onClick={() => setSelectedApp(app)}
-                    >
-                      <CardContent className="p-5">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h3 className="font-bold text-base text-primary">{app.creatorName}</h3>
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent font-semibold">
-                                {app.brandName}
+                  filteredApps.map((app) => {
+                    const selected = selectedApp?.id === app.id;
+                    return (
+                      <li key={app.id}>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedApp(app)}
+                          aria-pressed={selected}
+                          className={`clay-press w-full text-left rounded-4xl p-5 shadow-clay ${
+                            selected ? "bg-clay-butter ring-[3px] ring-accent/60" : "bg-surface"
+                          } ${app.status === "WITHDRAWN" ? "opacity-70" : ""}`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <h3 className="text-xl font-extrabold text-primary leading-tight">
+                                {app.creatorName} <span className="text-text-secondary font-bold">→ {app.brandName}</span>
+                              </h3>
+                              <p className="text-sm text-text-secondary mt-0.5">
+                                {app.creatorEmail} · sent {new Date(app.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                              </p>
+                            </div>
+                            <Badge variant={STATUS_BADGE[app.status]} className="shrink-0">{STATUS_LABEL[app.status]}</Badge>
+                          </div>
+
+                          <p className="mt-3 text-[15px] text-primary/85 leading-relaxed line-clamp-2">{app.proposal}</p>
+
+                          <div className="mt-4 flex flex-wrap items-center gap-2 text-sm font-semibold">
+                            {app.metrics.instagramFollowers ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 pt-1 pb-0.5 rounded-full bg-clay-rose shadow-clay-sm text-primary">
+                                <Instagram className="w-3.5 h-3.5 -mt-0.5" aria-hidden="true" />
+                                {app.metrics.instagramFollowers.toLocaleString("en-IN")}
+                                {app.metrics.instagramER ? ` · ${app.metrics.instagramER}` : ""}
                               </span>
-                            </div>
-                            <p className="text-xs text-text-secondary">{app.creatorEmail} • Submitted {app.date}</p>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase ${
-                                app.status === "APPROVED"
-                                  ? "bg-green-100 text-green-700"
-                                  : app.status === "SHORTLISTED"
-                                  ? "bg-purple-100 text-purple-700"
-                                  : app.status === "REJECTED"
-                                  ? "bg-red-100 text-red-700"
-                                  : "bg-amber-100 text-amber-700"
-                              }`}
-                            >
-                              {app.status.replace("_", " ")}
+                            ) : null}
+                            {app.metrics.youtubeSubscribers ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 pt-1 pb-0.5 rounded-full bg-clay-sky shadow-clay-sm text-primary">
+                                <Youtube className="w-3.5 h-3.5 -mt-0.5" aria-hidden="true" />
+                                {app.metrics.youtubeSubscribers.toLocaleString("en-IN")}
+                              </span>
+                            ) : null}
+                            <span className="ml-auto text-lg font-extrabold text-primary tabular-nums">
+                              {app.expectedRate ? `₹${app.expectedRate.toLocaleString("en-IN")}` : "No fee set"}
                             </span>
                           </div>
-                        </div>
-
-                        <p className="text-sm text-text-primary line-clamp-2 mb-4 leading-relaxed">
-                          &ldquo;{app.proposal}&rdquo;
-                        </p>
-
-                        {/* Metrics Badges */}
-                        <div className="flex flex-wrap gap-3 pt-3 border-t border-border text-xs text-text-secondary">
-                          {app.metrics.instagramHandle && (
-                            <span className="flex items-center gap-1.5 bg-muted text-text-primary px-2 py-1 rounded-md font-medium">
-                              <Instagram className="w-3.5 h-3.5" />
-                              {app.metrics.instagramFollowers?.toLocaleString()} (ER: {app.metrics.instagramER})
-                            </span>
-                          )}
-                          {app.metrics.youtubeSubscribers && (
-                            <span className="flex items-center gap-1.5 bg-red-50 text-red-700 px-2 py-1 rounded-md font-medium">
-                              <Youtube className="w-3.5 h-3.5" />
-                              {app.metrics.youtubeSubscribers.toLocaleString()} subs
-                            </span>
-                          )}
-                          <span className="font-bold text-primary ml-auto">
-                            ₹{app.expectedRate.toLocaleString()}
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
+                        </button>
+                      </li>
+                    );
+                  })
                 )}
-              </div>
+              </ul>
 
-              {/* Right Col: Inspection & Action Drawer */}
-              <div className="lg:col-span-1">
+              {/* Inspector */}
+              <div className="lg:sticky lg:top-28">
                 {selectedApp ? (
-                  <Card className="sticky top-20 border-border shadow-lg">
-                    <CardContent className="p-6 space-y-6">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold uppercase tracking-wider text-accent">
-                            Proposal Inspector
-                          </span>
-                          <span className="text-xs text-text-secondary">{selectedApp.date}</span>
-                        </div>
-                        <h2 className="text-xl font-extrabold text-primary">{selectedApp.creatorName}</h2>
-                        <p className="text-xs text-text-secondary">{selectedApp.creatorEmail}</p>
+                  <section className="rounded-4xl bg-surface p-6 shadow-clay space-y-6" aria-label={`Pitch from ${selectedApp.creatorName}`}>
+                    <div>
+                      <div className="flex items-start justify-between gap-3">
+                        <h2 className="text-2xl font-extrabold text-primary leading-tight">{selectedApp.creatorName}</h2>
+                        <Badge variant={STATUS_BADGE[selectedApp.status]} className="shrink-0">{STATUS_LABEL[selectedApp.status]}</Badge>
                       </div>
-
-                      {/* Brand Applied */}
-                      <div className="p-3 bg-muted rounded-xl border border-border">
-                        <div className="text-xs text-text-secondary font-medium">Target Brand Brief</div>
-                        <div className="text-sm font-bold text-primary">{selectedApp.brandName}</div>
-                      </div>
-
-                      {/* Verified Metrics */}
-                      <div className="space-y-2">
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary">
-                          Submitted Metrics
-                        </h3>
-                        <div className="space-y-1.5 text-xs">
-                          {selectedApp.metrics.instagramHandle && (
-                            <div className="flex justify-between p-2 bg-purple-50 rounded-lg text-purple-900">
-                              <span>Instagram ({selectedApp.metrics.instagramHandle})</span>
-                              <span className="font-bold">{selectedApp.metrics.instagramFollowers?.toLocaleString()}</span>
-                            </div>
-                          )}
-                          {selectedApp.metrics.youtubeChannel && (
-                            <div className="flex justify-between p-2 bg-red-50 rounded-lg text-red-900">
-                              <span>YouTube ({selectedApp.metrics.youtubeChannel})</span>
-                              <span className="font-bold">{selectedApp.metrics.youtubeSubscribers?.toLocaleString()}</span>
-                            </div>
-                          )}
-                          {selectedApp.metrics.facebookFollowers && (
-                            <div className="flex justify-between p-2 bg-blue-50 rounded-lg text-blue-900">
-                              <span>Facebook Followers</span>
-                              <span className="font-bold">{selectedApp.metrics.facebookFollowers.toLocaleString()}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Pitch & Proposal */}
-                      <div>
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
-                          Collaboration Pitch
-                        </h3>
-                        <p className="text-xs text-text-primary leading-relaxed bg-muted p-3 rounded-xl border border-border">
-                          {selectedApp.proposal}
+                      <p className="text-sm text-text-secondary">{selectedApp.creatorEmail}</p>
+                      {(selectedApp.applicant?.phone || selectedApp.applicant?.location) && (
+                        <p className="text-sm text-text-secondary">
+                          {[selectedApp.applicant?.phone, selectedApp.applicant?.location].filter(Boolean).join(" · ")}
                         </p>
-                      </div>
+                      )}
+                      {selectedApp.creatorId && (
+                        <Link href={`/creators/${selectedApp.creatorId}`} className="inline-flex items-center gap-1 mt-1.5 text-sm font-bold text-accent hover:underline underline-offset-4">
+                          Open creator profile <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
+                        </Link>
+                      )}
+                    </div>
 
-                      {/* Deliverables & Fee */}
-                      <div>
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
-                          Deliverables & Proposed Fee
-                        </h3>
-                        <div className="text-sm font-bold text-primary mb-2">
-                          ₹{selectedApp.expectedRate.toLocaleString()} INR
-                        </div>
-                        <div className="flex flex-wrap gap-1.5">
-                          {selectedApp.deliverables.map((d, i) => (
-                            <span key={i} className="px-2 py-0.5 rounded bg-muted text-[11px] text-text-secondary font-medium">
-                              {d}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+                    <div className={`rounded-3xl px-4 py-3 shadow-clay-sm ${clayFillFor(selectedApp.brandSlug || selectedApp.brandName)}`}>
+                      <p className="text-xs font-semibold text-text-secondary">Brief</p>
+                      <p className="text-lg font-extrabold text-primary">{selectedApp.brandName}</p>
+                    </div>
 
-                      {/* Admin Decision Actions */}
-                      <div className="pt-4 border-t border-border space-y-2">
-                        <div className="text-xs font-bold uppercase tracking-wider text-primary mb-2">
-                          Decision Workflow
-                        </div>
+                    <div>
+                      <h3 className="text-base font-extrabold text-primary mb-2">Numbers they sent</h3>
+                      <dl className="space-y-2 text-sm">
+                        {selectedApp.metrics.instagramHandle && (
+                          <div className="flex justify-between gap-3 rounded-2xl bg-background px-3.5 py-2.5 shadow-clay-well">
+                            <dt className="text-text-secondary">Instagram {selectedApp.metrics.instagramHandle}</dt>
+                            <dd className="font-extrabold text-primary tabular-nums">{selectedApp.metrics.instagramFollowers?.toLocaleString("en-IN")}</dd>
+                          </div>
+                        )}
+                        {selectedApp.metrics.youtubeChannel && (
+                          <div className="flex justify-between gap-3 rounded-2xl bg-background px-3.5 py-2.5 shadow-clay-well">
+                            <dt className="text-text-secondary">YouTube {selectedApp.metrics.youtubeChannel}</dt>
+                            <dd className="font-extrabold text-primary tabular-nums">{selectedApp.metrics.youtubeSubscribers?.toLocaleString("en-IN")}</dd>
+                          </div>
+                        )}
+                        {selectedApp.metrics.facebookFollowers ? (
+                          <div className="flex justify-between gap-3 rounded-2xl bg-background px-3.5 py-2.5 shadow-clay-well">
+                            <dt className="text-text-secondary">Facebook</dt>
+                            <dd className="font-extrabold text-primary tabular-nums">{selectedApp.metrics.facebookFollowers.toLocaleString("en-IN")}</dd>
+                          </div>
+                        ) : null}
+                      </dl>
+                      <p className="mt-2 text-xs text-text-secondary">Self-reported by the creator.</p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-extrabold text-primary mb-2">Their idea</h3>
+                      <p className="rounded-3xl bg-background p-4 text-[15px] leading-relaxed text-primary shadow-clay-well">{selectedApp.proposal}</p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-base font-extrabold text-primary mb-2">
+                        Deliverables · {selectedApp.expectedRate ? `₹${selectedApp.expectedRate.toLocaleString("en-IN")}` : "no fee set"}
+                      </h3>
+                      <ul className="flex flex-wrap gap-1.5">
+                        {selectedApp.deliverables.map((d) => (
+                          <li key={d} className="px-3 pt-1 pb-0.5 rounded-full bg-clay-butter text-sm font-bold text-primary shadow-clay-sm">{d}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {selectedApp.status === "WITHDRAWN" ? (
+                      <p className="rounded-3xl bg-clay-cloud px-4 py-3 text-sm text-primary shadow-clay-sm">
+                        The creator withdrew this pitch, so there is nothing to decide.
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        <h3 className="text-base font-extrabold text-primary">Decision</h3>
                         <div className="grid grid-cols-2 gap-2">
-                          <Button
-                            size="sm"
-                            variant="accent"
-                            onClick={() => handleUpdateAppStatus(selectedApp.id, "SHORTLISTED")}
-                          >
-                            <Check className="w-3.5 h-3.5 mr-1" />
-                            Shortlist
+                          <Button size="sm" variant="accent" disabled={savingReview} onClick={() => handleUpdateAppStatus(selectedApp.id, "SHORTLISTED")}>
+                            <Check className="w-4 h-4 mr-1" aria-hidden="true" /> Shortlist
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="primary"
-                            onClick={() => handleUpdateAppStatus(selectedApp.id, "APPROVED")}
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                            Approve
+                          <Button size="sm" variant="primary" disabled={savingReview} onClick={() => handleUpdateAppStatus(selectedApp.id, "APPROVED")}>
+                            <CheckCircle2 className="w-4 h-4 mr-1" aria-hidden="true" /> Approve
+                          </Button>
+                          <Button size="sm" variant="outline" disabled={savingReview} onClick={() => handleUpdateAppStatus(selectedApp.id, "UNDER_REVIEW")}>
+                            Mark in review
+                          </Button>
+                          <Button size="sm" variant="outline" className="text-error" disabled={savingReview} onClick={() => handleUpdateAppStatus(selectedApp.id, "REJECTED")}>
+                            <X className="w-4 h-4 mr-1" aria-hidden="true" /> Not selected
                           </Button>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
+
+                        <div className="pt-2 space-y-2">
+                          <Textarea
+                            label="Note to the creator"
+                            placeholder="Shown on their dashboard with this pitch — what to change or what happens next."
+                            rows={3}
+                            value={noteDraft}
+                            onChange={(e) => setNoteDraft(e.target.value)}
+                          />
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleUpdateAppStatus(selectedApp.id, "UNDER_REVIEW")}
+                            className="w-full"
+                            disabled={savingReview || noteDraft === (selectedApp.adminNotes ?? "")}
+                            onClick={handleSaveNote}
                           >
-                            Under Review
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-error hover:bg-red-50"
-                            onClick={() => handleUpdateAppStatus(selectedApp.id, "REJECTED")}
-                          >
-                            <X className="w-3.5 h-3.5 mr-1" />
-                            Reject
+                            Save note
                           </Button>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    )}
+                  </section>
                 ) : (
-                  <div className="p-8 text-center bg-muted border border-dashed border-border rounded-2xl text-xs text-text-secondary">
-                    Select an application to inspect creator analytics and make a review decision.
-                  </div>
+                  <p className="rounded-4xl bg-background p-8 text-center text-[15px] text-text-secondary shadow-clay-well">
+                    Pick a pitch to read it, check the numbers and decide.
+                  </p>
                 )}
               </div>
             </div>
           </div>
         )}
 
-        {/* TAB 4: CREATOR LIKES QUEUE (HOT LEADS) */}
+        {/* TAB 4: CREATOR INTEREST */}
         {activeTab === "interests" && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-6 rounded-3xl border border-border">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-primary flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-red-500 fill-red-500" />
-                  Creator Likes &amp; Expressed Interest Queue
-                </h2>
-                <p className="text-xs text-text-secondary mt-0.5">
-                  Creators who bookmarked or expressed interest in active brand briefs. Reach out directly with fast-track collaboration offers.
+                <h2 className="text-3xl font-extrabold tracking-tight text-primary">Who&apos;s interested</h2>
+                <p className="mt-1 text-[15px] text-text-secondary max-w-xl">
+                  Creators who liked a brief. They haven&apos;t pitched it yet — a quick email often gets them to.
                 </p>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Link href="/creators">
-                  <Button variant="outline" size="sm" className="text-xs font-bold">
-                    <Users className="w-3.5 h-3.5 mr-1.5" />
-                    Open Creator Roster
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/creators" className="shrink-0">
+                <Button variant="outline" size="sm">
+                  <Users className="w-4 h-4 mr-1.5" aria-hidden="true" />
+                  All creators
+                </Button>
+              </Link>
             </div>
 
-            {/* Interested Creators Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {INITIAL_CREATORS.flatMap((creator) =>
-                creator.likedBrandIds.map((brandId) => {
-                  const targetBrand = brands.find((b) => b.id === brandId);
-                  if (!targetBrand) return null;
+            {interests.length === 0 && (
+              <p className="rounded-4xl bg-background p-8 text-center text-[15px] text-text-secondary shadow-clay-well">
+                No likes yet. When a creator likes a brief on /brands, they show up here.
+              </p>
+            )}
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {interests.map(({ id, brand: targetBrand, creator, likedAt }) => (
+                <li key={id} className="rounded-4xl bg-surface p-5 shadow-clay flex flex-col">
+                  <div className={`rounded-3xl px-4 py-3 shadow-clay-sm flex items-center justify-between gap-3 ${clayFillFor(targetBrand.slug)}`}>
+                    <div className="min-w-0">
+                      <p className="text-lg font-extrabold text-primary leading-tight truncate">{targetBrand.name}</p>
+                      <p className="text-xs font-semibold text-text-secondary">
+                        {targetBrand.budgetTier} · liked {new Date(likedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                      </p>
+                    </div>
+                    <span className="shrink-0 w-9 h-9 rounded-full bg-surface grid place-items-center shadow-clay-sm">
+                      <Heart className="w-4 h-4 fill-[#E8457A] text-[#E8457A]" aria-hidden="true" />
+                    </span>
+                  </div>
 
-                  return (
-                    <Card key={`${creator.id}-${brandId}`} className="border-border hover:shadow-lg transition-all flex flex-col justify-between">
-                      <CardContent className="p-6">
-                        {/* Target Brand Header Banner */}
-                        <div className="flex items-center justify-between p-3 rounded-2xl bg-red-50/70 border border-red-100 mb-4">
-                          <div className="flex items-center gap-2">
-                            <img
-                              src={targetBrand.logo}
-                              alt={targetBrand.name}
-                              className="w-7 h-7 rounded-lg object-cover bg-surface border border-border"
-                            />
-                            <div>
-                              <div className="text-xs font-bold text-primary">
-                                Interested in {targetBrand.name}
-                              </div>
-                              <span className="text-[10px] text-red-600 font-semibold">
-                                {targetBrand.budgetTier} Tier Brief
-                              </span>
-                            </div>
-                          </div>
-                          <span className="p-1.5 rounded-full bg-red-100 text-red-600">
-                            <Heart className="w-3.5 h-3.5 fill-red-500 text-red-500" />
-                          </span>
-                        </div>
+                  <div className="mt-4 flex items-center gap-3">
+                    <img src={creator.avatar} alt="" className="w-12 h-12 rounded-full object-cover bg-clay-butter shadow-clay-sm" />
+                    <div className="min-w-0">
+                      <h3 className="font-extrabold text-primary truncate">{creator.name}</h3>
+                      <p className="text-sm font-semibold text-text-secondary truncate">{creator.handle}{creator.location ? ` · ${creator.location}` : ""}</p>
+                    </div>
+                  </div>
 
-                        {/* Creator Info */}
-                        <div className="flex items-start gap-3.5 mb-4">
-                          <img
-                            src={creator.avatar}
-                            alt={creator.name}
-                            className="w-12 h-12 rounded-2xl object-cover border border-border"
-                          />
-                          <div>
-                            <h3 className="font-extrabold text-sm text-primary">
-                              {creator.name}
-                            </h3>
-                            <p className="text-xs font-semibold text-accent">
-                              {creator.handle}
-                            </p>
-                            <span className="text-[11px] text-text-secondary">
-                              {creator.location}
-                            </span>
-                          </div>
-                        </div>
+                  <dl className="mt-4 grid grid-cols-2 gap-2 text-center">
+                    <div className="rounded-2xl bg-background px-2 pt-2 pb-1.5 shadow-clay-well">
+                      <dt className="text-xs font-semibold text-text-secondary">Followers</dt>
+                      <dd className="font-extrabold text-primary tabular-nums">
+                        {creator.igFollowers != null ? creator.igFollowers.toLocaleString("en-IN") : "—"}
+                      </dd>
+                    </div>
+                    <div className="rounded-2xl bg-background px-2 pt-2 pb-1.5 shadow-clay-well">
+                      <dt className="text-xs font-semibold text-text-secondary">Engagement</dt>
+                      <dd className="font-extrabold text-primary tabular-nums">
+                        {creator.igEngagementRate != null ? `${creator.igEngagementRate}%` : "—"}
+                      </dd>
+                    </div>
+                  </dl>
 
-                        {/* Social Metrics */}
-                        <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-muted border border-border text-center text-xs mb-4">
-                          <div>
-                            <span className="text-text-secondary text-[10px] font-medium block">Followers</span>
-                            <span className="font-black text-primary">
-                              {(creator.igFollowers / 1000).toFixed(0)}k
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-text-secondary text-[10px] font-medium block">Engagement Rate</span>
-                            <span className="font-black text-green-600">
-                              {creator.igEngagementRate}% ER
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Past Experience */}
-                        <div className="space-y-1.5 border-t border-border pt-3">
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">
-                            Past Brand Collabs:
-                          </div>
-                          <div className="flex flex-wrap gap-1">
-                            {creator.brandCollaborations.slice(0, 2).map((collab, i) => (
-                              <span
-                                key={i}
-                                className="px-2 py-0.5 rounded-md bg-surface border border-border text-[10px] font-bold text-primary"
-                              >
-                                {collab.brandName}
-                              </span>
-                            ))}
-                            {creator.brandCollaborations.length > 2 && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-muted text-[10px] font-medium text-text-secondary">
-                                +{creator.brandCollaborations.length - 2}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-
-                      {/* Card Action */}
-                      <div className="p-4 bg-muted border-t border-border flex items-center gap-2">
-                        <Link href={`/creators/${creator.id}`} className="flex-1">
-                          <Button variant="outline" size="sm" className="w-full text-xs font-bold">
-                            Scorecard
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="accent"
-                          size="sm"
-                          className="flex-1 text-xs font-bold shadow-md shadow-accent/20"
-                          onClick={() => {
-                            toast({
-                              title: `Invite sent to ${creator.name}`,
-                              description: `Fast-track pitch invite for ${targetBrand.name} sent to ${creator.name} (${creator.email}).`,
-                              type: "success",
-                            });
-                          }}
-                        >
-                          <Send className="w-3 h-3 mr-1" />
-                          Send Deal
-                        </Button>
-                      </div>
-                    </Card>
-                  );
-                })
-              )}
-            </div>
+                  <div className="mt-4 flex items-center gap-2">
+                    <Link href={`/creators/${creator.id}`} className="flex-1">
+                      <Button variant="outline" size="sm" className="w-full">Profile</Button>
+                    </Link>
+                    <a
+                      href={`mailto:${creator.email}?subject=${encodeURIComponent(`${targetBrand.name} brief on Align`)}`}
+                      className="flex-1"
+                    >
+                      <Button variant="accent" size="sm" className="w-full" tabIndex={-1}>
+                        <Send className="w-4 h-4 mr-1.5" aria-hidden="true" />
+                        Email creator
+                      </Button>
+                    </a>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
@@ -809,8 +711,8 @@ export default function AdminDashboard() {
       <Modal
         isOpen={isAddBrandOpen}
         onClose={() => setIsAddBrandOpen(false)}
-        title="Add New Brand Brief"
-        description="Publish an active brand campaign for creators to apply."
+        title="New brief"
+        description="It goes live on /brands as soon as you publish it."
         size="lg"
       >
         <form onSubmit={handleCreateBrand} className="space-y-4 mt-4">
@@ -898,7 +800,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Competitor Tracking Section */}
-          <div className="pt-4 border-t border-border space-y-3">
+          <div className="pt-4 border-t-2 border-muted space-y-3">
             <div>
               <label className="text-xs font-bold text-primary block mb-1">
                 Track Competitors (Optional — up to 4)
@@ -923,12 +825,12 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
+          <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setIsAddBrandOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="accent">
-              Publish Brand Brief
+            <Button type="submit" variant="accent" disabled={publishing}>
+              {publishing ? "Publishing…" : "Publish brief"}
             </Button>
           </div>
         </form>

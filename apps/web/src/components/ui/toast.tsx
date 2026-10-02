@@ -43,17 +43,17 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
           <div
             key={t.id}
             className={cn(
-              "p-4 rounded-xl shadow-lg border flex justify-between items-start",
-              t.type === 'success' && "bg-surface border-success/20 text-text-primary",
-              t.type === 'error' && "bg-surface border-error/20 text-text-primary",
-              (t.type === 'info' || !t.type) && "bg-surface border-border text-text-primary"
+              "p-4 pl-5 rounded-3xl shadow-clay flex justify-between items-start gap-3 text-text-primary animate-in fade-in slide-in-from-bottom-2 duration-300",
+              t.type === 'success' && "bg-clay-mint",
+              t.type === 'error' && "bg-clay-rose",
+              (t.type === 'info' || !t.type) && "bg-surface"
             )}
           >
             <div>
-              <h4 className="font-medium text-sm">{t.title}</h4>
-              {t.description && <p className="text-sm text-text-secondary mt-1">{t.description}</p>}
+              <h4 className="font-bold text-[15px] leading-snug">{t.title}</h4>
+              {t.description && <p className="text-sm text-text-primary/80 mt-0.5 leading-snug">{t.description}</p>}
             </div>
-            <button onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))} className="text-text-secondary hover:text-text-primary">
+            <button onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))} className="text-text-secondary hover:text-text-primary" aria-label="Dismiss">
               <X className="w-4 h-4" />
             </button>
           </div>
