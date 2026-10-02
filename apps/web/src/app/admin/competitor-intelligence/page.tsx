@@ -32,7 +32,7 @@ export default function CompetitorIntelligenceHubPage() {
         <div className="w-16 h-16 rounded-3xl bg-accent/10 text-accent flex items-center justify-center mb-4">
           <Lock className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl font-bold text-primary mb-2">Agency &amp; Brand Portal Only</h1>
+        <h1 className="text-2xl type-display text-primary mb-2">Agency &amp; Brand Portal Only</h1>
         <p className="text-sm text-text-secondary max-w-md mb-6">
           Competitor Instagram Scraping and Paid Collaboration Intelligence is reserved for verified Schbang Brand Managers.
         </p>
@@ -67,7 +67,7 @@ export default function CompetitorIntelligenceHubPage() {
         <div className="max-w-7xl mx-auto space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+              <h1 className="text-3xl md:text-4xl type-display">
                 Competitor intelligence
               </h1>
               <p className="text-white/70 max-w-2xl text-sm leading-relaxed mt-1">

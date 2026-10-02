@@ -9,6 +9,7 @@ import { verify } from "@node-rs/bcrypt";
 import { prisma } from "@/server/db";
 import { authConfig } from "./auth.config";
 import { normalizeEmail, isSeededAdminEmail } from "./auth-shared";
+import { clientIp, hitRateLimit, type RateLimitStore } from "./rate-limit";
 
 const hasGoogleKeys = Boolean(
   process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
@@ -20,6 +21,15 @@ const hasGoogleKeys = Boolean(
  * Without it, response latency reveals which emails are registered.
  */
 const DUMMY_HASH = "$2a$12$C6UzMDM.H6dfI/f/IKcEeO1wF0KHvmQvLQYQZ.3AD0Zv1lSRpF9dq";
+
+/**
+ * Password guesses allowed per account and per address in 15 minutes. Over
+ * the limit the attempt is refused before bcrypt runs, with the same generic
+ * "wrong email or password" the UI already shows. In-memory, so per instance
+ * (see lib/rate-limit.ts).
+ */
+const loginAttempts: RateLimitStore = new Map();
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 const nextAuth = NextAuth({
   ...authConfig,
@@ -45,11 +55,19 @@ const nextAuth = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials, request) => {
         const email = normalizeEmail(credentials?.email as string);
         const password = credentials?.password as string;
 
         if (!email || !password) return null;
+
+        const ip = request instanceof Request ? clientIp(request.headers) : "unknown";
+        const byEmail = hitRateLimit(loginAttempts, `email:${email}`, 10, LOGIN_WINDOW_MS);
+        const byIp = hitRateLimit(loginAttempts, `ip:${ip}`, 50, LOGIN_WINDOW_MS);
+        if (!byEmail.ok || !byIp.ok) {
+          console.warn(`[auth] login rate limit hit for ${!byEmail.ok ? "an account" : "an address"}`);
+          return null;
+        }
 
         const user = await prisma.user.findUnique({ where: { email } });
 

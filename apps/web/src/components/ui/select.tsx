@@ -11,12 +11,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, label, error, options, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1.5 w-full">
-        {label && <label className="text-sm font-medium text-text-primary">{label}</label>}
+        {label && <label className="text-sm font-extrabold text-text-primary">{label}</label>}
         <select
           ref={ref}
           className={cn(
-            "flex h-10 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-error focus:ring-error",
+            "flex h-12 w-full rounded-md bg-surface px-4 text-[15px] font-bold text-text-primary brut-well cursor-pointer focus:outline-none focus-visible:outline-none focus-visible:bg-[#FFFCEB] focus-visible:shadow-[3px_3px_0_0_#111] disabled:cursor-not-allowed disabled:opacity-55",
+            error && "border-error shadow-[3px_3px_0_0_var(--color-error)]",
             className
           )}
           {...props}

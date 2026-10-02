@@ -2,16 +2,34 @@ import { Providers } from './providers';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { AnalyticsProvider } from '@/components/analytics/analytics-provider';
-import { DM_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
+import { Martian_Mono } from 'next/font/google';
 import './globals.css';
 import type { Metadata } from 'next';
 
-// Pin Sans (DESIGN.md) substitute — DM Sans is the closest free geometric humanist sans
-const dmSans = DM_Sans({
+// Self-hosted from Fontshare (Indian Type Foundry, ITF Free Font License —
+// fonts/ITF-FFL.txt). Cabinet Grotesk is the interface and reading face;
+// Tanker is display only (page titles, brand names), set in capitals.
+const cabinet = localFont({
+  src: './fonts/CabinetGrotesk-Variable.woff2',
+  weight: '100 900',
+  display: 'swap',
+  variable: '--font-cabinet',
+});
+
+const tanker = localFont({
+  src: './fonts/Tanker-Regular.woff2',
+  weight: '400',
+  display: 'swap',
+  variable: '--font-tanker',
+});
+
+// Numbers only: rupees, follower counts, dates.
+const martian = Martian_Mono({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-dm-sans',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  axes: ['wdth'],
+  variable: '--font-martian',
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://align.schbang.com';
@@ -114,14 +132,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={dmSans.variable}>
+    <html lang="en" className={`${cabinet.variable} ${tanker.variable} ${martian.variable}`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`min-h-screen flex flex-col font-sans antialiased text-text-primary selection:bg-accent selection:text-white`}>
+      <body className={`min-h-screen flex flex-col font-sans antialiased text-text-primary`}>
         <AnalyticsProvider />
         <Providers>
           <Navbar />

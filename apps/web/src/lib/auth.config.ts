@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
+import { isEmailOtpRequired } from "./auth-shared";
 
 /**
  * Edge-safe half of the auth configuration.
@@ -55,7 +56,10 @@ export const authConfig = {
         session.user.id = (token.id as string) || "";
         session.user.role =
           (token.role as "CREATOR" | "ADMIN" | "SUPER_ADMIN") || "CREATOR";
-        session.user.emailConfirmed = token.emailConfirmed === true;
+        // With the email code switched off nobody is held at /auth/verify —
+        // including tokens issued while it was on (middleware, /auth/continue
+        // and /auth/verify all read this).
+        session.user.emailConfirmed = !isEmailOtpRequired() || token.emailConfirmed === true;
       }
       return session;
     },

@@ -13,11 +13,11 @@ export const Avatar = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted", className)}>
+    <div className={cn("relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-fill-butter brut-flat", className)}>
       {src ? (
         <img className="aspect-square h-full w-full object-cover" src={src} alt={alt} />
       ) : (
-        <div className="flex h-full w-full items-center justify-center font-medium text-text-secondary">
+        <div className="flex h-full w-full items-center justify-center font-extrabold text-text-primary">
           {fallback ? fallback : <User className="h-5 w-5" />}
         </div>
       )}

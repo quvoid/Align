@@ -1,46 +1,53 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette: raspberry plum #AF4D98 · sweet peony #D66BA0 · powder blush
-     #E5A9A9 · pearl beige #F4E4BA · soft cyan #9DF7E5. Light theme on a
-     pearl-tinted canvas. `primary` is the text/outline ink (deep plum, derived
-     from raspberry plum); `ink` is the dark band behind white text; `muted` is
-     the soft fill for inputs, chips and quiet panels; `highlight` (soft cyan,
-     dark text) is the default filled button; `accent` (raspberry plum) is the
-     sole charging CTA. */
-  --color-background: #FDF8EC;    /* Pearl beige, lightened for canvas */
-  --color-surface: #FFFFFF;       /* Cards */
-  --color-muted: #F4E4BA;         /* Pearl beige */
-  --color-ink: #3A1932;           /* Deep plum — hero bands, stat strips */
-  --color-border: #E8D3B0;
-  --color-primary: #3A1932;       /* Text, outline buttons */
-  --color-text-primary: #3A1932;
-  --color-text-secondary: #7A5470;
-  --color-accent: #AF4D98;        /* Raspberry plum — CTA */
-  --color-accent-hover: #8E3C7B;
-  --color-highlight: #9DF7E5;     /* Soft cyan */
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-error: #DC2626;
+  /* Neo-brutalism (user-picked over clay, see DESIGN.md). Warm paper ground,
+     white surfaces, 2px ink outlines and hard offset shadows. `accent` is the
+     ink used for the selected state (tabs, chips, beads) and links; `action`
+     (taxi yellow) is the one filled call to action per view. */
+  --color-background: #F6F0E4;    /* Paper */
+  --color-surface: #FFFFFF;
+  --color-muted: #EFE7D6;         /* Quiet panels, table heads */
+  --color-ink: #111111;
+  --color-border: #111111;
+  --color-primary: #111111;       /* Text, outlines */
+  --color-text-primary: #111111;
+  --color-text-secondary: #46413A;
+  --color-accent: #111111;        /* Selected state */
+  --color-accent-hover: #2B2B2B;
+  --color-action: #FFD000;        /* Taxi yellow: the one CTA */
+  --color-action-hover: #FFC300;
+  --color-highlight: #FFE27A;
+  --color-success: #13703F;
+  --color-warning: #8A5A00;
+  --color-error: #C4232F;
 
-  /* Decorative accents — illustrated/highlight moments, never chrome */
-  --color-raspberry-plum: #AF4D98;
-  --color-sweet-peony: #D66BA0;
-  --color-powder-blush: #E5A9A9;
-  --color-pearl-beige: #F4E4BA;
-  --color-soft-cyan: #9DF7E5;
-  --color-coral: #E5A9A9;
-  --color-pink: #D66BA0;
-  --color-lavender: #AF4D98;
-  --color-linen: #E8D3B0;
-  --color-stone: #8c8c8c;
-  --color-halo: #9DF7E5;
-  --color-wine: #D66BA0;          /* Hero highlight word — sweet peony */
-  --color-link: #AF4D98;
+  /* Signage fills: brief identity, stat tiles, status pills. Ink text on all. */
+  --color-fill-peach: #FFAD6E;
+  --color-fill-lilac: #C1ADFF;
+  --color-fill-mint: #72DDA6;
+  --color-fill-butter: #FFE27A;
+  --color-fill-sky: #8AC9FF;
+  --color-fill-rose: #FF9CC8;
+  --color-fill-cloud: #DDD6C8;
 
-  --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Legacy names still used by home/pricing, re-pointed into the set. */
+  --color-pink: #FF9CC8;
+  --color-lavender: #C1ADFF;
+  --color-linen: #E6DDCB;
+  --color-stone: #6E675C;
+  --color-halo: #FFD000;          /* Highlight word on the dark band */
+  --color-wine: #111111;          /* Hero highlight word */
 
-  /* Radius — 16px (2xl) for buttons/inputs/nav is already Tailwind's default; add the two larger card sizes DESIGN.md calls for */
+  --font-sans: var(--font-cabinet), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: var(--font-tanker), var(--font-cabinet), sans-serif;
+  --font-mono: var(--font-martian), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Hard offset shadows. The offset lives in --sh so .brut-press can push the
+     block exactly into its shadow on tap. */
+  --shadow-brut: 4px 4px 0 0 #111111;
+  --shadow-brut-sm: 2px 2px 0 0 #111111;
+
   /* Logo ribbon. The track holds two copies of the strip, so -50% is exactly
      one strip's width and the loop is seamless. Duration is per-strip pace. */
   --animate-marquee: marquee 48s linear infinite;
@@ -49,8 +56,50 @@
     to   { transform: translateX(-50%); }
   }
 
-  --radius-4xl: 2rem;    /* 32px — image cards, tilted stack */
-  --radius-5xl: 2.5rem;  /* 40px — large feature panels */
+  /* Nearly square: neo-brutal blocks read as cut paper, not pebbles. */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
+  --radius-2xl: 6px;
+  --radius-3xl: 8px;
+  --radius-4xl: 8px;
+  --radius-5xl: 10px;
+}
+
+/* Outlined blocks. `brut` for cards and panels, `brut-btn` for buttons and
+   selected chips, `brut-sm` for chips and pills, `brut-flat` / `brut-well`
+   for outlined things with no shadow (pressed buttons, inputs, fact tiles). */
+@utility brut {
+  border: 2px solid var(--color-ink);
+  --sh: 4px;
+  box-shadow: var(--sh) var(--sh) 0 0 var(--color-ink);
+}
+@utility brut-btn {
+  border: 2px solid var(--color-ink);
+  --sh: 3px;
+  box-shadow: var(--sh) var(--sh) 0 0 var(--color-ink);
+}
+@utility brut-sm {
+  border: 2px solid var(--color-ink);
+  --sh: 2px;
+  box-shadow: var(--sh) var(--sh) 0 0 var(--color-ink);
+}
+@utility brut-flat {
+  border: 2px solid var(--color-ink);
+  --sh: 0px;
+  box-shadow: none;
+}
+@utility brut-well {
+  border: 2px solid var(--color-ink);
+  box-shadow: none;
+}
+/* Page titles and brand names: Tanker, one weight, set in capitals. */
+@utility type-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
 /* Large monitors: the page reads right at the browser's 125% zoom, so that is
@@ -83,7 +132,7 @@ html, body {
   scrollbar-width: none;  /* Firefox */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.037em;
+  letter-spacing: -0.005em;
 }
 
 /* Logo ribbon: hold still while the pointer is over it, so a logo can be read.
@@ -142,7 +191,6 @@ html, body {
 }
 
 /* Interactive Card & Button Hover Classes */
-/* Flat, no-shadow depth per DESIGN.md — elevation comes from radius, rotation and border, not shadow */
 .interactive-card {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -164,4 +212,43 @@ html, body {
 }
 .click-scale:active {
   transform: scale(0.96);
+}
+
+/* Press: lifts a pixel on hover, and on tap slides into its own shadow so
+   the block visibly pushes into the page. Unlayered, so it beats utilities. */
+.brut-press {
+  transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.12s cubic-bezier(0.2, 0.9, 0.3, 1), background-color 0.15s ease;
+}
+@media (hover: hover) {
+  .brut-press:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: calc(var(--sh, 3px) + 1px) calc(var(--sh, 3px) + 1px) 0 0 var(--color-ink);
+  }
+}
+.brut-press:active:not(:disabled) {
+  transform: translate(var(--sh, 3px), var(--sh, 3px));
+  box-shadow: 0 0 0 0 var(--color-ink);
+}
+
+::selection {
+  background: var(--color-action);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px dashed var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* Tanker ships one weight; never fake a bold. */
+html {
+  font-synthesis-weight: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brut-press,
+  .brut-press:hover:not(:disabled) {
+    transform: none;
+    transition: none;
+  }
 }

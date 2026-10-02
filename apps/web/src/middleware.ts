@@ -23,13 +23,16 @@ export default auth((req) => {
   }
 
   // Signed in but the first-sign-in email code not entered yet: confirm first.
+  // Only when REQUIRE_EMAIL_OTP=true; otherwise the session callback in
+  // auth.config.ts reports everyone as confirmed.
   if (isLoggedIn && !req.auth?.user?.emailConfirmed) {
     const next = `${pathname}${req.nextUrl.search}`;
     return NextResponse.redirect(new URL(`/auth/verify?next=${encodeURIComponent(next)}`, req.nextUrl));
   }
 
-  // Signed-in non-admins cannot access /admin → redirect to /dashboard
-  if (isAdminRoute && isLoggedIn && role !== "ADMIN") {
+  // Signed-in non-admins cannot access /admin → redirect to /dashboard.
+  // SUPER_ADMIN counts as an admin here, as it does in requireAdmin().
+  if (isAdminRoute && isLoggedIn && role !== "ADMIN" && role !== "SUPER_ADMIN") {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 

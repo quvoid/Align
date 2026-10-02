@@ -80,7 +80,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
         <div className="w-16 h-16 rounded-3xl bg-accent/10 text-accent flex items-center justify-center mb-4">
           <Lock className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl font-bold text-primary mb-2">Agency &amp; Brand Portal Only</h1>
+        <h1 className="text-2xl type-display text-primary mb-2">Agency &amp; Brand Portal Only</h1>
         <p className="text-sm text-text-secondary max-w-md mb-6">
           Competitor Instagram Tracking is reserved for verified Schbang Brand Managers and Agency Leads.
         </p>
@@ -300,7 +300,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
   if (!config) {
     return (
       <div className="max-w-4xl mx-auto px-12 pt-12 pb-12 text-center space-y-4">
-        <h2 className="text-2xl font-bold text-primary">Brand Not Found</h2>
+        <h2 className="text-[30px] type-display text-primary">Brand Not Found</h2>
         <p className="text-text-secondary">No competitor profile exists for &quot;{slug}&quot;.</p>
         <Link href="/admin/competitor-intelligence">
           <Button variant="accent">Back to Competitor Hub</Button>
@@ -468,7 +468,7 @@ export default function CompetitorsPage({ params }: { params: Promise<{ slug: st
               className="w-10 h-10 rounded-2xl border object-cover"
             />
             <div>
-              <h1 className="text-2xl md:text-3xl font-black text-primary tracking-tight flex items-center gap-2">
+              <h1 className="text-2xl md:text-3xl type-display text-primary flex items-center gap-2">
                 {config.brandName}
                 <Badge variant="approved" className="text-[10px] uppercase font-bold">{config.brandIndustry}</Badge>
               </h1>

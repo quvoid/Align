@@ -8,7 +8,7 @@ import { BriefCard } from '@/components/brands/brief-card';
 import { PAGE_SHELL } from '@/lib/layout';
 import { PLAN_LIST, FREE_PITCHES, formatINR, JOIN_CTA } from '@/lib/plans';
 import { Button } from '@/components/ui/button';
-import { MOCK_BRANDS } from '@/lib/mock-data';
+import { listActiveBriefs } from '@/server/briefs';
 import { ArrowRight, Check, ChevronDown } from "lucide-react";
 
 // Brands shown in the hero's tilted image stack, front-to-back.
@@ -93,7 +93,12 @@ const FREE_TIER_INCLUDES = [
   'Pitch status tracking',
 ];
 
-export default function Home() {
+// Static; featured briefs and the open-brief count refresh every minute and
+// immediately when an admin publishes or pauses a brief.
+export const revalidate = 60;
+
+export default async function Home() {
+  const briefs = await listActiveBriefs();
   const faqList = [
     {
       q: "How does Align by Schbang work for creators?",
@@ -144,9 +149,9 @@ export default function Home() {
         <HeroParallax
           copy={
           <Rise targets="children" className="text-center lg:text-left max-w-xl mx-auto lg:mx-0">
-            <h1 className="text-[2.75rem] sm:text-5xl md:text-6xl font-black tracking-tight text-primary mb-6 leading-[1.05]">
+            <h1 className="text-[2.75rem] sm:text-5xl md:text-6xl type-display text-primary mb-6 leading-[0.92]">
               Pitch India&apos;s biggest brands.{' '}
-              <span className="italic text-wine">Directly.</span>
+              <span className="inline-block -rotate-1 bg-action px-2 pt-1 border-2 border-ink">Directly.</span>
             </h1>
 
             <p className="text-base md:text-lg text-primary/75 max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
@@ -198,15 +203,15 @@ export default function Home() {
         <div className={PAGE_SHELL}>
           <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 sm:divide-x divide-white/15 max-w-4xl mx-auto">
             <div className="sm:px-8 flex items-baseline gap-3">
-              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">300+</dd>
+              <dd className="type-display text-[44px] leading-none">300+</dd>
               <dt className="text-sm text-white/70">brand accounts</dt>
             </div>
             <div className="sm:px-8 flex items-baseline gap-3">
-              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">1,000+</dd>
+              <dd className="type-display text-[44px] leading-none">1,000+</dd>
               <dt className="text-sm text-white/70">briefs executed</dt>
             </div>
             <div className="sm:px-8 flex items-baseline gap-3">
-              <dd className="text-3xl font-extrabold tracking-tight tabular-nums">{FREE_PITCHES}</dd>
+              <dd className="type-display text-[44px] leading-none">{FREE_PITCHES}</dd>
               <dt className="text-sm text-white/70">free pitches to get started</dt>
             </div>
           </dl>
@@ -223,7 +228,7 @@ export default function Home() {
       <section className="py-24 md:py-28">
         <div className={PAGE_SHELL}>
           <div className="max-w-2xl mb-10 md:mb-14">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-[1.05]">
+            <h2 className="text-[44px] md:text-5xl type-display text-primary leading-[0.92]">
               How Align Works
             </h2>
             <p className="text-primary/75 text-base md:text-lg leading-relaxed mt-4">
@@ -241,7 +246,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] gap-12 lg:gap-16 items-center">
             <Reveal>
               <p className="text-sm font-semibold text-halo">Earning potential</p>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.05] mt-3">
+              <h2 className="text-[44px] md:text-5xl type-display leading-[0.92] mt-3">
                 Creators have earned <span className="text-halo">₹1M+</span> using Align
               </h2>
               <p className="text-white/70 text-base md:text-lg leading-relaxed mt-5 max-w-lg">
@@ -251,7 +256,7 @@ export default function Home() {
               <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10 pt-8 border-t border-white/15">
                 {EARNINGS_STATS.map((stat) => (
                   <div key={stat.label}>
-                    <dd className="text-3xl font-extrabold tracking-tight tabular-nums">{stat.value}</dd>
+                    <dd className="type-display text-[44px] leading-none">{stat.value}</dd>
                     <dt className="text-sm text-white/65 mt-1 leading-snug">{stat.label}</dt>
                   </div>
                 ))}
@@ -285,12 +290,12 @@ export default function Home() {
       <section className="py-20 border-t border-border">
         <div className={PAGE_SHELL}>
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold tracking-tight mb-3">Featured Brand Opportunities</h2>
+            <h2 className="text-[36px] type-display mb-3">Featured Brand Opportunities</h2>
             <p className="text-primary/75">Active briefs looking for creators right now.</p>
           </div>
           
           <Reveal targets="children" className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {MOCK_BRANDS.slice(0, 3).map((brand) => (
+            {briefs.slice(0, 3).map((brand) => (
               <BriefCard key={brand.id} brand={brand} href={`/brands/${brand.slug}`} />
             ))}
           </Reveal>
@@ -298,7 +303,7 @@ export default function Home() {
           <div className="flex justify-center mt-12">
             <Link href="/brands">
               <Button size="lg" variant="accent" className="font-bold px-8">
-                See all {MOCK_BRANDS.length} open briefs
+                See all {briefs.length} open briefs
               </Button>
             </Link>
           </div>
@@ -309,7 +314,7 @@ export default function Home() {
       <section className="py-24 border-t border-border">
         <div className={PAGE_SHELL}>
           <div className="max-w-2xl mb-10 md:mb-14">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-[1.05]">
+            <h2 className="text-[44px] md:text-5xl type-display text-primary leading-[0.92]">
               Creators closing deals on Align
             </h2>
             <p className="text-primary/75 text-base md:text-lg leading-relaxed mt-4">
@@ -328,7 +333,7 @@ export default function Home() {
         <div className="mx-auto w-full max-w-5xl px-4 lg:px-10">
           <Reveal className="rounded-4xl border border-border bg-surface p-7 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-10 lg:gap-16">
             <div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight text-primary leading-[1.05]">
+              <h2 className="text-[36px] md:text-4xl type-display text-primary leading-[0.92]">
                 Frequently asked questions
               </h2>
               <p className="text-text-secondary text-base mt-4 leading-relaxed">
@@ -364,12 +369,12 @@ export default function Home() {
       <section id="pricing" className="py-24 border-t border-border">
         <div className={PAGE_SHELL}>
           <div className="max-w-2xl mx-auto text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-primary leading-[1.05]">
+            <h2 className="text-[44px] md:text-5xl type-display text-primary leading-[0.92]">
               Start free. Pay only when you want more pitches.
             </h2>
             <p className="text-primary/75 text-base md:text-lg leading-relaxed mt-4">
               Every creator gets {FREE_PITCHES} free pitches. When they&apos;re used up, pick a plan to keep
-              pitching. {MOCK_BRANDS.length} briefs are open right now.
+              pitching. {briefs.length} briefs are open right now.
             </p>
           </div>
 
@@ -377,7 +382,7 @@ export default function Home() {
             <div className="rounded-3xl border border-border bg-surface p-7 flex flex-col">
               <h3 className="text-lg font-bold text-primary">Free</h3>
               <p className="mt-5 flex items-baseline gap-1.5">
-                <span className="text-4xl font-black tracking-tight text-primary tabular-nums">₹0</span>
+                <span className="type-display text-[60px] leading-none text-primary">₹0</span>
                 <span className="text-sm text-text-secondary">to start</span>
               </p>
               <p className="text-sm text-text-secondary mt-1">No card needed.</p>
@@ -410,7 +415,7 @@ export default function Home() {
                   )}
                 </div>
                 <p className="mt-5 flex items-baseline gap-1.5">
-                  <span className="text-4xl font-black tracking-tight text-primary tabular-nums">
+                  <span className="type-display text-[60px] leading-none text-primary">
                     {formatINR(plan.price)}
                   </span>
                   <span className="text-sm text-text-secondary">

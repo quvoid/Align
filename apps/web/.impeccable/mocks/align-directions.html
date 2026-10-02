@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Align — six directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Latin:wdth,wght@75..125,400..800&family=Archivo:wdth,wght@62..125,400..900&family=Doto:wght@600..900&family=Hind:wght@400;500;600;700&family=Teko:wght@500..700&family=Baloo+2:wght@400..800&family=Manrope:wght@400..800&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&display=swap" rel="stylesheet">
+<style>
+  /* ── Comparison chrome (neutral, not part of any direction) ── */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: #E6E5E0;
+    color: #1A1A1A;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .intro { max-width: 1560px; margin: 0 auto; padding: 40px 24px 12px; }
+  .intro h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: -0.02em; }
+  .intro p { margin: 0; max-width: 72ch; font-size: 15px; line-height: 1.5; color: #444; }
+  .row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; max-width: 1560px; margin: 0 auto; padding: 24px 24px 8px; }
+  .row-title { max-width: 1560px; margin: 0 auto; padding: 28px 24px 0; font-size: 13px; font-weight: 600; color: #555; }
+  .opt h2 { margin: 0 0 6px; font-size: 22px; letter-spacing: -0.015em; }
+  .opt > p { margin: 0 0 18px; font-size: 14px; line-height: 1.45; color: #474747; min-height: 4.4em; }
+  .phone { width: 360px; max-width: 100%; margin: 0 auto; padding: 9px; border-radius: 36px; background: #0E0E0E; box-shadow: 0 30px 60px -32px rgba(0,0,0,.55); }
+  .screen { border-radius: 28px; overflow: hidden; }
+  .desk { border-radius: 12px; overflow: hidden; box-shadow: 0 24px 46px -28px rgba(0,0,0,.45); }
+  footer { max-width: 1560px; margin: 0 auto; padding: 32px 24px 56px; font-size: 14px; line-height: 1.5; color: #444; }
+  footer strong { color: #1A1A1A; }
+  @media (max-width: 1220px) {
+    .row { grid-template-columns: 1fr; max-width: 560px; }
+    .opt > p { min-height: 0; }
+  }
+  .ico { width: 18px; height: 18px; flex: none; }
+  button { font: inherit; color: inherit; }
+
+  /* ════════════════ 1. KIRANA SHELF ════════════════ */
+  .k {
+    --board: #FFFFFF; --key: #141414; --haldi: #FFC20E; --neel: #2337C6;
+    --rani: #E0157A; --patta: #1E8E3E; --soft: #4A4A4A;
+    font-family: "Anek Latin", system-ui, sans-serif;
+    background: var(--board); color: var(--key);
+  }
+  .k ::selection { background: var(--haldi); color: var(--key); }
+  .k :focus-visible { outline: 3px solid var(--haldi); outline-offset: 2px; }
+  .k-code { font-family: "Doto", monospace; font-weight: 800; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; }
+  .k-top { display: flex; align-items: flex-end; justify-content: space-between; padding: 22px 16px 10px; border-bottom: 2px solid var(--key); }
+  .k-word { font-weight: 800; font-stretch: 75%; font-size: 38px; line-height: .78; letter-spacing: -.01em; }
+  .k-by { display: inline-block; margin-left: 6px; padding: 3px 5px 1px; border: 1.5px solid var(--key); border-radius: 3px; font-size: 11px; font-weight: 600; font-stretch: 100%; letter-spacing: 0; vertical-align: 8px; }
+  .k-avatar { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--key); display: grid; place-items: center; font-weight: 700; font-size: 13px; background: var(--haldi); }
+  .k-sub { padding: 7px 16px 8px; border-bottom: 2px solid var(--key); }
+  .k-shelf { display: flex; gap: 8px; padding: 12px 16px 14px; overflow-x: auto; scrollbar-width: none; background: var(--haldi); border-bottom: 2px solid var(--key); }
+  .k-tag { position: relative; flex: none; padding: 6px 10px 4px 21px; border: 1.5px solid var(--key); border-radius: 3px 7px 7px 3px; background: #fff; font-weight: 700; font-stretch: 85%; font-size: 13px; text-transform: uppercase; cursor: pointer; transition: transform .2s; }
+  .k-tag::before { content: ""; position: absolute; left: 7px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border: 1.5px solid var(--key); border-radius: 50%; background: var(--haldi); }
+  .k-tag:hover { transform: rotate(-2deg); }
+  .k-tag[aria-pressed="true"] { background: var(--key); color: #fff; }
+  .k-tag[aria-pressed="true"]::before { border-color: #fff; }
+  .k-h { display: flex; justify-content: space-between; align-items: baseline; margin: 22px 16px 10px; }
+  .k-h h3 { margin: 0; font-weight: 800; font-stretch: 80%; font-size: 26px; line-height: 1; }
+  .k-pack { margin: 0 16px 16px; border: 2px solid var(--key); border-radius: 6px; overflow: hidden; background: #fff; }
+  .k-band { position: relative; padding: 11px 14px 14px; color: #fff; }
+  .k-band .k-like { position: absolute; top: 9px; right: 10px; border-color: #fff; background: transparent; color: #fff; }
+  .k-band .k-like[aria-pressed="true"] { background: #fff; color: var(--key); }
+  .k-band .k-like[aria-pressed="true"] .ico { fill: var(--rani); stroke: var(--rani); }
+  .k-band > .k-code { padding-right: 70px; }
+  .k-band.neel { background: var(--neel); }
+  .k-band.rani { background: var(--rani); }
+  .k-brand { margin: 8px 0 6px; font-weight: 800; font-stretch: 75%; font-size: 56px; line-height: .8; text-transform: uppercase; letter-spacing: -.005em; }
+  .k-camp { font-weight: 600; font-size: 16px; line-height: 1.2; }
+  .k-body { padding: 12px 14px 14px; }
+  .k-desc { margin: 0 0 10px; font-size: 14.5px; line-height: 1.42; color: #262626; }
+  .k-formats { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
+  .k-row .k-formats { flex-direction: column; align-items: flex-start; margin: 0; }
+  .k-formats li { padding: 3px 7px 1px; border: 1.5px solid var(--key); border-radius: 3px; font-size: 12.5px; font-weight: 600; }
+  .k-scale { position: relative; height: 40px; margin: 6px 2px 12px; }
+  .k-scale .line { position: absolute; left: 0; right: 0; top: 18px; border-top: 1.5px solid var(--key); }
+  .k-scale .band { position: absolute; left: 52.5%; right: 0; top: 12px; height: 6px; background: var(--haldi); border: 1.5px solid var(--key); border-bottom: 0; }
+  .k-scale .tick { position: absolute; top: 14px; width: 1.5px; height: 9px; background: var(--key); }
+  .k-scale .lbl { position: absolute; top: 25px; transform: translateX(-50%); font-family: "Doto", monospace; font-weight: 800; font-size: 9.5px; letter-spacing: .05em; }
+  .k-scale .you { position: absolute; top: -2px; transform: translateX(-50%); font-family: "Doto", monospace; font-weight: 900; font-size: 9.5px; letter-spacing: .05em; white-space: nowrap; }
+  .k-scale .you::after { content: ""; position: absolute; left: 50%; top: 11px; margin-left: -4px; border: 4px solid transparent; border-top: 5px solid var(--key); }
+  .k-row { display: grid; grid-template-columns: 1fr 156px; gap: 10px; align-items: end; }
+  .k-like { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px 4px; border: 1.5px solid var(--key); border-radius: 6px; background: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .k-like[aria-pressed="true"] { background: var(--rani); color: #fff; }
+  .k-like[aria-pressed="true"] .ico { fill: currentColor; }
+  .k-mrp { border: 1.5px solid var(--key); border-radius: 3px; overflow: hidden; }
+  .k-mrp-title { padding: 3px 6px 1px; background: var(--key); color: #fff; font-weight: 700; font-stretch: 85%; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; }
+  .k-mrp dl { display: grid; grid-template-columns: auto 1fr; gap: 1px 6px; margin: 0; padding: 5px 6px 3px; }
+  .k-mrp dt { font-size: 10px; font-weight: 600; text-transform: uppercase; color: #3A3A3A; }
+  .k-mrp dd { margin: 0; text-align: right; font-size: 11.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .k-price { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; padding: 4px 6px 5px; border-top: 1.5px dashed var(--key); }
+  .k-price strong { font-weight: 800; font-stretch: 80%; font-size: 28px; line-height: 1; }
+  .k-price small { font-size: 9.5px; font-weight: 600; line-height: 1.1; text-transform: uppercase; text-align: right; }
+  .k-cta { display: block; width: 100%; margin-top: 12px; padding: 0; overflow: hidden; border: 2px solid var(--key); border-radius: 6px; background: #fff; cursor: pointer; }
+  .k-cta .ink { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px 11px; background: var(--neel); color: #fff; font-weight: 700; font-size: 17px; transition: transform .28s cubic-bezier(.2,.8,.2,1); }
+  .k-cta:hover .ink { transform: translate(4px, 4px); }
+  .k-cta:active .ink { transform: translate(0, 0); filter: brightness(.9); }
+  .k-batch { display: flex; justify-content: space-between; padding: 7px 14px 6px; border-top: 2px solid var(--key); background: #F2F2F2; }
+  .k-status { margin: 0 16px 20px; border: 2px solid var(--key); border-radius: 6px; overflow: hidden; }
+  .k-status-head { padding: 10px 14px 12px; background: var(--patta); color: #fff; }
+  .k-status-head .k-code { color: #E9FFE9; }
+  .k-status-word { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-weight: 800; font-stretch: 75%; font-size: 40px; line-height: .85; text-transform: uppercase; }
+  .k-steps { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 2px solid var(--key); }
+  .k-steps li { list-style: none; padding: 7px 6px 5px; border-right: 1.5px solid var(--key); font-size: 11.5px; font-weight: 700; font-stretch: 85%; text-transform: uppercase; line-height: 1.1; }
+  .k-steps li:last-child { border-right: 0; }
+  .k-steps .done { background: var(--key); color: #fff; }
+  .k-steps .now { background: var(--haldi); }
+  .k-steps { margin: 0; padding: 0; }
+  .k-note { padding: 10px 14px 12px; font-size: 14.5px; line-height: 1.42; }
+  .k-note b { display: block; margin-bottom: 3px; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  /* Kirana admin: dispatch sheet */
+  .k-desk { border: 2px solid var(--key); }
+  .k-desk-head { display: flex; align-items: baseline; justify-content: space-between; padding: 12px 14px 9px; background: var(--key); color: #fff; }
+  .k-desk-head strong { font-weight: 800; font-stretch: 75%; font-size: 26px; line-height: .9; text-transform: uppercase; }
+  .k-desk-head .k-code { color: var(--haldi); }
+  .k-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .k-table th { padding: 7px 10px 5px; border-bottom: 2px solid var(--key); text-align: left; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+  .k-table td { padding: 10px 10px 8px; border-bottom: 1.5px solid var(--key); vertical-align: middle; font-variant-numeric: tabular-nums; }
+  .k-table tr:last-child td { border-bottom: 0; }
+  .k-table tr.sel td { background: var(--haldi); }
+  .k-table .who { font-weight: 700; line-height: 1.15; }
+  .k-table .who span { display: block; font-weight: 500; font-size: 12px; color: #3A3A3A; }
+  .k-mini { padding: 6px 9px 4px; border: 2px solid var(--key); border-radius: 5px; background: var(--neel); color: #fff; font-weight: 700; font-size: 12.5px; cursor: pointer; }
+
+  /* ════════════════ 2. HOARDING ════════════════ */
+  .h {
+    --yellow: #FFD400; --red: #D21F3C; --black: #111111; --concrete: #E2DFD8; --steel: #4E5257;
+    font-family: "Hind", system-ui, sans-serif;
+    background: var(--concrete); color: var(--black);
+  }
+  .h ::selection { background: var(--yellow); color: var(--black); }
+  .h :focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  .h-top { display: flex; align-items: center; justify-content: space-between; padding: 22px 16px 10px; background: var(--black); color: #fff; }
+  .h-word { font-family: "Teko", sans-serif; font-weight: 700; font-size: 46px; line-height: .7; color: var(--yellow); padding-top: 8px; }
+  .h-by { display: block; margin-top: 2px; font-size: 10.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #E9E9E9; }
+  .h-menu { width: 38px; height: 38px; display: grid; place-items: center; border: 2px solid var(--yellow); color: var(--yellow); border-radius: 2px; }
+  .h-tabs { display: flex; gap: 7px; padding: 10px 16px 14px; overflow-x: auto; scrollbar-width: none; background: var(--black); }
+  .h-tab { flex: none; padding: 6px 11px 1px; border: 2px solid var(--yellow); border-radius: 2px; background: transparent; color: var(--yellow); font-family: "Teko", sans-serif; font-weight: 600; font-size: 21px; line-height: 1; text-transform: uppercase; cursor: pointer; }
+  .h-tab[aria-pressed="true"] { background: var(--yellow); color: var(--black); }
+  .h-heading { margin: 20px 16px 12px; font-family: "Teko", sans-serif; font-weight: 700; font-size: 36px; line-height: .85; text-transform: uppercase; }
+  .h-board { margin: 0 14px; }
+  .h-panel { position: relative; padding: 14px 14px 0; border: 7px solid #262626; background: var(--yellow); box-shadow: 0 22px 30px -20px rgba(0,0,0,.55); }
+  .h-panel::before, .h-panel::after { content: ""; position: absolute; top: -5px; width: 7px; height: 7px; border-radius: 50%; background: #8A8E92; }
+  .h-panel::before { left: 10px; } .h-panel::after { right: 10px; }
+  .h-panel.dark { background: var(--black); color: #fff; }
+  .h-plate { display: inline-block; padding: 4px 7px 1px; background: var(--black); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  .h-panel.dark .h-plate { background: var(--yellow); color: var(--black); }
+  .h-line { margin: 12px 0 10px; font-family: "Teko", sans-serif; font-weight: 700; font-size: 47px; line-height: .84; text-transform: uppercase; }
+  .h-line em { font-style: normal; color: var(--red); }
+  .h-panel.dark .h-line em { color: var(--yellow); }
+  .h-sub { margin: 0 0 14px; font-size: 14.5px; line-height: 1.38; font-weight: 500; }
+  .h-rail { display: flex; align-items: center; justify-content: space-between; width: calc(100% + 28px); margin: 0 -14px; padding: 9px 14px 3px; border: 0; background: var(--red); color: #fff; font-family: "Teko", sans-serif; font-weight: 600; font-size: 25px; line-height: 1; text-transform: uppercase; cursor: pointer; position: relative; overflow: hidden; }
+  .h-rail::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%); transform: translateX(-110%); }
+  .h-rail:hover::after { transform: translateX(110%); transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+  .h-rail .ico { transition: transform .25s; }
+  .h-rail:hover .ico { transform: translateX(4px); }
+  .h-panel.dark .h-rail { background: var(--yellow); color: var(--black); }
+  .h-legs { display: flex; justify-content: space-around; height: 24px; }
+  .h-legs span { width: 7px; background: var(--steel); }
+  .h-ground { display: flex; justify-content: space-between; gap: 10px; margin: 0 14px 20px; padding: 7px 2px 0; border-top: 3px solid var(--steel); font-size: 12.5px; color: #333; }
+  .h-like { display: inline-flex; align-items: center; gap: 5px; border: 0; background: none; padding: 0; font-weight: 600; cursor: pointer; }
+  .h-like[aria-pressed="true"] { color: var(--red); }
+  .h-like[aria-pressed="true"] .ico { fill: currentColor; }
+  .h-reply { margin: 0 14px 22px; padding: 14px; border: 7px solid #262626; background: #fff; }
+  .h-reply-word { font-family: "Teko", sans-serif; font-weight: 700; font-size: 44px; line-height: .8; color: var(--red); text-transform: uppercase; margin: 8px 0 10px; }
+  .h-steps { display: flex; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 14px; padding: 0; list-style: none; font-family: "Teko", sans-serif; font-weight: 600; font-size: 20px; line-height: 1; text-transform: uppercase; }
+  .h-steps li { color: #9A9A9A; }
+  .h-steps li.done { color: var(--black); }
+  .h-steps li.now { color: #fff; background: var(--red); padding: 3px 6px 0; }
+  .h-notice { position: relative; padding: 12px 12px 10px; background: #FFFDF5; box-shadow: 0 8px 14px -8px rgba(0,0,0,.45); transform: rotate(-1.4deg); font-size: 14px; line-height: 1.4; }
+  .h-notice::before { content: ""; position: absolute; top: -8px; left: 42%; width: 58px; height: 16px; background: rgba(255,212,0,.8); transform: rotate(3deg); }
+  .h-notice b { display: block; margin-bottom: 2px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  /* Hoarding admin */
+  .h-desk { background: var(--concrete); }
+  .h-desk-head { display: flex; align-items: baseline; justify-content: space-between; padding: 14px 14px 8px; background: var(--black); color: #fff; }
+  .h-desk-head strong { font-family: "Teko", sans-serif; font-weight: 700; font-size: 34px; line-height: .8; color: var(--yellow); text-transform: uppercase; }
+  .h-desk-head span { font-size: 12.5px; color: #DDD; }
+  .h-rows { display: grid; gap: 8px; padding: 10px; }
+  .h-r { display: grid; grid-template-columns: 116px 1fr auto; align-items: center; gap: 12px; padding: 9px 10px; background: #fff; border: 3px solid #262626; }
+  .h-r.sel { background: var(--yellow); }
+  .h-chip { padding: 5px 7px 0; font-family: "Teko", sans-serif; font-weight: 600; font-size: 19px; line-height: 1; text-transform: uppercase; text-align: center; }
+  .h-chip.pend { background: var(--black); color: var(--yellow); }
+  .h-chip.short { background: var(--red); color: #fff; }
+  .h-chip.ok { background: #1F7A3A; color: #fff; }
+  .h-r .who { font-weight: 700; font-size: 14.5px; line-height: 1.15; }
+  .h-r .who span { display: block; font-weight: 500; font-size: 12.5px; color: #3A3A3A; }
+  .h-r .fee { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .h-act { padding: 6px 10px 1px; border: 0; background: var(--red); color: #fff; font-family: "Teko", sans-serif; font-weight: 600; font-size: 19px; text-transform: uppercase; cursor: pointer; }
+
+  /* ════════════════ 3. GLASS PARTITION ════════════════ */
+  .g {
+    --bar: #121212; --clear: #F2F4F3; --cobalt: #1F48C6; --amber: #E3A21A; --ox: #7A1F2B;
+    font-family: "Archivo", system-ui, sans-serif; color: var(--bar); background: var(--bar);
+  }
+  .g ::selection { background: var(--cobalt); color: #fff; }
+  .g :focus-visible { outline: 3px solid var(--amber); outline-offset: -3px; }
+  .g-wall { display: grid; gap: 6px; padding: 6px; background: var(--bar); }
+  .g-pane {
+    position: relative; padding: 14px;
+    background-color: var(--clear);
+    background-image:
+      radial-gradient(rgba(255,255,255,.8) 1px, transparent 1.6px),
+      radial-gradient(rgba(0,0,0,.05) 1px, transparent 1.6px);
+    background-size: 9px 11px, 13px 7px;
+    background-position: 0 0, 4px 3px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), inset 0 -26px 34px -30px rgba(0,0,0,.25);
+    transition: background-color .6s ease, color .6s ease, box-shadow .6s ease;
+  }
+  .g-pane.cobalt { background-color: var(--cobalt); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 60px rgba(120,160,255,.35); }
+  .g-pane.amber { background-color: var(--amber); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 60px rgba(255,236,170,.55); }
+  .g-pane.cobalt, .g-pane.amber, .g-filter[aria-pressed="true"] {
+    background-image: radial-gradient(rgba(255,255,255,.14) 1px, transparent 1.6px);
+    background-size: 11px 13px;
+  }
+  .g-cap { font-weight: 800; font-stretch: 62%; text-transform: uppercase; line-height: .82; letter-spacing: .005em; }
+  .g-top { grid-template-columns: 1fr 64px; }
+  .g-word { font-size: 44px; }
+  .g-by { display: block; margin-top: 4px; font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .g-menu { display: grid; place-items: center; }
+  .g-filters { grid-template-columns: repeat(4, 1fr); }
+  .g-filter { padding: 11px 4px 9px; border: 0; text-align: center; font-weight: 700; font-stretch: 75%; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+  .g-filter[aria-pressed="true"] { background-color: var(--cobalt); color: #fff; }
+  .g-filter:hover { background-color: #FFFFFF; }
+  .g-filter[aria-pressed="true"]:hover { background-color: var(--cobalt); }
+  .g-h { font-size: 30px; padding: 16px 14px 12px; }
+  .g-brief .g-cap { font-size: 54px; margin: 2px 0 8px; }
+  .g-meta { font-size: 13.5px; font-weight: 600; letter-spacing: .01em; }
+  .g-desc { margin: 8px 0 0; font-size: 14.5px; line-height: 1.42; }
+  .g-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 12px -14px -14px; padding: 6px; background: var(--bar); }
+  .g-fact { padding: 9px 10px 8px; }
+  .g-fact b { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #3C3C3C; }
+  .g-fact span { display: block; margin-top: 2px; font-weight: 800; font-stretch: 75%; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .g-cta { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 16px 14px; border: 0; text-align: left; font-weight: 700; font-size: 16.5px; cursor: pointer; }
+  .g-cta:hover { background-color: #FFFFFF; box-shadow: inset 0 1px 0 #fff, inset 0 0 70px rgba(255,226,140,.75); }
+  .g-cta .ico { transition: transform .35s ease; }
+  .g-cta:hover .ico { transform: translateX(5px); }
+  .g-like { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 0; border: 0; background: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .g-like[aria-pressed="true"] .ico { fill: var(--ox); stroke: var(--ox); }
+  .g-yours .g-cap { font-size: 46px; margin: 4px 0 6px; }
+  .g-yours .g-meta { color: #DCE5FF; }
+  .g-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 14px -14px 0; padding: 4px; background: rgba(0,0,0,.55); list-style: none; }
+  .g-steps li { padding: 8px 6px 7px; font-size: 11px; font-weight: 700; font-stretch: 80%; letter-spacing: .05em; text-transform: uppercase; text-align: center; background: rgba(255,255,255,.18); color: #fff; }
+  .g-steps li.done { background: rgba(255,255,255,.42); }
+  .g-steps li.now { background: #fff; color: var(--cobalt); }
+  .g-note { margin: 14px 0 0; font-size: 14.5px; line-height: 1.42; }
+  .g-note b { display: block; margin-bottom: 3px; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #DCE5FF; }
+  .g-left .g-cap { font-size: 32px; }
+  .g-left p { margin: 6px 0 0; font-size: 14px; line-height: 1.4; }
+  /* Glass admin */
+  .g-desk .g-wall { grid-template-columns: 1.5fr 1fr .9fr 1.2fr; }
+  .g-desk .g-head { grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; }
+  .g-desk .g-head .g-cap { font-size: 32px; }
+  .g-desk .g-head span { font-size: 13px; font-weight: 600; }
+  .g-cell { padding: 11px 12px; font-size: 14px; }
+  .g-cell.who { font-weight: 700; line-height: 1.15; }
+  .g-cell.who span { display: block; font-weight: 500; font-size: 12.5px; color: #3C3C3C; }
+  .g-cell.fee { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .g-cell.stat { font-weight: 800; font-stretch: 75%; font-size: 15px; letter-spacing: .05em; text-transform: uppercase; }
+
+  /* Set navigation */
+  .jump { max-width: 1560px; margin: 0 auto; padding: 14px 24px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .jump a { padding: 6px 12px; border-radius: 999px; background: #fff; color: #1A1A1A; font-size: 13px; font-weight: 600; text-decoration: none; box-shadow: 0 1px 0 rgba(0,0,0,.08); }
+  .jump a:hover { background: #1A1A1A; color: #fff; }
+  .set-title { max-width: 1560px; margin: 0 auto; padding: 44px 24px 0; font-size: 24px; letter-spacing: -0.02em; }
+  .set-title + .row-title { padding-top: 8px; }
+
+  /* ════════════════ 4. CLAYMORPHISM ════════════════ */
+  .c {
+    --ground: #FFE4D6; --ink: #2B2146; --soft: #574A78; --grape: #6E4BF5;
+    --peach: #FFC7AA; --mint: #BDEFD6; --lilac: #DCD1FF; --butter: #FFEFA3; --cream-pill: #FFF7F1;
+    --clay: 0 18px 28px -16px rgba(84,58,200,.45), inset -7px -9px 16px rgba(43,33,70,.13), inset 7px 9px 16px rgba(255,255,255,.7);
+    --clay-sm: 0 9px 14px -9px rgba(84,58,200,.4), inset -3px -4px 8px rgba(43,33,70,.1), inset 3px 4px 8px rgba(255,255,255,.9);
+    font-family: "Baloo 2", system-ui, sans-serif; background: var(--ground); color: var(--ink);
+  }
+  .c ::selection { background: var(--grape); color: #fff; }
+  .c :focus-visible { outline: 3px solid var(--grape); outline-offset: 3px; }
+  .c button { font-family: inherit; }
+  .c-top { display: flex; align-items: center; justify-content: space-between; padding: 22px 18px 12px; }
+  .c-word { font-weight: 800; font-size: 36px; line-height: .9; letter-spacing: -.02em; }
+  .c-by { display: block; font-size: 13px; font-weight: 600; color: var(--soft); }
+  .c-avatar { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; background: var(--butter); font-weight: 800; font-size: 15px; box-shadow: var(--clay-sm); }
+  .c-chips { display: flex; gap: 10px; padding: 8px 18px 18px; overflow-x: auto; scrollbar-width: none; }
+  .c-chip { flex: none; padding: 9px 17px 6px; border: 0; border-radius: 999px; background: var(--cream-pill); color: var(--ink); font-weight: 700; font-size: 14.5px; cursor: pointer; box-shadow: var(--clay-sm); transition: transform .35s cubic-bezier(.3,1.7,.45,1), background-color .25s; }
+  .c-chip:hover { transform: translateY(-2px); }
+  .c-chip:active { transform: scale(.92); }
+  .c-chip[aria-pressed="true"] { background: var(--grape); color: #fff; box-shadow: 0 12px 18px -10px rgba(84,58,200,.7), inset -3px -4px 8px rgba(0,0,0,.2), inset 3px 4px 8px rgba(255,255,255,.35); }
+  .c-h { display: flex; align-items: baseline; justify-content: space-between; margin: 4px 20px 14px; }
+  .c-h h3 { margin: 0; font-weight: 800; font-size: 28px; line-height: 1; letter-spacing: -.015em; }
+  .c-h span { font-size: 14px; font-weight: 600; color: var(--soft); }
+  .c-card { margin: 0 16px 20px; padding: 18px 18px 16px; border-radius: 32px; background: var(--peach); box-shadow: var(--clay); }
+  .c-card.lilac { background: var(--lilac); }
+  .c-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .c-brand { font-weight: 800; font-size: 40px; line-height: .95; letter-spacing: -.025em; }
+  .c-sub { margin-top: 2px; font-size: 14.5px; font-weight: 600; line-height: 1.3; color: var(--soft); }
+  .c-like { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 9px 13px 7px; border: 0; border-radius: 999px; background: var(--cream-pill); font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: var(--clay-sm); transition: transform .35s cubic-bezier(.3,1.7,.45,1); }
+  .c-like:active { transform: scale(.9); }
+  .c-like[aria-pressed="true"] .ico { fill: #E8457A; stroke: #E8457A; }
+  .c-desc { margin: 12px 0 14px; font-size: 15px; line-height: 1.42; }
+  .c-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .c-fact { padding: 9px 10px 6px; border-radius: 18px; background: rgba(255,255,255,.6); box-shadow: inset -2px -3px 6px rgba(43,33,70,.08), inset 2px 3px 6px rgba(255,255,255,.95); }
+  .c-fact b { display: block; font-size: 11.5px; font-weight: 600; color: var(--soft); line-height: 1.1; }
+  .c-fact span { display: block; font-size: 16px; font-weight: 800; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .c-formats { margin: 0 0 16px; font-size: 13.5px; font-weight: 600; color: var(--soft); }
+  .c-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 15px 20px 12px; border: 0; border-radius: 24px; background: var(--grape); color: #fff; font-weight: 800; font-size: 17px; cursor: pointer; box-shadow: 0 16px 24px -12px rgba(84,58,200,.75), inset -5px -7px 12px rgba(0,0,0,.24), inset 5px 7px 12px rgba(255,255,255,.35); transition: transform .35s cubic-bezier(.3,1.7,.45,1), box-shadow .25s; }
+  .c-btn:hover { transform: translateY(-3px); }
+  .c-btn:active { transform: translateY(2px) scale(.96); box-shadow: 0 6px 10px -6px rgba(84,58,200,.75), inset -3px -4px 8px rgba(0,0,0,.24), inset 3px 4px 8px rgba(255,255,255,.35); }
+  .c-pitched { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px 6px; border-radius: 999px; background: var(--mint); font-weight: 800; font-size: 14px; box-shadow: var(--clay-sm); }
+  .c-status { margin: 0 16px 22px; padding: 18px; border-radius: 32px; background: var(--mint); box-shadow: var(--clay); }
+  .c-status-sub { font-size: 14px; font-weight: 600; color: #2F5B47; }
+  .c-status-word { display: flex; align-items: center; gap: 10px; margin-top: 4px; font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -.02em; }
+  .c-tick { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--grape); color: #fff; box-shadow: 0 8px 12px -8px rgba(84,58,200,.8), inset -3px -4px 7px rgba(0,0,0,.25), inset 3px 4px 7px rgba(255,255,255,.35); }
+  .c-beads { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 16px 0 14px; padding: 0; list-style: none; text-align: center; font-size: 12.5px; font-weight: 700; color: #2F5B47; }
+  .c-beads li::before { content: ""; display: block; width: 24px; height: 24px; margin: 0 auto 4px; border-radius: 50%; background: rgba(255,255,255,.7); box-shadow: inset 2px 3px 5px rgba(43,33,70,.15); }
+  .c-beads li.done::before { background: var(--grape); box-shadow: inset -2px -3px 5px rgba(0,0,0,.25), inset 2px 3px 5px rgba(255,255,255,.35); }
+  .c-beads li.now::before { width: 28px; height: 28px; margin-top: -2px; background: var(--butter); box-shadow: 0 6px 10px -6px rgba(84,58,200,.6), inset -2px -3px 6px rgba(43,33,70,.15), inset 2px 3px 6px rgba(255,255,255,.9); }
+  .c-beads li.now { color: var(--ink); }
+  .c-bubble { padding: 12px 14px 10px; border-radius: 22px 22px 22px 6px; background: #fff; font-size: 14.5px; line-height: 1.4; box-shadow: 0 12px 18px -12px rgba(43,33,70,.4); }
+  .c-bubble b { display: block; margin-bottom: 2px; font-size: 12.5px; color: var(--soft); }
+  /* Clay admin */
+  .c-desk { padding: 16px; }
+  .c-desk-head { display: flex; align-items: baseline; justify-content: space-between; margin: 2px 4px 14px; }
+  .c-desk-head strong { font-weight: 800; font-size: 28px; line-height: 1; }
+  .c-desk-head span { font-size: 14px; font-weight: 600; color: var(--soft); }
+  .c-r { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; margin-bottom: 10px; padding: 11px 12px 9px 16px; border-radius: 24px; background: var(--cream-pill); box-shadow: var(--clay-sm); }
+  .c-r:last-child { margin-bottom: 0; }
+  .c-r .who { font-weight: 800; font-size: 15px; line-height: 1.15; }
+  .c-r .who span { display: block; font-weight: 500; font-size: 13px; color: var(--soft); }
+  .c-pill { padding: 6px 12px 4px; border-radius: 999px; font-weight: 700; font-size: 13px; box-shadow: var(--clay-sm); }
+  .c-pill.pend { background: var(--butter); }
+  .c-pill.short { background: var(--lilac); }
+  .c-pill.ok { background: var(--mint); }
+  .c-mini { padding: 8px 14px 6px; border: 0; border-radius: 16px; background: var(--grape); color: #fff; font-weight: 800; font-size: 13.5px; cursor: pointer; box-shadow: 0 8px 12px -8px rgba(84,58,200,.8), inset -3px -4px 7px rgba(0,0,0,.24), inset 3px 4px 7px rgba(255,255,255,.35); transition: transform .3s cubic-bezier(.3,1.7,.45,1); }
+  .c-mini:active { transform: scale(.92); }
+
+  /* ════════════════ 5. NEUMORPHISM ════════════════ */
+  .n {
+    --bg: #E3E8EF; --hi: #FFFFFF; --lo: #BAC3D1; --ink: #283246; --soft: #4F5A70; --teal: #0B7476;
+    --raise: 8px 8px 18px var(--lo), -8px -8px 18px var(--hi);
+    --raise-sm: 4px 4px 10px var(--lo), -4px -4px 10px var(--hi);
+    --press: inset 4px 4px 9px var(--lo), inset -4px -4px 9px var(--hi);
+    font-family: "Manrope", system-ui, sans-serif; background: var(--bg); color: var(--ink);
+  }
+  .n ::selection { background: var(--teal); color: #fff; }
+  .n :focus-visible { outline: 2.5px solid var(--teal); outline-offset: 3px; }
+  .n button { font-family: inherit; }
+  .n-top { display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 14px; }
+  .n-word { font-weight: 800; font-size: 28px; line-height: 1; letter-spacing: -.03em; }
+  .n-by { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 600; color: var(--soft); }
+  .n-avatar { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; font-weight: 800; font-size: 14px; color: var(--teal); box-shadow: var(--raise-sm); }
+  .n-search { display: flex; align-items: center; gap: 10px; margin: 6px 20px 18px; padding: 14px 16px; border-radius: 18px; box-shadow: var(--press); font-size: 14.5px; color: var(--soft); }
+  .n-chips { display: flex; gap: 12px; padding: 6px 20px 22px; overflow-x: auto; scrollbar-width: none; }
+  .n-chip { flex: none; padding: 10px 16px; border: 0; border-radius: 14px; background: var(--bg); color: var(--soft); font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: var(--raise-sm); transition: box-shadow .3s ease, color .3s ease; }
+  .n-chip[aria-pressed="true"] { color: var(--teal); box-shadow: var(--press); }
+  .n-h { display: flex; align-items: baseline; justify-content: space-between; margin: 0 20px 16px; }
+  .n-h h3 { margin: 0; font-weight: 800; font-size: 22px; letter-spacing: -.02em; }
+  .n-h span { font-size: 13px; font-weight: 600; color: var(--soft); }
+  .n-card { margin: 0 20px 24px; padding: 20px; border-radius: 28px; box-shadow: 10px 10px 24px var(--lo), -10px -10px 24px var(--hi); }
+  .n-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .n-brand { font-weight: 800; font-size: 30px; line-height: 1; letter-spacing: -.03em; }
+  .n-sub { margin-top: 4px; font-size: 13.5px; font-weight: 600; line-height: 1.3; color: var(--soft); }
+  .n-like { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--bg); color: var(--soft); cursor: pointer; box-shadow: var(--raise-sm); transition: box-shadow .3s ease, color .3s ease; }
+  .n-like[aria-pressed="true"] { color: #C2334E; box-shadow: var(--press); }
+  .n-like[aria-pressed="true"] .ico { fill: currentColor; }
+  .n-desc { margin: 14px 0 16px; font-size: 14.5px; line-height: 1.45; color: #34405A; }
+  .n-wells { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .n-well { padding: 10px 10px 9px; border-radius: 16px; box-shadow: var(--press); }
+  .n-well b { display: block; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); }
+  .n-well span { display: block; margin-top: 3px; font-weight: 800; font-size: 15.5px; font-variant-numeric: tabular-nums; }
+  .n-formats { margin: 0 0 18px; font-size: 13.5px; color: var(--soft); }
+  .n-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 15px 18px; border: 0; border-radius: 18px; background: linear-gradient(145deg, #0D8486, #0A6668); color: #fff; font-weight: 800; font-size: 16.5px; cursor: pointer; box-shadow: 8px 8px 18px #A9B3C2, -8px -8px 18px var(--hi); transition: box-shadow .25s ease, transform .25s ease; }
+  .n-btn:hover { box-shadow: 10px 10px 22px #A3AEBE, -10px -10px 22px var(--hi); }
+  .n-btn:active { transform: scale(.985); box-shadow: inset 4px 4px 10px rgba(0,0,0,.32), inset -4px -4px 10px rgba(255,255,255,.12), 2px 2px 6px var(--lo); }
+  .n-pitched { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 14px; box-shadow: var(--press); font-weight: 700; font-size: 13.5px; color: var(--teal); }
+  .n-status { margin: 0 20px 26px; padding: 20px; border-radius: 28px; box-shadow: 10px 10px 24px var(--lo), -10px -10px 24px var(--hi); }
+  .n-status-sub { font-size: 13px; font-weight: 600; color: var(--soft); }
+  .n-status-word { display: flex; align-items: center; gap: 10px; margin-top: 6px; font-weight: 800; font-size: 26px; letter-spacing: -.02em; color: var(--teal); }
+  .n-dot { width: 12px; height: 12px; border-radius: 50%; background: #12A3A5; box-shadow: 0 0 0 4px rgba(18,163,165,.18), 0 0 14px rgba(18,163,165,.7); }
+  .n-track { position: relative; height: 14px; margin: 18px 0 8px; border-radius: 999px; box-shadow: var(--press); }
+  .n-track span { position: absolute; left: 3px; top: 3px; bottom: 3px; width: 70%; border-radius: 999px; background: linear-gradient(90deg, #0A6668, #12A3A5); }
+  .n-steps { display: grid; grid-template-columns: repeat(4, 1fr); margin: 0 0 16px; padding: 0; list-style: none; font-size: 11.5px; font-weight: 700; color: var(--soft); }
+  .n-steps li:nth-child(2) { text-align: center; } .n-steps li:nth-child(3) { text-align: center; color: var(--teal); } .n-steps li:last-child { text-align: right; }
+  .n-note { padding: 14px; border-radius: 18px; box-shadow: var(--press); font-size: 14.5px; line-height: 1.42; }
+  .n-note b { display: block; margin-bottom: 3px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); }
+  /* Neumorphic admin */
+  .n-desk { padding: 18px; }
+  .n-desk-head { display: flex; align-items: baseline; justify-content: space-between; margin: 0 6px 14px; }
+  .n-desk-head strong { font-weight: 800; font-size: 22px; letter-spacing: -.02em; }
+  .n-desk-head span { font-size: 13px; font-weight: 600; color: var(--soft); }
+  .n-r { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; }
+  .n-r + .n-r { margin-top: 8px; }
+  .n-r.sel { box-shadow: var(--press); }
+  .n-r .who { font-weight: 800; font-size: 14.5px; line-height: 1.15; }
+  .n-r .who span { display: block; font-weight: 600; font-size: 12.5px; color: var(--soft); }
+  .n-tag { padding: 6px 10px; border-radius: 10px; box-shadow: var(--raise-sm); font-size: 12px; font-weight: 800; }
+  .n-tag.pend { color: #9A5B00; } .n-tag.short { color: var(--teal); } .n-tag.ok { color: #23703B; }
+  .n-mini { padding: 9px 14px; border: 0; border-radius: 12px; background: var(--bg); color: var(--teal); font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: var(--raise-sm); transition: box-shadow .25s; }
+  .n-mini:active { box-shadow: var(--press); }
+
+  /* ════════════════ 6. NEUBRUTALISM ════════════════ */
+  .b {
+    --bg: #D7E7FF; --ink: #111111; --yellow: #FFDF3D; --pink: #FF6FAE; --green: #36D58F; --blue: #3D6BFF; --white: #FFFFFF;
+    --edge: 3px solid var(--ink); --drop: 5px 5px 0 var(--ink);
+    font-family: "Bricolage Grotesque", system-ui, sans-serif; background: var(--bg); color: var(--ink);
+  }
+  .b ::selection { background: var(--yellow); color: var(--ink); }
+  .b :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+  .b button { font-family: inherit; }
+  .b-top { display: flex; align-items: center; justify-content: space-between; padding: 22px 16px 14px; }
+  .b-word { display: inline-block; padding: 2px 10px 0; border: var(--edge); border-radius: 10px; background: var(--yellow); box-shadow: 3px 3px 0 var(--ink); font-weight: 800; font-size: 30px; line-height: 1.1; letter-spacing: -.03em; transform: rotate(-2deg); }
+  .b-by { display: inline-block; margin-left: 10px; font-size: 13px; font-weight: 700; }
+  .b-avatar { width: 44px; height: 44px; display: grid; place-items: center; border: var(--edge); border-radius: 50%; background: var(--pink); font-weight: 800; font-size: 14px; box-shadow: 3px 3px 0 var(--ink); }
+  .b-chips { display: flex; gap: 10px; padding: 6px 16px 18px; overflow-x: auto; scrollbar-width: none; }
+  .b-chip, .b-btn, .b-like, .b-mini { transition: transform .12s ease, box-shadow .12s ease; }
+  .b-chip { flex: none; padding: 7px 13px 6px; border: 2.5px solid var(--ink); border-radius: 999px; background: var(--white); font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); }
+  .b-chip[aria-pressed="true"] { background: var(--blue); color: #fff; }
+  .b-chip:hover, .b-btn:hover, .b-like:hover, .b-mini:hover { transform: translate(-1px, -1px); }
+  .b-chip:active, .b-btn:active, .b-like:active, .b-mini:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+  .b-h { display: flex; align-items: center; gap: 10px; margin: 2px 16px 16px; }
+  .b-h h3 { margin: 0; font-weight: 800; font-size: 30px; line-height: 1; letter-spacing: -.03em; }
+  .b-count { padding: 3px 9px 2px; border: 2.5px solid var(--ink); border-radius: 8px; background: var(--pink); font-weight: 800; font-size: 14px; transform: rotate(4deg); }
+  .b-card { margin: 0 16px 22px; border: var(--edge); border-radius: 16px; background: var(--white); box-shadow: var(--drop); overflow: hidden; }
+  .b-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 14px 12px; border-bottom: var(--edge); background: var(--yellow); }
+  .b-card.pinkhead .b-card-head { background: var(--pink); }
+  .b-brand { font-weight: 800; font-size: 34px; line-height: .95; letter-spacing: -.035em; }
+  .b-sub { margin-top: 4px; font-size: 14px; font-weight: 600; line-height: 1.3; }
+  .b-like { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 7px 10px 6px; border: 2.5px solid var(--ink); border-radius: 10px; background: var(--white); font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); }
+  .b-like[aria-pressed="true"] { background: var(--ink); color: var(--white); }
+  .b-like[aria-pressed="true"] .ico { fill: var(--pink); stroke: var(--pink); }
+  .b-body { padding: 14px; }
+  .b-desc { margin: 0 0 12px; font-size: 15px; line-height: 1.42; }
+  .b-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; }
+  .b-tags li { padding: 3px 9px 2px; border: 2px solid var(--ink); border-radius: 999px; font-size: 13px; font-weight: 700; }
+  .b-tags li:nth-child(1) { background: #C9D8FF; } .b-tags li:nth-child(2) { background: #C6F5DD; } .b-tags li:nth-child(3) { background: #FFD3E6; }
+  .b-facts { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 14px; border: 2.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+  .b-fact { padding: 8px 9px 7px; border-right: 2.5px solid var(--ink); }
+  .b-fact:last-child { border-right: 0; }
+  .b-fact b { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .b-fact span { display: block; font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; }
+  .b-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 13px 16px 12px; border: var(--edge); border-radius: 12px; background: var(--pink); color: var(--ink); font-weight: 800; font-size: 17px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink); }
+  .b-pitched { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 5px; border: 2.5px solid var(--ink); border-radius: 999px; background: var(--green); font-weight: 800; font-size: 14px; }
+  .b-status { position: relative; margin: 0 16px 24px; padding: 16px; border: var(--edge); border-radius: 16px; background: var(--green); box-shadow: var(--drop); }
+  .b-status-sub { font-size: 14px; font-weight: 700; }
+  .b-sticker { display: inline-flex; align-items: center; gap: 8px; margin: 8px 0 14px; padding: 6px 12px 5px; border: var(--edge); border-radius: 12px; background: var(--white); box-shadow: 3px 3px 0 var(--ink); font-weight: 800; font-size: 28px; letter-spacing: -.03em; transform: rotate(-2.5deg); }
+  .b-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 0 0 14px; padding: 0; list-style: none; }
+  .b-steps li { padding: 7px 4px 6px; border: 2.5px solid var(--ink); border-radius: 10px; background: rgba(255,255,255,.55); font-size: 11.5px; font-weight: 800; text-align: center; }
+  .b-steps li.done { background: var(--ink); color: var(--white); }
+  .b-steps li.now { background: var(--yellow); }
+  .b-note { padding: 12px 13px 10px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--white); font-size: 14.5px; line-height: 1.4; }
+  .b-note b { display: block; margin-bottom: 2px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  /* Neubrutal admin */
+  .b-desk { border: var(--edge); }
+  .b-desk-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: var(--edge); background: var(--yellow); }
+  .b-desk-head strong { font-weight: 800; font-size: 26px; letter-spacing: -.03em; }
+  .b-desk-head span { padding: 3px 9px 2px; border: 2.5px solid var(--ink); border-radius: 8px; background: var(--white); font-weight: 800; font-size: 13px; }
+  .b-table { width: 100%; border-collapse: collapse; background: var(--white); font-size: 14.5px; }
+  .b-table th { padding: 8px 10px; border-bottom: var(--edge); text-align: left; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+  .b-table td { padding: 10px; border-bottom: 2.5px solid var(--ink); font-variant-numeric: tabular-nums; }
+  .b-table tr:last-child td { border-bottom: 0; }
+  .b-table tr.sel td { background: #FFF3A6; }
+  .b-table .who { font-weight: 800; line-height: 1.15; }
+  .b-table .who span { display: block; font-weight: 500; font-size: 12.5px; }
+  .b-chip-s { padding: 3px 9px 2px; border: 2px solid var(--ink); border-radius: 999px; font-weight: 800; font-size: 12px; }
+  .b-chip-s.pend { background: var(--yellow); } .b-chip-s.short { background: var(--pink); } .b-chip-s.ok { background: var(--green); }
+  .b-mini { padding: 6px 11px 5px; border: 2.5px solid var(--ink); border-radius: 9px; background: var(--blue); color: #fff; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.3 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+</svg>
+
+<header class="intro">
+  <h1>Align — six directions, same screens</h1>
+  <p>Every style shows the same three things: a creator's phone on the open-briefs shelf, their pitch status with a note from Schbang, and the admin review queue. Brief text is from the live briefs; the interest counts, the pitch, the note and the queue are sample data. Tap the filters and hearts, and hover the buttons — each direction has its own interaction.</p>
+</header>
+<nav class="jump" aria-label="Jump to a style">
+  <a href="#t-k">Kirana Shelf</a><a href="#t-h">Hoarding</a><a href="#t-g">Glass Partition</a>
+  <a href="#clay">Claymorphism</a><a href="#neu">Neumorphism</a><a href="#brutal">Neubrutalism</a>
+</nav>
+
+<h2 class="set-title" id="set-1">Set 1 · From Align's own world</h2>
+<p class="row-title">Creator · phone · /brands with your pitch</p>
+<div class="row">
+
+  <!-- ═══ KIRANA SHELF ═══ -->
+  <section class="opt" aria-labelledby="t-k">
+    <h2 id="t-k">Kirana Shelf</h2>
+    <p>Every brief is a printed pack: brand loud on the front, the facts in an MRP block. Hover the pitch button — the ink slips out of register.</p>
+    <div class="phone"><div class="screen k">
+      <div class="k-top">
+        <div><span class="k-word">ALIGN</span><span class="k-by">by Schbang</span></div>
+        <div class="k-avatar" aria-label="Rohan Joshi">RJ</div>
+      </div>
+      <div class="k-sub k-code">6 briefs on the shelf · 2 of 3 free pitches left</div>
+      <div class="k-shelf" role="group" aria-label="Filter by tier">
+        <button class="k-tag" aria-pressed="true">All</button>
+        <button class="k-tag" aria-pressed="false">Micro</button>
+        <button class="k-tag" aria-pressed="false">Mid-tier</button>
+        <button class="k-tag" aria-pressed="false">Macro</button>
+        <button class="k-tag" aria-pressed="false">Mega</button>
+      </div>
+      <div class="k-h"><h3>Open briefs</h3><span class="k-code">Food · Lifestyle · Fashion</span></div>
+
+      <article class="k-pack">
+        <div class="k-band neel">
+          <div class="k-code">Brief BRT-001 · Food &amp; FMCG</div>
+          <button class="k-like" aria-pressed="false" aria-label="Like Britannia brief, 38 interested"><svg class="ico"><use href="#i-heart"/></svg>38</button>
+          <div class="k-brand">Britannia</div>
+          <div class="k-camp">Good Day &amp; Jim Jam social remix</div>
+        </div>
+        <div class="k-body">
+          <p class="k-desc">Looking for food, lifestyle, and comedy creators for the Good Day &amp; Jim Jam social remix campaign.</p>
+          <div class="k-scale" aria-label="Brief asks for 1,00,000 followers or more; you have 1,45,000">
+            <div class="line"></div><div class="band"></div>
+            <span class="tick" style="left:10%"></span><span class="lbl" style="left:10%">10K</span>
+            <span class="tick" style="left:40%"></span><span class="lbl" style="left:40%">50K</span>
+            <span class="tick" style="left:52.5%"></span><span class="lbl" style="left:52.5%">1L</span>
+            <span class="tick" style="left:95%"></span><span class="lbl" style="left:93%">10L</span>
+            <span class="you" style="left:59%">You 1,45,000</span>
+          </div>
+          <div class="k-row">
+            <ul class="k-formats"><li>Instagram Reel</li><li>YouTube Short</li><li>Family Challenge</li></ul>
+            <div class="k-mrp">
+              <div class="k-mrp-title">Pitch M.R.P.</div>
+              <dl>
+                <dt>Tier</dt><dd>Macro</dd>
+                <dt>Followers</dt><dd>1,00,000+</dd>
+                <dt>Eng. rate</dt><dd>4.5%+</dd>
+              </dl>
+              <div class="k-price"><strong>₹0</strong><small>Free pitch<br>incl. all taxes</small></div>
+            </div>
+          </div>
+          <button class="k-cta"><span class="ink">Pitch to this brief — free <svg class="ico"><use href="#i-arrow"/></svg></span></button>
+        </div>
+      </article>
+
+      <article class="k-pack">
+        <div class="k-band rani">
+          <div class="k-code">Brief FEV-002 · Lifestyle &amp; DIY</div>
+          <button class="k-like" aria-pressed="true" aria-label="Like Fevicol brief, 54 interested"><svg class="ico"><use href="#i-heart"/></svg>54</button>
+          <div class="k-brand">Fevicol</div>
+          <div class="k-camp">#FevicolKaJod conversation series</div>
+        </div>
+        <div class="k-body">
+          <p class="k-desc">The iconic adhesive brand is seeking quirky creators for the #FevicolKaJod cultural conversation series.</p>
+          <ul class="k-formats"><li>Witty Reel</li><li>DIY Craft Post</li><li>Memetic Content</li></ul>
+        </div>
+        <div class="k-batch k-code"><span>Pitch A-0193 · sent 28 Sep</span><span>Shortlisted</span></div>
+      </article>
+
+      <div class="k-h"><h3>Your pitch</h3><span class="k-code">Updated 02 Oct</span></div>
+      <section class="k-status" aria-label="Your pitch to Fevicol">
+        <div class="k-status-head">
+          <div class="k-code">Fevicol · ₹45,000 · 2 deliverables</div>
+          <div class="k-status-word"><svg class="ico" style="width:30px;height:30px"><use href="#i-check"/></svg>Shortlisted</div>
+        </div>
+        <ol class="k-steps"><li class="done">Sent</li><li class="done">In review</li><li class="now">Shortlist</li><li>Decision</li></ol>
+        <div class="k-note"><b>Note from the Schbang team</b>Love the cricket bat idea. Send a rough script by Friday.</div>
+      </section>
+    </div></div>
+  </section>
+
+  <!-- ═══ HOARDING ═══ -->
+  <section class="opt" aria-labelledby="t-h">
+    <h2 id="t-h">Hoarding</h2>
+    <p>Every brief is a roadside board with one painted line; your pitch status is your reply board. Hover the red rail — a light sweeps across it.</p>
+    <div class="phone"><div class="screen h">
+      <div class="h-top">
+        <div><div class="h-word">ALIGN</div><span class="h-by">by Schbang</span></div>
+        <div class="h-menu" aria-label="Menu"><svg class="ico"><use href="#i-menu"/></svg></div>
+      </div>
+      <div class="h-tabs" role="group" aria-label="Filter by tier">
+        <button class="h-tab" aria-pressed="true">All tiers</button>
+        <button class="h-tab" aria-pressed="false">Micro</button>
+        <button class="h-tab" aria-pressed="false">Mid-tier</button>
+        <button class="h-tab" aria-pressed="false">Macro</button>
+        <button class="h-tab" aria-pressed="false">Mega</button>
+      </div>
+      <h3 class="h-heading">6 briefs up on the boards</h3>
+
+      <div class="h-board">
+        <article class="h-panel">
+          <span class="h-plate">Britannia · Food &amp; FMCG</span>
+          <div class="h-line">Food, comedy &amp; family creators: remix <em>Good Day &amp; Jim Jam</em></div>
+          <p class="h-sub">Instagram Reel, YouTube Short and a family challenge. 1,00,000+ followers, 4.5%+ engagement.</p>
+          <button class="h-rail">Pitch to this brief — free <svg class="ico"><use href="#i-arrow"/></svg></button>
+        </article>
+        <div class="h-legs" aria-hidden="true"><span></span><span></span></div>
+      </div>
+      <div class="h-ground"><span>Macro tier · managed by Schbang</span><button class="h-like" aria-pressed="false"><svg class="ico"><use href="#i-heart"/></svg>38</button></div>
+
+      <div class="h-board">
+        <article class="h-panel dark">
+          <span class="h-plate">Fevicol · Lifestyle &amp; DIY</span>
+          <div class="h-line" style="font-size:41px">#FevicolKaJod wants <em>quirky</em> creators</div>
+          <p class="h-sub">Witty Reels, DIY craft posts and memes for the cultural conversation series.</p>
+          <button class="h-rail">Your pitch is shortlisted <svg class="ico"><use href="#i-arrow"/></svg></button>
+        </article>
+        <div class="h-legs" aria-hidden="true"><span></span><span></span></div>
+      </div>
+      <div class="h-ground"><span>Mega tier · managed by Schbang</span><button class="h-like" aria-pressed="true"><svg class="ico"><use href="#i-heart"/></svg>54</button></div>
+
+      <section class="h-reply" aria-label="Your pitch to Fevicol">
+        <span class="h-plate">Your reply · Fevicol · ₹45,000</span>
+        <div class="h-reply-word">Shortlisted</div>
+        <ol class="h-steps"><li class="done">Sent</li><li class="done">In review</li><li class="now">Shortlist</li><li>Decision</li></ol>
+        <div class="h-notice"><b>Note from the Schbang team</b>Love the cricket bat idea. Send a rough script by Friday.</div>
+      </section>
+    </div></div>
+  </section>
+
+  <!-- ═══ GLASS PARTITION ═══ -->
+  <section class="opt" aria-labelledby="t-g">
+    <h2 id="t-g">Glass Partition</h2>
+    <p>A calm black grid of clear panes; only what needs you lights up — cobalt for your pitch, amber for what to act on. Hover a pane — it backlights.</p>
+    <div class="phone"><div class="screen g">
+      <div class="g-wall g-top">
+        <div class="g-pane"><span class="g-cap g-word">Align</span><span class="g-by">by Schbang</span></div>
+        <div class="g-pane g-menu" aria-label="Menu"><svg class="ico" style="width:22px;height:22px"><use href="#i-menu"/></svg></div>
+      </div>
+      <div class="g-wall g-filters" role="group" aria-label="Filter by tier" style="padding-top:0">
+        <button class="g-pane g-filter" aria-pressed="true">All</button>
+        <button class="g-pane g-filter" aria-pressed="false">Micro</button>
+        <button class="g-pane g-filter" aria-pressed="false">Macro</button>
+        <button class="g-pane g-filter" aria-pressed="false">Mega</button>
+      </div>
+      <div class="g-wall" style="padding-top:0">
+        <div class="g-pane amber g-left">
+          <div class="g-cap">2 of 3 free pitches left</div>
+          <p>Then ₹200 once for every brief, or ₹50/month.</p>
+        </div>
+        <div class="g-pane g-cap g-h">Open briefs</div>
+        <article class="g-pane g-brief">
+          <div class="g-meta">Food &amp; FMCG · Good Day &amp; Jim Jam social remix</div>
+          <div class="g-cap">Britannia</div>
+          <p class="g-desc">Looking for food, lifestyle, and comedy creators for the Good Day &amp; Jim Jam social remix campaign.</p>
+          <button class="g-like" aria-pressed="false"><svg class="ico"><use href="#i-heart"/></svg>38 interested</button>
+          <div class="g-facts">
+            <div class="g-pane g-fact"><b>Tier</b><span>Macro</span></div>
+            <div class="g-pane g-fact"><b>Followers</b><span>1,00,000+</span></div>
+            <div class="g-pane g-fact"><b>Eng. rate</b><span>4.5%+</span></div>
+            <div class="g-pane g-fact"><b>Formats</b><span>Reel · Short · +1</span></div>
+          </div>
+        </article>
+        <button class="g-pane g-cta">Pitch to this brief — free <svg class="ico"><use href="#i-arrow"/></svg></button>
+        <section class="g-pane cobalt g-yours" aria-label="Your pitch to Fevicol">
+          <div class="g-meta">Your pitch · ₹45,000 · Lifestyle &amp; DIY</div>
+          <div class="g-cap">Fevicol — shortlisted</div>
+          <ol class="g-steps"><li class="done">Sent</li><li class="done">In review</li><li class="now">Shortlist</li><li>Decision</li></ol>
+          <p class="g-note"><b>Note from the Schbang team</b>Love the cricket bat idea. Send a rough script by Friday.</p>
+        </section>
+      </div>
+    </div></div>
+  </section>
+</div>
+
+<p class="row-title">Admin · desktop · review queue</p>
+<div class="row">
+  <div class="desk k k-desk">
+    <div class="k-desk-head"><strong>Review queue</strong><span class="k-code">3 pitches · 1 awaiting</span></div>
+    <table class="k-table">
+      <thead><tr><th>Creator</th><th>Brief</th><th>Fee</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr class="sel"><td class="who">Rohan Joshi<span>@rohan_joshicomics</span></td><td>Britannia</td><td>₹45,000</td><td class="k-code">Pending</td><td><button class="k-mini">Shortlist</button></td></tr>
+        <tr><td class="who">Aanya Sen<span>@aanya.beauty</span></td><td>Enamor</td><td>₹35,000</td><td class="k-code">Shortlisted</td><td></td></tr>
+        <tr><td class="who">Siddharth Verma<span>@sid.tech</span></td><td>Kotak811</td><td>₹80,000</td><td class="k-code">Approved</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="desk h h-desk">
+    <div class="h-desk-head"><strong>Review board</strong><span>3 pitches · 1 awaiting</span></div>
+    <div class="h-rows">
+      <div class="h-r sel"><span class="h-chip pend">Pending</span><div class="who">Rohan Joshi<span>Britannia · <span class="fee" style="display:inline">₹45,000</span></span></div><button class="h-act">Shortlist</button></div>
+      <div class="h-r"><span class="h-chip short">Shortlisted</span><div class="who">Aanya Sen<span>Enamor · ₹35,000</span></div><span></span></div>
+      <div class="h-r"><span class="h-chip ok">Approved</span><div class="who">Siddharth Verma<span>Kotak811 · ₹80,000</span></div><span></span></div>
+    </div>
+  </div>
+
+  <div class="desk g g-desk">
+    <div class="g-wall">
+      <div class="g-pane g-head"><span class="g-cap">Review queue</span><span>3 pitches · 1 awaiting</span></div>
+      <div class="g-pane g-cell who">Rohan Joshi<span>@rohan_joshicomics</span></div><div class="g-pane g-cell">Britannia</div><div class="g-pane g-cell fee">₹45,000</div><div class="g-pane amber g-cell stat">Awaiting decision</div>
+      <div class="g-pane g-cell who">Aanya Sen<span>@aanya.beauty</span></div><div class="g-pane g-cell">Enamor</div><div class="g-pane g-cell fee">₹35,000</div><div class="g-pane cobalt g-cell stat">Shortlisted</div>
+      <div class="g-pane g-cell who">Siddharth Verma<span>@sid.tech</span></div><div class="g-pane g-cell">Kotak811</div><div class="g-pane g-cell fee">₹80,000</div><div class="g-pane g-cell stat">Approved</div>
+    </div>
+  </div>
+</div>
+
+
+<h2 class="set-title" id="set-2">Set 2 · Claymorphism, Neumorphism, Neubrutalism</h2>
+<p class="row-title">Creator · phone · /brands with your pitch</p>
+<div class="row">
+
+  <!-- ═══ CLAYMORPHISM ═══ -->
+  <section class="opt" id="clay" aria-labelledby="t-c">
+    <h2 id="t-c">Claymorphism</h2>
+    <p>Soft, puffy pastel shapes that look moulded from clay. Buttons bounce when you hover and squish when you tap.</p>
+    <div class="phone"><div class="screen c">
+      <div class="c-top">
+        <div><span class="c-word">Align</span><span class="c-by">by Schbang</span></div>
+        <div class="c-avatar" aria-label="Rohan Joshi">RJ</div>
+      </div>
+      <div class="c-chips" role="group" aria-label="Filter by tier">
+        <button class="c-chip" aria-pressed="true">All briefs</button>
+        <button class="c-chip" aria-pressed="false">Micro</button>
+        <button class="c-chip" aria-pressed="false">Mid-tier</button>
+        <button class="c-chip" aria-pressed="false">Macro</button>
+        <button class="c-chip" aria-pressed="false">Mega</button>
+      </div>
+      <div class="c-h"><h3>Open briefs</h3><span>2 of 3 free pitches left</span></div>
+
+      <article class="c-card">
+        <div class="c-card-top">
+          <div><div class="c-brand">Britannia</div><div class="c-sub">Food &amp; FMCG · Good Day &amp; Jim Jam social remix</div></div>
+          <button class="c-like" aria-pressed="false" aria-label="Like Britannia brief"><svg class="ico"><use href="#i-heart"/></svg>38</button>
+        </div>
+        <p class="c-desc">Looking for food, lifestyle, and comedy creators for the Good Day &amp; Jim Jam social remix campaign.</p>
+        <div class="c-facts">
+          <div class="c-fact"><b>Tier</b><span>Macro</span></div>
+          <div class="c-fact"><b>Followers</b><span>1,00,000+</span></div>
+          <div class="c-fact"><b>Eng. rate</b><span>4.5%+</span></div>
+        </div>
+        <p class="c-formats">Instagram Reel · YouTube Short · Family Challenge</p>
+        <button class="c-btn">Pitch to this brief — free <svg class="ico"><use href="#i-arrow"/></svg></button>
+      </article>
+
+      <article class="c-card lilac">
+        <div class="c-card-top">
+          <div><div class="c-brand">Fevicol</div><div class="c-sub">Lifestyle &amp; DIY · #FevicolKaJod conversation series</div></div>
+          <button class="c-like" aria-pressed="true" aria-label="Like Fevicol brief"><svg class="ico"><use href="#i-heart"/></svg>54</button>
+        </div>
+        <p class="c-desc">The iconic adhesive brand is seeking quirky creators for the #FevicolKaJod cultural conversation series.</p>
+        <span class="c-pitched"><svg class="ico"><use href="#i-check"/></svg>You pitched · shortlisted</span>
+      </article>
+
+      <div class="c-h"><h3>Your pitch</h3><span>Updated 2 Oct</span></div>
+      <section class="c-status" aria-label="Your pitch to Fevicol">
+        <div class="c-status-sub">Fevicol · ₹45,000 · 2 deliverables</div>
+        <div class="c-status-word"><span class="c-tick"><svg class="ico"><use href="#i-check"/></svg></span>Shortlisted</div>
+        <ol class="c-beads"><li class="done">Sent</li><li class="done">In review</li><li class="now">Shortlist</li><li>Decision</li></ol>
+        <div class="c-bubble"><b>Note from the Schbang team</b>Love the cricket bat idea. Send a rough script by Friday.</div>
+      </section>
+    </div></div>
+  </section>
+
+  <!-- ═══ NEUMORPHISM ═══ -->
+  <section class="opt" id="neu" aria-labelledby="t-n">
+    <h2 id="t-n">Neumorphism</h2>
+    <p>Soft UI: one calm surface, with controls raised out of it or pressed into it. Tap a filter or the heart and it sinks in; tap the button and it presses down.</p>
+    <div class="phone"><div class="screen n">
+      <div class="n-top">
+        <div><span class="n-word">Align</span><span class="n-by">by Schbang</span></div>
+        <div class="n-avatar" aria-label="Rohan Joshi">RJ</div>
+      </div>
+      <div class="n-search"><svg class="ico"><use href="#i-search"/></svg>Search brands, niches, formats</div>
+      <div class="n-chips" role="group" aria-label="Filter by tier">
+        <button class="n-chip" aria-pressed="true">All</button>
+        <button class="n-chip" aria-pressed="false">Micro</button>
+        <button class="n-chip" aria-pressed="false">Mid-tier</button>
+        <button class="n-chip" aria-pressed="false">Macro</button>
+        <button class="n-chip" aria-pressed="false">Mega</button>
+      </div>
+      <div class="n-h"><h3>Open briefs</h3><span>2 of 3 free pitches left</span></div>
+
+      <article class="n-card">
+        <div class="n-card-top">
+          <div><div class="n-brand">Britannia</div><div class="n-sub">Food &amp; FMCG · Good Day &amp; Jim Jam social remix</div></div>
+          <button class="n-like" aria-pressed="false" aria-label="Like Britannia brief, 38 interested"><svg class="ico"><use href="#i-heart"/></svg></button>
+        </div>
+        <p class="n-desc">Looking for food, lifestyle, and comedy creators for the Good Day &amp; Jim Jam social remix campaign.</p>
+        <div class="n-wells">
+          <div class="n-well"><b>Tier</b><span>Macro</span></div>
+          <div class="n-well"><b>Followers</b><span>1,00,000+</span></div>
+          <div class="n-well"><b>Eng. rate</b><span>4.5%+</span></div>
+        </div>
+        <p class="n-formats">Instagram Reel · YouTube Short · Family Challenge · 38 interested</p>
+        <button class="n-btn">Pitch to this brief — free <svg class="ico"><use href="#i-arrow"/></svg></button>
+      </article>
+
+      <article class="n-card">
+        <div class="n-card-top">
+          <div><div class="n-brand">Fevicol</div><div class="n-sub">Lifestyle &amp; DIY · #FevicolKaJod conversation series</div></div>
+          <button class="n-like" aria-pressed="true" aria-label="Like Fevicol brief, 54 interested"><svg class="ico"><use href="#i-heart"/></svg></button>
+        </div>
+        <p class="n-desc">The iconic adhesive brand is seeking quirky creators for the #FevicolKaJod cultural conversation series.</p>
+        <span class="n-pitched"><svg class="ico"><use href="#i-check"/></svg>You pitched · shortlisted</span>
+      </article>
+
+      <div class="n-h"><h3>Your pitch</h3><span>Updated 2 Oct</span></div>
+      <section class="n-status" aria-label="Your pitch to Fevicol">
+        <div class="n-status-sub">Fevicol · ₹45,000 · 2 deliverables</div>
+        <div class="n-status-word"><span class="n-dot" aria-hidden="true"></span>Shortlisted</div>
+        <div class="n-track" aria-hidden="true"><span></span></div>
+        <ol class="n-steps"><li>Sent</li><li>In review</li><li>Shortlist</li><li>Decision</li></ol>
+        <div class="n-note"><b>Note from the Schbang team</b>Love the cricket bat idea. Send a rough script by Friday.</div>
+      </section>
+    </div></div>
+  </section>
+
+  <!-- ═══ NEUBRUTALISM ═══ -->
+  <section class="opt" id="brutal" aria-labelledby="t-b">
+    <h2 id="t-b">Neubrutalism</h2>
+    <p>Loud flat colours, thick black outlines and chunky hard shadows. Buttons visibly push into the page when you tap them.</p>
+    <div class="phone"><div class="screen b">
+      <div class="b-top">
+        <div><span class="b-word">Align</span><span class="b-by">by Schbang</span></div>
+        <div class="b-avatar" aria-label="Rohan Joshi">RJ</div>
+      </div>
+      <div class="b-chips" role="group" aria-label="Filter by tier">
+        <button class="b-chip" aria-pressed="true">All briefs</button>
+        <button class="b-chip" aria-pressed="false">Micro</button>
+        <button class="b-chip" aria-pressed="false">Mid-tier</button>
+        <button class="b-chip" aria-pressed="false">Macro</button>
+        <button class="b-chip" aria-pressed="false">Mega</button>
+      </div>
+      <div class="b-h"><h3>Open briefs</h3><span class="b-count">6 live</span></div>
+
+      <article class="b-card">
+        <div class="b-card-head">
+          <div><div class="b-brand">Britannia</div><div class="b-sub">Food &amp; FMCG · Good Day &amp; Jim Jam social remix</div></div>
+          <button class="b-like" aria-pressed="false" aria-label="Like Britannia brief"><svg class="ico"><use href="#i-heart"/></svg>38</button>
+        </div>
+        <div class="b-body">
+          <p class="b-desc">Looking for food, lifestyle, and comedy creators for the Good Day &amp; Jim Jam social remix campaign.</p>
+          <ul class="b-tags"><li>Instagram Reel</li><li>YouTube Short</li><li>Family Challenge</li></ul>
+          <div class="b-facts">
+            <div class="b-fact"><b>Tier</b><span>Macro</span></div>
+            <div class="b-fact"><b>Followers</b><span>1L+</span></div>
+            <div class="b-fact"><b>Eng.</b><span>4.5%+</span></div>
+          </div>
+          <button class="b-btn">Pitch to this brief — free <svg class="ico"><use href="#i-arrow"/></svg></button>
+        </div>
+      </article>
+
+      <article class="b-card pinkhead">
+        <div class="b-card-head">
+          <div><div class="b-brand">Fevicol</div><div class="b-sub">Lifestyle &amp; DIY · #FevicolKaJod conversation series</div></div>
+          <button class="b-like" aria-pressed="true" aria-label="Like Fevicol brief"><svg class="ico"><use href="#i-heart"/></svg>54</button>
+        </div>
+        <div class="b-body">
+          <p class="b-desc">The iconic adhesive brand is seeking quirky creators for the #FevicolKaJod cultural conversation series.</p>
+          <span class="b-pitched"><svg class="ico"><use href="#i-check"/></svg>You pitched · shortlisted</span>
+        </div>
+      </article>
+
+      <div class="b-h"><h3>Your pitch</h3></div>
+      <section class="b-status" aria-label="Your pitch to Fevicol">
+        <div class="b-status-sub">Fevicol · ₹45,000 · 2 deliverables · updated 2 Oct</div>
+        <div class="b-sticker"><svg class="ico" style="width:24px;height:24px"><use href="#i-check"/></svg>Shortlisted</div>
+        <ol class="b-steps"><li class="done">Sent</li><li class="done">Review</li><li class="now">Shortlist</li><li>Decision</li></ol>
+        <div class="b-note"><b>Note from the Schbang team</b>Love the cricket bat idea. Send a rough script by Friday.</div>
+      </section>
+    </div></div>
+  </section>
+</div>
+
+<p class="row-title">Admin · desktop · review queue</p>
+<div class="row">
+  <div class="desk c c-desk">
+    <div class="c-desk-head"><strong>Review queue</strong><span>3 pitches · 1 awaiting</span></div>
+    <div class="c-r"><div class="who">Rohan Joshi<span>Britannia · ₹45,000</span></div><span class="c-pill pend">Pending</span><button class="c-mini">Shortlist</button></div>
+    <div class="c-r"><div class="who">Aanya Sen<span>Enamor · ₹35,000</span></div><span class="c-pill short">Shortlisted</span><span></span></div>
+    <div class="c-r"><div class="who">Siddharth Verma<span>Kotak811 · ₹80,000</span></div><span class="c-pill ok">Approved</span><span></span></div>
+  </div>
+
+  <div class="desk n n-desk">
+    <div class="n-desk-head"><strong>Review queue</strong><span>3 pitches · 1 awaiting</span></div>
+    <div class="n-r sel"><div class="who">Rohan Joshi<span>Britannia · ₹45,000</span></div><span class="n-tag pend">Pending</span><button class="n-mini">Shortlist</button></div>
+    <div class="n-r"><div class="who">Aanya Sen<span>Enamor · ₹35,000</span></div><span class="n-tag short">Shortlisted</span><span></span></div>
+    <div class="n-r"><div class="who">Siddharth Verma<span>Kotak811 · ₹80,000</span></div><span class="n-tag ok">Approved</span><span></span></div>
+  </div>
+
+  <div class="desk b b-desk">
+    <div class="b-desk-head"><strong>Review queue</strong><span>1 awaiting</span></div>
+    <table class="b-table">
+      <thead><tr><th>Creator</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        <tr class="sel"><td class="who">Rohan Joshi<span>Britannia · ₹45,000</span></td><td><span class="b-chip-s pend">Pending</span></td><td><button class="b-mini">Shortlist</button></td></tr>
+        <tr><td class="who">Aanya Sen<span>Enamor · ₹35,000</span></td><td><span class="b-chip-s short">Shortlisted</span></td><td></td></tr>
+        <tr><td class="who">Siddharth Verma<span>Kotak811 · ₹80,000</span></td><td><span class="b-chip-s ok">Approved</span></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  <strong>To choose:</strong> tell Claude "Kirana Shelf", "Hoarding", "Glass Partition", "Claymorphism", "Neumorphism" or "Neubrutalism" (or what you'd change). The chosen direction gets rebuilt properly across the briefs pages, creator dashboard and pitch form, admin panel and sign-in — these columns are previews, not the finished screens.
+</footer>
+
+<script>
+  // Filters behave as one-of-many; hearts toggle.
+  document.querySelectorAll('[role="group"]').forEach((group) => {
+    group.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      group.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    });
+  });
+  document.querySelectorAll('.k-like, .h-like, .g-like, .c-like, .n-like, .b-like').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const on = btn.getAttribute('aria-pressed') !== 'true';
+      btn.setAttribute('aria-pressed', String(on));
+      const label = btn.lastChild;
+      const n = parseInt(label.textContent, 10);
+      if (!Number.isNaN(n)) label.textContent = label.textContent.replace(String(n), String(n + (on ? 1 : -1)));
+    });
+  });
+</script>
+</body>
+</html>

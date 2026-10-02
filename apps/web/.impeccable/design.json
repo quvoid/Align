@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-02T07:30:00.000Z",
+  "title": "Design System: Align by Schbang",
+  "extensions": {
+    "colorMeta": {
+      "peach-ground": { "role": "neutral", "displayName": "Peach Ground", "canonical": "#FFE8DC" },
+      "cream-clay": { "role": "neutral", "displayName": "Cream Clay", "canonical": "#FFF7F1" },
+      "grape-ink": { "role": "neutral", "displayName": "Grape Ink", "canonical": "#2B2146" },
+      "dusk-violet": { "role": "neutral", "displayName": "Dusk Violet", "canonical": "#574A78" },
+      "grape": { "role": "primary", "displayName": "Grape", "canonical": "#6E4BF5", "tonalRamp": ["#DCD1FF", "#6E4BF5", "#5B39E6"] },
+      "clay-mint": { "role": "secondary", "displayName": "Clay Mint", "canonical": "#BDEFD6" },
+      "clay-lilac": { "role": "secondary", "displayName": "Clay Lilac", "canonical": "#DCD1FF" },
+      "clay-sky": { "role": "secondary", "displayName": "Clay Sky", "canonical": "#CDE6FF" },
+      "clay-butter": { "role": "secondary", "displayName": "Clay Butter", "canonical": "#FFEFA3" },
+      "clay-rose": { "role": "secondary", "displayName": "Clay Rose", "canonical": "#FFD2DD" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles and brief names." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles." },
+      "title": { "displayName": "Title", "purpose": "Card titles and brand names on cards." },
+      "body": { "displayName": "Body", "purpose": "Descriptions, pitches, notes." },
+      "label": { "displayName": "Label", "purpose": "Chips, field labels, stat labels." }
+    },
+    "shadows": [
+      { "name": "clay", "value": "0 18px 30px -18px rgb(84 58 200 / 0.45), inset -7px -9px 16px rgb(43 33 70 / 0.12), inset 7px 9px 16px rgb(255 255 255 / 0.7)", "purpose": "Cards, slabs, navbar, sheets." },
+      { "name": "clay-sm", "value": "0 9px 14px -9px rgb(84 58 200 / 0.4), inset -3px -4px 8px rgb(43 33 70 / 0.1), inset 3px 4px 8px rgb(255 255 255 / 0.9)", "purpose": "Chips, pills, small buttons, icon discs." },
+      { "name": "clay-btn", "value": "0 14px 22px -12px rgb(84 58 200 / 0.75), inset -5px -7px 12px rgb(0 0 0 / 0.24), inset 5px 7px 12px rgb(255 255 255 / 0.35)", "purpose": "Grape filled buttons and selected chips." },
+      { "name": "clay-btn-press", "value": "0 5px 9px -6px rgb(84 58 200 / 0.75), inset -3px -4px 8px rgb(0 0 0 / 0.24), inset 3px 4px 8px rgb(255 255 255 / 0.35)", "purpose": "Grape buttons while pressed." },
+      { "name": "clay-well", "value": "inset 3px 4px 8px rgb(43 33 70 / 0.12), inset -3px -4px 8px rgb(255 255 255 / 0.85)", "purpose": "Inputs, fact tiles, quiet and empty states." }
+    ],
+    "motion": [
+      { "name": "ease-squish", "value": "cubic-bezier(0.3, 1.7, 0.45, 1)", "purpose": "Bounce on hover (translateY -2px) and squish on tap (scale .96); user-requested, disabled under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one grape filled action per view.",
+      "html": "<button class=\"ds-btn-primary\">Pitch to this brief — free</button>",
+      "css": ".ds-btn-primary { font-family: 'Baloo 2', sans-serif; background: #6E4BF5; color: #fff; padding: 12px 20px; border: 0; border-radius: 24px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 14px 22px -12px rgb(84 58 200 / .75), inset -5px -7px 12px rgb(0 0 0 / .24), inset 5px 7px 12px rgb(255 255 255 / .35); transition: transform .35s cubic-bezier(.3,1.7,.45,1), background-color .2s; } .ds-btn-primary:hover { background: #5B39E6; transform: translateY(-2px); } .ds-btn-primary:active { transform: translateY(1px) scale(.96); } .ds-btn-primary:focus-visible { outline: 3px solid #6E4BF5; outline-offset: 3px; }"
+    },
+    {
+      "name": "Cream Button",
+      "kind": "button",
+      "refersTo": "button-cream",
+      "description": "Secondary action in cream clay.",
+      "html": "<button class=\"ds-btn-cream\">Edit media kit</button>",
+      "css": ".ds-btn-cream { font-family: 'Baloo 2', sans-serif; background: #FFF7F1; color: #2B2146; padding: 12px 20px; border: 0; border-radius: 24px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 9px 14px -9px rgb(84 58 200 / .4), inset -3px -4px 8px rgb(43 33 70 / .1), inset 3px 4px 8px rgb(255 255 255 / .9); transition: transform .35s cubic-bezier(.3,1.7,.45,1); } .ds-btn-cream:hover { transform: translateY(-2px); background: #fff; } .ds-btn-cream:active { transform: translateY(1px) scale(.96); } .ds-btn-cream:focus-visible { outline: 3px solid #6E4BF5; outline-offset: 3px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Single-select filter pill; selected is grape.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-chip-on\" aria-pressed=\"true\">All tiers</button><button class=\"ds-chip\" aria-pressed=\"false\">Micro</button></div>",
+      "css": ".ds-chips { display: flex; gap: 10px; background: #FFF7F1; padding: 12px; border-radius: 32px; } .ds-chip { font-family: 'Baloo 2', sans-serif; border: 0; background: #FFE8DC; color: #2B2146; padding: 10px 16px 8px; border-radius: 9999px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 9px 14px -9px rgb(84 58 200 / .4), inset -3px -4px 8px rgb(43 33 70 / .1), inset 3px 4px 8px rgb(255 255 255 / .9); transition: transform .35s cubic-bezier(.3,1.7,.45,1); } .ds-chip:hover { transform: translateY(-2px); } .ds-chip-on { background: #6E4BF5; color: #fff; box-shadow: 0 14px 22px -12px rgb(84 58 200 / .75), inset -5px -7px 12px rgb(0 0 0 / .24), inset 5px 7px 12px rgb(255 255 255 / .35); }"
+    },
+    {
+      "name": "Brief Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A pastel clay slab per brief; the brand name is the logo.",
+      "html": "<article class=\"ds-brief\"><h3>Britannia</h3><p class=\"ds-meta\">Food &amp; FMCG · Macro creators</p><p>Looking for food, lifestyle, and comedy creators for the Good Day &amp; Jim Jam social remix campaign.</p><span class=\"ds-view\">View brief</span></article>",
+      "css": ".ds-brief { font-family: 'Baloo 2', sans-serif; background: #FFEFA3; color: #2B2146; padding: 24px; border-radius: 32px; max-width: 360px; box-shadow: 0 18px 30px -18px rgb(84 58 200 / .45), inset -7px -9px 16px rgb(43 33 70 / .12), inset 7px 9px 16px rgb(255 255 255 / .7); } .ds-brief h3 { margin: 0; font-size: 34px; font-weight: 800; line-height: .95; letter-spacing: -.02em; } .ds-meta { margin: 6px 0 0; font-size: 14px; font-weight: 600; color: #574A78; } .ds-brief p { font-size: 15px; line-height: 1.6; } .ds-view { display: block; margin-top: 16px; padding: 12px 16px; border-radius: 24px; background: rgb(255 247 241 / .8); font-weight: 700; box-shadow: 0 9px 14px -9px rgb(84 58 200 / .4), inset -3px -4px 8px rgb(43 33 70 / .1), inset 3px 4px 8px rgb(255 255 255 / .9); }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Pressed-in clay well with a grape focus ring.",
+      "html": "<label class=\"ds-field\"><span>Instagram handle</span><input placeholder=\"@yourhandle\" /></label>",
+      "css": ".ds-field { display: grid; gap: 6px; font-family: 'Baloo 2', sans-serif; color: #2B2146; font-size: 14px; font-weight: 600; } .ds-field input { height: 48px; padding: 0 16px; border: 0; border-radius: 16px; background: #FFF7F1; color: #2B2146; font: inherit; font-size: 15px; font-weight: 400; box-shadow: inset 3px 4px 8px rgb(43 33 70 / .12), inset -3px -4px 8px rgb(255 255 255 / .85); } .ds-field input::placeholder { color: #574A78; } .ds-field input:focus-visible { outline: none; box-shadow: inset 3px 4px 8px rgb(43 33 70 / .12), inset -3px -4px 8px rgb(255 255 255 / .85), 0 0 0 3px rgb(110 75 245 / .45); }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Pitch status; same label and colour on creator and admin screens.",
+      "html": "<span class=\"ds-status ds-short\">Shortlisted</span> <span class=\"ds-status ds-pend\">Pending</span>",
+      "css": ".ds-status { display: inline-flex; padding: 4px 12px; border-radius: 9999px; font-family: 'Baloo 2', sans-serif; font-size: 12px; font-weight: 700; color: #2B2146; box-shadow: 0 9px 14px -9px rgb(84 58 200 / .4), inset -3px -4px 8px rgb(43 33 70 / .1), inset 3px 4px 8px rgb(255 255 255 / .9); } .ds-short { background: #DCD1FF; } .ds-pend { background: #FFEFA3; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Friendly clay you can press",
+    "overview": "Align's creator and admin surfaces are soft, puffy clay on a warm peach ground, lit from the top-left, with one grape colour for the action you came to take. Controls bounce on hover and squish on tap so creators on mid-range phones always know what is pressable. Brands appear as their names set big on pastel slabs, never as logo images.",
+    "keyCharacteristics": [
+      "Peach ground, cream clay surfaces, five pastel clay fills",
+      "Grape is the only filled action colour",
+      "Depth from layered clay shadows; no borders",
+      "Baloo 2 throughout",
+      "Bounce on hover, squish on tap, off under reduced motion"
+    ],
+    "rules": [
+      { "name": "The One Grape Rule", "body": "Grape fills one action per view plus the current selection.", "section": "colors" },
+      { "name": "The Same Words Rule", "body": "A pitch status has one label and one colour on both creator and admin screens (lib/status.ts).", "section": "colors" },
+      { "name": "The Name Is The Logo Rule", "body": "Brands appear as their names set big; no logo images until real marks are supplied.", "section": "typography" },
+      { "name": "The No Border Rule", "body": "Clay surfaces never take a border; separation comes from shadow and fill.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do give each brief its colour through clayFillFor(slug).",
+      "Do keep one grape filled action per view and put the price on the charging button.",
+      "Do use lib/status.ts labels and colours on both sides.",
+      "Do keep phone tap targets at 44px or more."
+    ],
+    "donts": [
+      "Don't put borders on clay surfaces.",
+      "Don't use peach clay for brief cards.",
+      "Don't show stock-photo logos or unearned verified badges.",
+      "Don't add a second action colour.",
+      "Don't use dark ink bands on creator or admin screens."
+    ]
+  }
+}

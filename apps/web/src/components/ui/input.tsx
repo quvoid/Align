@@ -11,12 +11,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, helperText, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1.5 w-full">
-        {label && <label className="text-sm font-medium text-text-primary">{label}</label>}
+        {label && <label className="text-sm font-extrabold text-text-primary">{label}</label>}
         <input
           ref={ref}
           className={cn(
-            "flex h-11 w-full rounded-2xl border border-stone bg-surface px-3.5 py-2 text-sm placeholder:text-text-secondary focus:outline-none focus:border-text-primary disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-error focus:border-error",
+            "flex h-12 w-full rounded-md bg-surface px-4 text-[16px] font-medium text-text-primary brut-well placeholder:text-text-secondary transition-[box-shadow,background-color] focus:outline-none focus-visible:outline-none focus-visible:bg-[#FFFCEB] focus-visible:shadow-[3px_3px_0_0_#111] disabled:cursor-not-allowed disabled:opacity-55",
+            error && "border-error shadow-[3px_3px_0_0_var(--color-error)]",
             className
           )}
           {...props}

@@ -14,7 +14,7 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-black text-primary tracking-tight mb-4">
+          <h1 className="text-4xl md:text-5xl type-display text-primary mb-4">
             Where Creator Reach Meets Brand Purpose
           </h1>
           <p className="text-text-secondary text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
@@ -67,7 +67,7 @@ export default function AboutPage() {
 
         {/* CTA Card */}
         <div className="bg-ink text-white rounded-3xl p-10 text-center relative overflow-hidden">
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-3">
+          <h2 className="text-[30px] md:text-3xl type-display mb-3">
             Ready to collaborate with marquee brands?
           </h2>
           <p className="text-white/70 text-sm max-w-lg mx-auto mb-8">

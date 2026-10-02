@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { sendOtp } from "@/server/email-otp";
+import { assertSameOrigin, HttpError } from "@/server/http";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Emails the signed-in user a fresh confirmation code (at most once a minute). */
-export async function POST() {
+export async function POST(request: Request) {
+  try {
+    assertSameOrigin(request);
+  } catch (err) {
+    if (err instanceof HttpError) return NextResponse.json({ error: err.message }, { status: err.status });
+    throw err;
+  }
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
 

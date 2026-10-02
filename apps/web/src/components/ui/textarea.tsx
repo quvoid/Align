@@ -11,12 +11,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, label, error, helperText, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1.5 w-full">
-        {label && <label className="text-sm font-medium text-text-primary">{label}</label>}
+        {label && <label className="text-sm font-extrabold text-text-primary">{label}</label>}
         <textarea
           ref={ref}
           className={cn(
-            "flex min-h-[80px] w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
-            error && "border-error focus:ring-error",
+            "flex min-h-[96px] w-full rounded-md bg-surface px-4 py-3 text-[16px] font-medium leading-relaxed text-text-primary brut-well placeholder:text-text-secondary transition-[box-shadow,background-color] focus:outline-none focus-visible:outline-none focus-visible:bg-[#FFFCEB] focus-visible:shadow-[3px_3px_0_0_#111] disabled:cursor-not-allowed disabled:opacity-55",
+            error && "border-error shadow-[3px_3px_0_0_var(--color-error)]",
             className
           )}
           {...props}

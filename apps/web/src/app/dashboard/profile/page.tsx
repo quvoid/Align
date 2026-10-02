@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { getUserData, updateProfile, isProfileComplete, type CreatorProfile } from "@/lib/user-store";
+import { fetchMe, saveProfile, isProfileComplete, type CreatorProfile } from "@/lib/user-store";
+import { errorMessage } from "@/lib/fetch-json";
 import { safeRedirectPath } from "@/lib/auth-shared";
-import { Instagram, Youtube, Save, ShieldCheck, Sparkles, Loader2 } from "lucide-react";
+import { Instagram, Youtube, Save, ShieldCheck, Loader2 } from "lucide-react";
 
 // useSearchParams() (used for ?next=) requires a Suspense boundary above it
 // for Next.js to statically prerender this route — without this wrapper the
@@ -21,7 +22,7 @@ export default function ProfilePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center">
           <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
       }
@@ -44,29 +45,35 @@ function ProfilePageInner() {
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const role = session?.user?.role;
+  const email = session?.user?.email;
+
   useEffect(() => {
-    if (!session?.user?.email) return;
+    if (!email) return;
 
     // Admins don't have a creator profile — never gate them here.
-    if (session.user.role === "ADMIN") {
+    if (role === "ADMIN" || role === "SUPER_ADMIN") {
       router.replace("/admin");
       return;
     }
 
-    const data = getUserData(
-      session.user.email,
-      session.user.name || undefined,
-      session.user.image || undefined
-    );
-    setProfile(data.profile);
+    let cancelled = false;
+    fetchMe()
+      .then((me) => {
+        if (cancelled) return;
+        setProfile(me.profile);
+        if (next && isProfileComplete(me.profile)) router.replace(next);
+      })
+      .catch((err) => {
+        if (!cancelled) toast({ title: "Couldn't load your profile", description: errorMessage(err), type: "error" });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [email, role, next, router, toast]);
 
-    if (next && isProfileComplete(data.profile)) {
-      router.replace(next);
-    }
-  }, [session, next, router]);
-
-  const handleSave = () => {
-    if (!session?.user?.email || !profile) return;
+  const handleSave = async () => {
+    if (!email || !profile) return;
 
     // Onboarding: the gate that sent them here would only bounce them back.
     if (next && !isProfileComplete(profile)) {
@@ -79,19 +86,19 @@ function ProfilePageInner() {
     }
 
     setLoading(true);
-    updateProfile(session.user.email, profile);
-
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      setProfile(await saveProfile(profile));
       toast({
-        title: "Profile Saved",
-        description: "Your creator profile has been updated successfully.",
+        title: "Profile saved",
+        description: "Brands reviewing your pitches now see these details.",
         type: "success",
       });
-      if (next) {
-        router.push(next);
-      }
-    }, 500);
+      if (next) router.push(next);
+    } catch (err) {
+      toast({ title: "Profile not saved", description: errorMessage(err), type: "error" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateField = (field: keyof CreatorProfile, value: string) => {
@@ -101,38 +108,33 @@ function ProfilePageInner() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="bg-ink text-white pt-8 pb-12 border-b border-white/10">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-2 flex items-center gap-2">
-                <Sparkles className="w-8 h-8 text-accent" />
-                My Creator Profile & Media Kit
-              </h1>
-              <p className="text-white/70 text-base">
-                Manage your public creator identity and verified analytics.
-              </p>
-            </div>
-            <Link href="/brands">
-              <Button variant="accent" className="font-bold">
-                Browse Open Brand Briefs
-              </Button>
-            </Link>
+    <div className="min-h-screen pb-20">
+      <div className="container mx-auto px-4 pt-8 sm:pt-12 max-w-4xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
+          <div>
+            <h1 className="text-[44px] sm:text-6xl type-display leading-[0.95] text-primary">
+              Your media kit
+            </h1>
+            <p className="mt-2 text-base sm:text-lg text-text-secondary max-w-xl">
+              Brands see this with every pitch. Your numbers are shown as you enter them, so keep them current.
+            </p>
           </div>
+          <Link href="/brands" className="shrink-0">
+            <Button variant="outline">Browse open briefs</Button>
+          </Link>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+      <div className="container mx-auto px-4 pt-8 max-w-4xl space-y-6">
         {next && !isProfileComplete(profile) && (
-          <div className="rounded-3xl border border-accent/30 bg-surface p-5 md:p-6">
+          <div className="rounded-4xl bg-fill-butter p-5 md:p-6 brut">
             <p className="font-bold text-primary">Finish your profile to continue</p>
             <p className="text-sm text-text-secondary mt-1">
               Brands see this with every pitch. Add at least your Instagram handle and niche, then save.
@@ -140,11 +142,11 @@ function ProfilePageInner() {
           </div>
         )}
         {/* Section 1: Basic Creator Details */}
-        <Card className="rounded-3xl border-border shadow-xs">
-          <CardContent className="p-6 md:p-8 space-y-6">
-            <div className="flex items-center gap-2 border-b border-border pb-4 mb-6">
-              <ShieldCheck className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-bold text-primary">Basic Creator Details</h2>
+        <Card>
+          <CardContent className="p-6 md:p-8 space-y-5">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-11 h-11 rounded-full bg-fill-lilac grid place-items-center brut-sm"><ShieldCheck className="w-5 h-5 text-primary" aria-hidden="true" /></span>
+              <h2 className="text-[30px] type-display text-primary">About you</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -153,12 +155,6 @@ function ProfilePageInner() {
                 value={profile.name || ""}
                 onChange={(e) => updateField("name", e.target.value)}
                 placeholder="Your full name"
-              />
-              <Input
-                label="Creator Handle"
-                value={profile.handle || ""}
-                onChange={(e) => updateField("handle", e.target.value)}
-                placeholder="@yourhandle"
               />
               <Input
                 label="Email Address"
@@ -172,6 +168,13 @@ function ProfilePageInner() {
                 value={profile.location || ""}
                 onChange={(e) => updateField("location", e.target.value)}
                 placeholder="City, Country"
+              />
+              <Input
+                label="Phone"
+                type="tel"
+                value={profile.phone || ""}
+                onChange={(e) => updateField("phone", e.target.value)}
+                placeholder="e.g. +91 98765 43210"
               />
             </div>
             
@@ -197,11 +200,11 @@ function ProfilePageInner() {
         </Card>
 
         {/* Section 2: Instagram Analytics */}
-        <Card className="rounded-3xl border-border shadow-xs">
-          <CardContent className="p-6 md:p-8 space-y-6">
-            <div className="flex items-center gap-2 border-b border-border pb-4 mb-6">
-              <Instagram className="w-6 h-6 text-pink-600" />
-              <h2 className="text-xl font-bold text-primary">Instagram Analytics</h2>
+        <Card>
+          <CardContent className="p-6 md:p-8 space-y-5">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-11 h-11 rounded-full bg-fill-rose grid place-items-center brut-sm"><Instagram className="w-5 h-5 text-primary" aria-hidden="true" /></span>
+              <h2 className="text-[30px] type-display text-primary">Instagram</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -231,11 +234,11 @@ function ProfilePageInner() {
         </Card>
 
         {/* Section 3: YouTube & Channels */}
-        <Card className="rounded-3xl border-border shadow-xs">
-          <CardContent className="p-6 md:p-8 space-y-6">
-            <div className="flex items-center gap-2 border-b border-border pb-4 mb-6">
-              <Youtube className="w-6 h-6 text-red-600" />
-              <h2 className="text-xl font-bold text-primary">YouTube & Channels</h2>
+        <Card>
+          <CardContent className="p-6 md:p-8 space-y-5">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-11 h-11 rounded-full bg-fill-sky grid place-items-center brut-sm"><Youtube className="w-5 h-5 text-primary" aria-hidden="true" /></span>
+              <h2 className="text-[30px] type-display text-primary">YouTube and media kit</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -261,7 +264,7 @@ function ProfilePageInner() {
               />
             </div>
 
-            <div className="pt-4 border-t border-border">
+            <div className="pt-2">
               <Input
                 label="Media Kit URL"
                 value={profile.mediaKitUrl || ""}
@@ -279,10 +282,10 @@ function ProfilePageInner() {
             size="lg" 
             onClick={handleSave} 
             disabled={loading}
-            className="w-full md:w-auto text-base font-bold px-8"
+            className="w-full md:w-auto px-8"
           >
             {loading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
-            Save Creator Profile
+            Save media kit
           </Button>
         </div>
       </div>

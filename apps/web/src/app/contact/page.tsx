@@ -30,7 +30,7 @@ export default function ContactPage() {
     <div className="bg-background min-h-screen pt-12 pb-16">
       <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-14">
-          <h1 className="text-4xl font-black text-primary tracking-tight mb-3">
+          <h1 className="text-4xl type-display text-primary mb-3">
             Contact the Schbang Team
           </h1>
           <p className="text-text-secondary text-base max-w-xl mx-auto">
@@ -83,7 +83,7 @@ export default function ContactPage() {
                 <div className="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h2 className="text-2xl font-bold text-primary mb-2">Inquiry Submitted!</h2>
+                <h2 className="text-[30px] type-display text-primary mb-2">Inquiry Submitted!</h2>
                 <p className="text-sm text-text-secondary max-w-sm mx-auto mb-6">
                   Thank you for getting in touch. A Schbang influencer manager has received your note and will get back to you shortly.
                 </p>

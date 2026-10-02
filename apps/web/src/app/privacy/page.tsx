@@ -9,7 +9,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="bg-background min-h-screen pt-12 pb-16">
       <div className="container mx-auto px-4 max-w-3xl bg-surface p-8 md:p-12 rounded-3xl border border-border">
-        <h1 className="text-3xl md:text-4xl font-black text-primary tracking-tight mb-2">
+        <h1 className="text-3xl md:text-4xl type-display text-primary mb-2">
           Privacy Policy
         </h1>
         <p className="text-xs text-text-secondary mb-8">
